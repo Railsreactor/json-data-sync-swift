@@ -10,21 +10,7 @@
 		1C81CB4B1C90553B00580BB6 /* JDSKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81CB4A1C90553B00580BB6 /* JDSKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1C8F33A31C9059470035C40D /* CoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F336A1C9059470035C40D /* CoreService.swift */; };
 		1C8F33AA1C9059470035C40D /* EntityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33721C9059470035C40D /* EntityService.swift */; };
-		1C8F33AB1C9059470035C40D /* CDUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33741C9059470035C40D /* CDUtils.swift */; };
-		1C8F33AC1C9059470035C40D /* BaseDBService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33751C9059470035C40D /* BaseDBService.swift */; };
-		1C8F33AD1C9059470035C40D /* GenericEntityGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33771C9059470035C40D /* GenericEntityGateway.swift */; };
-		1C8F33AE1C9059470035C40D /* LinkableEntityGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33781C9059470035C40D /* LinkableEntityGateway.swift */; };
-		1C8F33AF1C9059470035C40D /* UpdateInfoGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33791C9059470035C40D /* UpdateInfoGateway.swift */; };
-		1C8F33B31C9059470035C40D /* CDUpdateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33801C9059470035C40D /* CDUpdateInfo.swift */; };
 		1C8F33B81C9059470035C40D /* RegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33861C9059470035C40D /* RegistryService.swift */; };
-		1C8F33B91C9059470035C40D /* BaseJSONAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33881C9059470035C40D /* BaseJSONAPIManager.swift */; };
-		1C8F33BB1C9059470035C40D /* JSONAPISession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F338B1C9059470035C40D /* JSONAPISession.swift */; };
-		1C8F33BC1C9059470035C40D /* JSONAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F338C1C9059470035C40D /* JSONAttachment.swift */; };
-		1C8F33BE1C9059470035C40D /* JSONEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F338E1C9059470035C40D /* JSONEvent.swift */; };
-		1C8F33C11C9059470035C40D /* JSONLinkableEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33911C9059470035C40D /* JSONLinkableEntity.swift */; };
-		1C8F33C31C9059470035C40D /* JSONManagedEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33931C9059470035C40D /* JSONManagedEntity.swift */; };
-		1C8F33C71C9059470035C40D /* JSONTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33981C9059470035C40D /* JSONTransformers.swift */; };
-		1C8F33C81C9059470035C40D /* UrlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33991C9059470035C40D /* UrlExtensions.swift */; };
 		1C8F33C91C9059470035C40D /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F339A1C9059470035C40D /* SyncService.swift */; };
 		1C8F33CC1C9059470035C40D /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F339F1C9059470035C40D /* Attachment.swift */; };
 		1C8F33CD1C9059470035C40D /* LinkableEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33A01C9059470035C40D /* LinkableEntity.swift */; };
@@ -36,28 +22,42 @@
 		1C8F33F81C90594E0035C40D /* NetworkSpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33E41C90594E0035C40D /* NetworkSpinner.swift */; };
 		1C8F33F91C90594E0035C40D /* Synchronized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33E51C90594E0035C40D /* Synchronized.swift */; };
 		1C8F33FD1C905E1D0035C40D /* Containerable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33FC1C905E1D0035C40D /* Containerable.swift */; };
-		1C8F340D1C905F480035C40D /* DeserializeOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33FF1C905F480035C40D /* DeserializeOperation.swift */; };
-		1C8F340E1C905F480035C40D /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34001C905F480035C40D /* Errors.swift */; };
-		1C8F340F1C905F480035C40D /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34011C905F480035C40D /* Logging.swift */; };
-		1C8F34101C905F480035C40D /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34021C905F480035C40D /* Networking.swift */; };
-		1C8F34111C905F480035C40D /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34031C905F480035C40D /* Operation.swift */; };
-		1C8F34121C905F480035C40D /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34041C905F480035C40D /* Query.swift */; };
-		1C8F34131C905F480035C40D /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34051C905F480035C40D /* Resource.swift */; };
-		1C8F34141C905F480035C40D /* ResourceCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34061C905F480035C40D /* ResourceCollection.swift */; };
-		1C8F34151C905F480035C40D /* ResourceField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34071C905F480035C40D /* ResourceField.swift */; };
-		1C8F34161C905F480035C40D /* Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34081C905F480035C40D /* Routing.swift */; };
-		1C8F34171C905F480035C40D /* SerializeOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34091C905F480035C40D /* SerializeOperation.swift */; };
-		1C8F34181C905F480035C40D /* Serializing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F340A1C905F480035C40D /* Serializing.swift */; };
-		1C8F34191C905F480035C40D /* Spine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F340B1C905F480035C40D /* Spine.swift */; };
-		1C8F341A1C905F480035C40D /* Transformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F340C1C905F480035C40D /* Transformer.swift */; };
 		1CE60F201C90613700ACF75A /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE60F1F1C90613700ACF75A /* Event.swift */; };
 		1CE60F231C9065C300ACF75A /* AttachmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE60F211C9065C300ACF75A /* AttachmentService.swift */; };
-		1CFB48BD1C90685B000A3029 /* CDAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48BA1C90685B000A3029 /* CDAttachment.swift */; };
-		1CFB48BE1C90685B000A3029 /* CDLinkableEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48BB1C90685B000A3029 /* CDLinkableEntity.swift */; };
-		1CFB48BF1C90685B000A3029 /* CDManagedEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48BC1C90685B000A3029 /* CDManagedEntity.swift */; };
 		1CFB48C41C906CE2000A3029 /* InitialModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48C01C906CBE000A3029 /* InitialModel.xcdatamodeld */; };
-		1CFB48D51C91B0DE000A3029 /* SNExceptionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFB48D21C91B0DE000A3029 /* SNExceptionWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1CFB48D61C91B0DE000A3029 /* SNExceptionWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48D31C91B0DE000A3029 /* SNExceptionWrapper.m */; };
+		1CFB49021C91BFF4000A3029 /* BaseDBService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48DA1C91BFF4000A3029 /* BaseDBService.swift */; };
+		1CFB49031C91BFF4000A3029 /* CDUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48DB1C91BFF4000A3029 /* CDUtils.swift */; };
+		1CFB49041C91BFF4000A3029 /* GenericEntityGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48DD1C91BFF4000A3029 /* GenericEntityGateway.swift */; };
+		1CFB49051C91BFF4000A3029 /* LinkableEntityGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48DE1C91BFF4000A3029 /* LinkableEntityGateway.swift */; };
+		1CFB49061C91BFF4000A3029 /* UpdateInfoGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48DF1C91BFF4000A3029 /* UpdateInfoGateway.swift */; };
+		1CFB49071C91BFF4000A3029 /* CDAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48E11C91BFF4000A3029 /* CDAttachment.swift */; };
+		1CFB49081C91BFF4000A3029 /* CDLinkableEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48E21C91BFF4000A3029 /* CDLinkableEntity.swift */; };
+		1CFB49091C91BFF4000A3029 /* CDManagedEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48E31C91BFF4000A3029 /* CDManagedEntity.swift */; };
+		1CFB490A1C91BFF4000A3029 /* CDUpdateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48E41C91BFF4000A3029 /* CDUpdateInfo.swift */; };
+		1CFB490B1C91BFF4000A3029 /* SNExceptionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFB48E61C91BFF4000A3029 /* SNExceptionWrapper.h */; };
+		1CFB490C1C91BFF4000A3029 /* SNExceptionWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48E71C91BFF4000A3029 /* SNExceptionWrapper.m */; };
+		1CFB490D1C91BFF4000A3029 /* BaseJSONAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48E91C91BFF4000A3029 /* BaseJSONAPIManager.swift */; };
+		1CFB490E1C91BFF4000A3029 /* JSONAPISession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48EB1C91BFF4000A3029 /* JSONAPISession.swift */; };
+		1CFB490F1C91BFF4000A3029 /* JSONAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48EC1C91BFF4000A3029 /* JSONAttachment.swift */; };
+		1CFB49101C91BFF4000A3029 /* JSONEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48ED1C91BFF4000A3029 /* JSONEvent.swift */; };
+		1CFB49111C91BFF4000A3029 /* JSONLinkableEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48EE1C91BFF4000A3029 /* JSONLinkableEntity.swift */; };
+		1CFB49121C91BFF4000A3029 /* JSONManagedEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48EF1C91BFF4000A3029 /* JSONManagedEntity.swift */; };
+		1CFB49131C91BFF4000A3029 /* DeserializeOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48F11C91BFF4000A3029 /* DeserializeOperation.swift */; };
+		1CFB49141C91BFF4000A3029 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48F21C91BFF4000A3029 /* Errors.swift */; };
+		1CFB49151C91BFF4000A3029 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48F31C91BFF4000A3029 /* Logging.swift */; };
+		1CFB49161C91BFF4000A3029 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48F41C91BFF4000A3029 /* Networking.swift */; };
+		1CFB49171C91BFF4000A3029 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48F51C91BFF4000A3029 /* Operation.swift */; };
+		1CFB49181C91BFF4000A3029 /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48F61C91BFF4000A3029 /* Query.swift */; };
+		1CFB49191C91BFF4000A3029 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48F71C91BFF4000A3029 /* Resource.swift */; };
+		1CFB491A1C91BFF4000A3029 /* ResourceCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48F81C91BFF4000A3029 /* ResourceCollection.swift */; };
+		1CFB491B1C91BFF4000A3029 /* ResourceField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48F91C91BFF4000A3029 /* ResourceField.swift */; };
+		1CFB491C1C91BFF4000A3029 /* Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48FA1C91BFF4000A3029 /* Routing.swift */; };
+		1CFB491D1C91BFF4000A3029 /* SerializeOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48FB1C91BFF4000A3029 /* SerializeOperation.swift */; };
+		1CFB491E1C91BFF4000A3029 /* Serializing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48FC1C91BFF4000A3029 /* Serializing.swift */; };
+		1CFB491F1C91BFF4000A3029 /* Spine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48FD1C91BFF4000A3029 /* Spine.swift */; };
+		1CFB49201C91BFF4000A3029 /* Transformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48FE1C91BFF4000A3029 /* Transformer.swift */; };
+		1CFB49211C91BFF4000A3029 /* JSONTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB49001C91BFF4000A3029 /* JSONTransformers.swift */; };
+		1CFB49221C91BFF4000A3029 /* UrlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB49011C91BFF4000A3029 /* UrlExtensions.swift */; };
 		3BAC5155902FCD660A1F7063 /* Pods_JDSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C98E2744282DF4AEC1149E2 /* Pods_JDSKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -68,21 +68,7 @@
 		1C81CB4C1C90553B00580BB6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C8F336A1C9059470035C40D /* CoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreService.swift; sourceTree = "<group>"; };
 		1C8F33721C9059470035C40D /* EntityService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityService.swift; sourceTree = "<group>"; };
-		1C8F33741C9059470035C40D /* CDUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDUtils.swift; sourceTree = "<group>"; };
-		1C8F33751C9059470035C40D /* BaseDBService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseDBService.swift; sourceTree = "<group>"; };
-		1C8F33771C9059470035C40D /* GenericEntityGateway.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericEntityGateway.swift; sourceTree = "<group>"; };
-		1C8F33781C9059470035C40D /* LinkableEntityGateway.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkableEntityGateway.swift; sourceTree = "<group>"; };
-		1C8F33791C9059470035C40D /* UpdateInfoGateway.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateInfoGateway.swift; sourceTree = "<group>"; };
-		1C8F33801C9059470035C40D /* CDUpdateInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDUpdateInfo.swift; sourceTree = "<group>"; };
 		1C8F33861C9059470035C40D /* RegistryService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistryService.swift; sourceTree = "<group>"; };
-		1C8F33881C9059470035C40D /* BaseJSONAPIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseJSONAPIManager.swift; sourceTree = "<group>"; };
-		1C8F338B1C9059470035C40D /* JSONAPISession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONAPISession.swift; sourceTree = "<group>"; };
-		1C8F338C1C9059470035C40D /* JSONAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONAttachment.swift; sourceTree = "<group>"; };
-		1C8F338E1C9059470035C40D /* JSONEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONEvent.swift; sourceTree = "<group>"; };
-		1C8F33911C9059470035C40D /* JSONLinkableEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONLinkableEntity.swift; sourceTree = "<group>"; };
-		1C8F33931C9059470035C40D /* JSONManagedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONManagedEntity.swift; sourceTree = "<group>"; };
-		1C8F33981C9059470035C40D /* JSONTransformers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONTransformers.swift; sourceTree = "<group>"; };
-		1C8F33991C9059470035C40D /* UrlExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UrlExtensions.swift; sourceTree = "<group>"; };
 		1C8F339A1C9059470035C40D /* SyncService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncService.swift; sourceTree = "<group>"; };
 		1C8F339F1C9059470035C40D /* Attachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		1C8F33A01C9059470035C40D /* LinkableEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkableEntity.swift; sourceTree = "<group>"; };
@@ -94,29 +80,43 @@
 		1C8F33E41C90594E0035C40D /* NetworkSpinner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSpinner.swift; sourceTree = "<group>"; };
 		1C8F33E51C90594E0035C40D /* Synchronized.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Synchronized.swift; sourceTree = "<group>"; };
 		1C8F33FC1C905E1D0035C40D /* Containerable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Containerable.swift; sourceTree = "<group>"; };
-		1C8F33FF1C905F480035C40D /* DeserializeOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeserializeOperation.swift; sourceTree = "<group>"; };
-		1C8F34001C905F480035C40D /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
-		1C8F34011C905F480035C40D /* Logging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
-		1C8F34021C905F480035C40D /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
-		1C8F34031C905F480035C40D /* Operation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
-		1C8F34041C905F480035C40D /* Query.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.swift; sourceTree = "<group>"; };
-		1C8F34051C905F480035C40D /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
-		1C8F34061C905F480035C40D /* ResourceCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceCollection.swift; sourceTree = "<group>"; };
-		1C8F34071C905F480035C40D /* ResourceField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceField.swift; sourceTree = "<group>"; };
-		1C8F34081C905F480035C40D /* Routing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Routing.swift; sourceTree = "<group>"; };
-		1C8F34091C905F480035C40D /* SerializeOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeOperation.swift; sourceTree = "<group>"; };
-		1C8F340A1C905F480035C40D /* Serializing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Serializing.swift; sourceTree = "<group>"; };
-		1C8F340B1C905F480035C40D /* Spine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spine.swift; sourceTree = "<group>"; };
-		1C8F340C1C905F480035C40D /* Transformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transformer.swift; sourceTree = "<group>"; };
 		1C98E2744282DF4AEC1149E2 /* Pods_JDSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JDSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CE60F1F1C90613700ACF75A /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		1CE60F211C9065C300ACF75A /* AttachmentService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentService.swift; sourceTree = "<group>"; };
-		1CFB48BA1C90685B000A3029 /* CDAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDAttachment.swift; sourceTree = "<group>"; };
-		1CFB48BB1C90685B000A3029 /* CDLinkableEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDLinkableEntity.swift; sourceTree = "<group>"; };
-		1CFB48BC1C90685B000A3029 /* CDManagedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDManagedEntity.swift; sourceTree = "<group>"; };
 		1CFB48C11C906CBE000A3029 /* InitialModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = InitialModel.xcdatamodel; sourceTree = "<group>"; };
-		1CFB48D21C91B0DE000A3029 /* SNExceptionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SNExceptionWrapper.h; sourceTree = "<group>"; };
-		1CFB48D31C91B0DE000A3029 /* SNExceptionWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNExceptionWrapper.m; sourceTree = "<group>"; };
+		1CFB48DA1C91BFF4000A3029 /* BaseDBService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseDBService.swift; sourceTree = "<group>"; };
+		1CFB48DB1C91BFF4000A3029 /* CDUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDUtils.swift; sourceTree = "<group>"; };
+		1CFB48DD1C91BFF4000A3029 /* GenericEntityGateway.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericEntityGateway.swift; sourceTree = "<group>"; };
+		1CFB48DE1C91BFF4000A3029 /* LinkableEntityGateway.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkableEntityGateway.swift; sourceTree = "<group>"; };
+		1CFB48DF1C91BFF4000A3029 /* UpdateInfoGateway.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateInfoGateway.swift; sourceTree = "<group>"; };
+		1CFB48E11C91BFF4000A3029 /* CDAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDAttachment.swift; sourceTree = "<group>"; };
+		1CFB48E21C91BFF4000A3029 /* CDLinkableEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDLinkableEntity.swift; sourceTree = "<group>"; };
+		1CFB48E31C91BFF4000A3029 /* CDManagedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDManagedEntity.swift; sourceTree = "<group>"; };
+		1CFB48E41C91BFF4000A3029 /* CDUpdateInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDUpdateInfo.swift; sourceTree = "<group>"; };
+		1CFB48E61C91BFF4000A3029 /* SNExceptionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SNExceptionWrapper.h; sourceTree = "<group>"; };
+		1CFB48E71C91BFF4000A3029 /* SNExceptionWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNExceptionWrapper.m; sourceTree = "<group>"; };
+		1CFB48E91C91BFF4000A3029 /* BaseJSONAPIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseJSONAPIManager.swift; sourceTree = "<group>"; };
+		1CFB48EB1C91BFF4000A3029 /* JSONAPISession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONAPISession.swift; sourceTree = "<group>"; };
+		1CFB48EC1C91BFF4000A3029 /* JSONAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONAttachment.swift; sourceTree = "<group>"; };
+		1CFB48ED1C91BFF4000A3029 /* JSONEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONEvent.swift; sourceTree = "<group>"; };
+		1CFB48EE1C91BFF4000A3029 /* JSONLinkableEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONLinkableEntity.swift; sourceTree = "<group>"; };
+		1CFB48EF1C91BFF4000A3029 /* JSONManagedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONManagedEntity.swift; sourceTree = "<group>"; };
+		1CFB48F11C91BFF4000A3029 /* DeserializeOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeserializeOperation.swift; sourceTree = "<group>"; };
+		1CFB48F21C91BFF4000A3029 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		1CFB48F31C91BFF4000A3029 /* Logging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		1CFB48F41C91BFF4000A3029 /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
+		1CFB48F51C91BFF4000A3029 /* Operation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
+		1CFB48F61C91BFF4000A3029 /* Query.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.swift; sourceTree = "<group>"; };
+		1CFB48F71C91BFF4000A3029 /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
+		1CFB48F81C91BFF4000A3029 /* ResourceCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceCollection.swift; sourceTree = "<group>"; };
+		1CFB48F91C91BFF4000A3029 /* ResourceField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceField.swift; sourceTree = "<group>"; };
+		1CFB48FA1C91BFF4000A3029 /* Routing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Routing.swift; sourceTree = "<group>"; };
+		1CFB48FB1C91BFF4000A3029 /* SerializeOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeOperation.swift; sourceTree = "<group>"; };
+		1CFB48FC1C91BFF4000A3029 /* Serializing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Serializing.swift; sourceTree = "<group>"; };
+		1CFB48FD1C91BFF4000A3029 /* Spine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spine.swift; sourceTree = "<group>"; };
+		1CFB48FE1C91BFF4000A3029 /* Transformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transformer.swift; sourceTree = "<group>"; };
+		1CFB49001C91BFF4000A3029 /* JSONTransformers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONTransformers.swift; sourceTree = "<group>"; };
+		1CFB49011C91BFF4000A3029 /* UrlExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UrlExtensions.swift; sourceTree = "<group>"; };
 		B014B7021470727913E69BD5 /* Pods-JDSKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JDSKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JDSKit/Pods-JDSKit.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -153,10 +153,12 @@
 		1C81CB491C90553B00580BB6 /* JDSKit */ = {
 			isa = PBXGroup;
 			children = (
-				1CFB48C01C906CBE000A3029 /* InitialModel.xcdatamodeld */,
 				1C8F339E1C9059470035C40D /* Model */,
 				1C8F33691C9059470035C40D /* Core */,
+				1CFB48D91C91BFF4000A3029 /* Local */,
+				1CFB48E81C91BFF4000A3029 /* Remote */,
 				1C8F33DF1C90594E0035C40D /* Utils */,
+				1CFB48C01C906CBE000A3029 /* InitialModel.xcdatamodeld */,
 				1C81CB4A1C90553B00580BB6 /* JDSKit.h */,
 				1C81CB4C1C90553B00580BB6 /* Info.plist */,
 			);
@@ -171,84 +173,8 @@
 				1C8F33721C9059470035C40D /* EntityService.swift */,
 				1C8F339A1C9059470035C40D /* SyncService.swift */,
 				1CE60F211C9065C300ACF75A /* AttachmentService.swift */,
-				1C8F33731C9059470035C40D /* Local */,
-				1C8F33871C9059470035C40D /* Remote */,
 			);
 			path = Core;
-			sourceTree = "<group>";
-		};
-		1C8F33731C9059470035C40D /* Local */ = {
-			isa = PBXGroup;
-			children = (
-				1C8F33741C9059470035C40D /* CDUtils.swift */,
-				1C8F33751C9059470035C40D /* BaseDBService.swift */,
-				1C8F33761C9059470035C40D /* Gateways */,
-				1C8F337A1C9059470035C40D /* Model */,
-				1C8F33811C9059470035C40D /* Obj-C Bridge */,
-			);
-			path = Local;
-			sourceTree = "<group>";
-		};
-		1C8F33761C9059470035C40D /* Gateways */ = {
-			isa = PBXGroup;
-			children = (
-				1C8F33771C9059470035C40D /* GenericEntityGateway.swift */,
-				1C8F33781C9059470035C40D /* LinkableEntityGateway.swift */,
-				1C8F33791C9059470035C40D /* UpdateInfoGateway.swift */,
-			);
-			path = Gateways;
-			sourceTree = "<group>";
-		};
-		1C8F337A1C9059470035C40D /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				1CFB48BA1C90685B000A3029 /* CDAttachment.swift */,
-				1CFB48BB1C90685B000A3029 /* CDLinkableEntity.swift */,
-				1CFB48BC1C90685B000A3029 /* CDManagedEntity.swift */,
-				1C8F33801C9059470035C40D /* CDUpdateInfo.swift */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		1C8F33811C9059470035C40D /* Obj-C Bridge */ = {
-			isa = PBXGroup;
-			children = (
-				1CFB48D21C91B0DE000A3029 /* SNExceptionWrapper.h */,
-				1CFB48D31C91B0DE000A3029 /* SNExceptionWrapper.m */,
-			);
-			path = "Obj-C Bridge";
-			sourceTree = "<group>";
-		};
-		1C8F33871C9059470035C40D /* Remote */ = {
-			isa = PBXGroup;
-			children = (
-				1C8F33881C9059470035C40D /* BaseJSONAPIManager.swift */,
-				1C8F33FE1C905F480035C40D /* Spine */,
-				1C8F33891C9059470035C40D /* Model */,
-				1C8F33971C9059470035C40D /* Utils */,
-			);
-			path = Remote;
-			sourceTree = "<group>";
-		};
-		1C8F33891C9059470035C40D /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				1C8F338B1C9059470035C40D /* JSONAPISession.swift */,
-				1C8F338C1C9059470035C40D /* JSONAttachment.swift */,
-				1C8F338E1C9059470035C40D /* JSONEvent.swift */,
-				1C8F33911C9059470035C40D /* JSONLinkableEntity.swift */,
-				1C8F33931C9059470035C40D /* JSONManagedEntity.swift */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		1C8F33971C9059470035C40D /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				1C8F33981C9059470035C40D /* JSONTransformers.swift */,
-				1C8F33991C9059470035C40D /* UrlExtensions.swift */,
-			);
-			path = Utils;
 			sourceTree = "<group>";
 		};
 		1C8F339E1C9059470035C40D /* Model */ = {
@@ -276,25 +202,99 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		1C8F33FE1C905F480035C40D /* Spine */ = {
+		1CFB48D91C91BFF4000A3029 /* Local */ = {
 			isa = PBXGroup;
 			children = (
-				1C8F33FF1C905F480035C40D /* DeserializeOperation.swift */,
-				1C8F34001C905F480035C40D /* Errors.swift */,
-				1C8F34011C905F480035C40D /* Logging.swift */,
-				1C8F34021C905F480035C40D /* Networking.swift */,
-				1C8F34031C905F480035C40D /* Operation.swift */,
-				1C8F34041C905F480035C40D /* Query.swift */,
-				1C8F34051C905F480035C40D /* Resource.swift */,
-				1C8F34061C905F480035C40D /* ResourceCollection.swift */,
-				1C8F34071C905F480035C40D /* ResourceField.swift */,
-				1C8F34081C905F480035C40D /* Routing.swift */,
-				1C8F34091C905F480035C40D /* SerializeOperation.swift */,
-				1C8F340A1C905F480035C40D /* Serializing.swift */,
-				1C8F340B1C905F480035C40D /* Spine.swift */,
-				1C8F340C1C905F480035C40D /* Transformer.swift */,
+				1CFB48DA1C91BFF4000A3029 /* BaseDBService.swift */,
+				1CFB48DB1C91BFF4000A3029 /* CDUtils.swift */,
+				1CFB48DC1C91BFF4000A3029 /* Gateways */,
+				1CFB48E01C91BFF4000A3029 /* Model */,
+				1CFB48E51C91BFF4000A3029 /* Obj-C Bridge */,
+			);
+			path = Local;
+			sourceTree = "<group>";
+		};
+		1CFB48DC1C91BFF4000A3029 /* Gateways */ = {
+			isa = PBXGroup;
+			children = (
+				1CFB48DD1C91BFF4000A3029 /* GenericEntityGateway.swift */,
+				1CFB48DE1C91BFF4000A3029 /* LinkableEntityGateway.swift */,
+				1CFB48DF1C91BFF4000A3029 /* UpdateInfoGateway.swift */,
+			);
+			path = Gateways;
+			sourceTree = "<group>";
+		};
+		1CFB48E01C91BFF4000A3029 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				1CFB48E11C91BFF4000A3029 /* CDAttachment.swift */,
+				1CFB48E21C91BFF4000A3029 /* CDLinkableEntity.swift */,
+				1CFB48E31C91BFF4000A3029 /* CDManagedEntity.swift */,
+				1CFB48E41C91BFF4000A3029 /* CDUpdateInfo.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		1CFB48E51C91BFF4000A3029 /* Obj-C Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				1CFB48E61C91BFF4000A3029 /* SNExceptionWrapper.h */,
+				1CFB48E71C91BFF4000A3029 /* SNExceptionWrapper.m */,
+			);
+			path = "Obj-C Bridge";
+			sourceTree = "<group>";
+		};
+		1CFB48E81C91BFF4000A3029 /* Remote */ = {
+			isa = PBXGroup;
+			children = (
+				1CFB48E91C91BFF4000A3029 /* BaseJSONAPIManager.swift */,
+				1CFB48EA1C91BFF4000A3029 /* Model */,
+				1CFB48F01C91BFF4000A3029 /* Spine */,
+				1CFB48FF1C91BFF4000A3029 /* Utils */,
+			);
+			path = Remote;
+			sourceTree = "<group>";
+		};
+		1CFB48EA1C91BFF4000A3029 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				1CFB48EB1C91BFF4000A3029 /* JSONAPISession.swift */,
+				1CFB48EC1C91BFF4000A3029 /* JSONAttachment.swift */,
+				1CFB48ED1C91BFF4000A3029 /* JSONEvent.swift */,
+				1CFB48EE1C91BFF4000A3029 /* JSONLinkableEntity.swift */,
+				1CFB48EF1C91BFF4000A3029 /* JSONManagedEntity.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		1CFB48F01C91BFF4000A3029 /* Spine */ = {
+			isa = PBXGroup;
+			children = (
+				1CFB48F11C91BFF4000A3029 /* DeserializeOperation.swift */,
+				1CFB48F21C91BFF4000A3029 /* Errors.swift */,
+				1CFB48F31C91BFF4000A3029 /* Logging.swift */,
+				1CFB48F41C91BFF4000A3029 /* Networking.swift */,
+				1CFB48F51C91BFF4000A3029 /* Operation.swift */,
+				1CFB48F61C91BFF4000A3029 /* Query.swift */,
+				1CFB48F71C91BFF4000A3029 /* Resource.swift */,
+				1CFB48F81C91BFF4000A3029 /* ResourceCollection.swift */,
+				1CFB48F91C91BFF4000A3029 /* ResourceField.swift */,
+				1CFB48FA1C91BFF4000A3029 /* Routing.swift */,
+				1CFB48FB1C91BFF4000A3029 /* SerializeOperation.swift */,
+				1CFB48FC1C91BFF4000A3029 /* Serializing.swift */,
+				1CFB48FD1C91BFF4000A3029 /* Spine.swift */,
+				1CFB48FE1C91BFF4000A3029 /* Transformer.swift */,
 			);
 			path = Spine;
+			sourceTree = "<group>";
+		};
+		1CFB48FF1C91BFF4000A3029 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				1CFB49001C91BFF4000A3029 /* JSONTransformers.swift */,
+				1CFB49011C91BFF4000A3029 /* UrlExtensions.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		52E5B69C5FFD0D7BC1E14C20 /* Pods */ = {
@@ -321,8 +321,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1CFB48D51C91B0DE000A3029 /* SNExceptionWrapper.h in Headers */,
 				1C81CB4B1C90553B00580BB6 /* JDSKit.h in Headers */,
+				1CFB490B1C91BFF4000A3029 /* SNExceptionWrapper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,55 +428,55 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1CFB490F1C91BFF4000A3029 /* JSONAttachment.swift in Sources */,
+				1CFB49051C91BFF4000A3029 /* LinkableEntityGateway.swift in Sources */,
+				1CFB49021C91BFF4000A3029 /* BaseDBService.swift in Sources */,
+				1CFB49041C91BFF4000A3029 /* GenericEntityGateway.swift in Sources */,
 				1C8F33F71C90594E0035C40D /* MulticastDelegate.swift in Sources */,
-				1C8F34101C905F480035C40D /* Networking.swift in Sources */,
-				1C8F33B91C9059470035C40D /* BaseJSONAPIManager.swift in Sources */,
+				1CFB49121C91BFF4000A3029 /* JSONManagedEntity.swift in Sources */,
+				1CFB49141C91BFF4000A3029 /* Errors.swift in Sources */,
+				1CFB49181C91BFF4000A3029 /* Query.swift in Sources */,
+				1CFB49151C91BFF4000A3029 /* Logging.swift in Sources */,
+				1CFB49071C91BFF4000A3029 /* CDAttachment.swift in Sources */,
 				1C8F33C91C9059470035C40D /* SyncService.swift in Sources */,
 				1C8F33CC1C9059470035C40D /* Attachment.swift in Sources */,
-				1C8F33C11C9059470035C40D /* JSONLinkableEntity.swift in Sources */,
-				1C8F33AC1C9059470035C40D /* BaseDBService.swift in Sources */,
-				1C8F34131C905F480035C40D /* Resource.swift in Sources */,
-				1C8F33BE1C9059470035C40D /* JSONEvent.swift in Sources */,
 				1CE60F231C9065C300ACF75A /* AttachmentService.swift in Sources */,
-				1CFB48BF1C90685B000A3029 /* CDManagedEntity.swift in Sources */,
 				1C8F33F41C90594E0035C40D /* CoreError.swift in Sources */,
-				1CFB48BD1C90685B000A3029 /* CDAttachment.swift in Sources */,
-				1C8F33AE1C9059470035C40D /* LinkableEntityGateway.swift in Sources */,
-				1C8F33AF1C9059470035C40D /* UpdateInfoGateway.swift in Sources */,
-				1C8F33AD1C9059470035C40D /* GenericEntityGateway.swift in Sources */,
-				1C8F34161C905F480035C40D /* Routing.swift in Sources */,
-				1CFB48D61C91B0DE000A3029 /* SNExceptionWrapper.m in Sources */,
-				1C8F34191C905F480035C40D /* Spine.swift in Sources */,
-				1C8F340E1C905F480035C40D /* Errors.swift in Sources */,
-				1C8F33C71C9059470035C40D /* JSONTransformers.swift in Sources */,
 				1C8F33F91C90594E0035C40D /* Synchronized.swift in Sources */,
 				1C8F33B81C9059470035C40D /* RegistryService.swift in Sources */,
-				1C8F33B31C9059470035C40D /* CDUpdateInfo.swift in Sources */,
+				1CFB491D1C91BFF4000A3029 /* SerializeOperation.swift in Sources */,
+				1CFB49111C91BFF4000A3029 /* JSONLinkableEntity.swift in Sources */,
 				1C8F33AA1C9059470035C40D /* EntityService.swift in Sources */,
-				1C8F340F1C905F480035C40D /* Logging.swift in Sources */,
+				1CFB49101C91BFF4000A3029 /* JSONEvent.swift in Sources */,
 				1C8F33CD1C9059470035C40D /* LinkableEntity.swift in Sources */,
-				1CFB48BE1C90685B000A3029 /* CDLinkableEntity.swift in Sources */,
-				1C8F34111C905F480035C40D /* Operation.swift in Sources */,
 				1CFB48C41C906CE2000A3029 /* InitialModel.xcdatamodeld in Sources */,
-				1C8F34121C905F480035C40D /* Query.swift in Sources */,
-				1C8F33BC1C9059470035C40D /* JSONAttachment.swift in Sources */,
-				1C8F34141C905F480035C40D /* ResourceCollection.swift in Sources */,
-				1C8F33BB1C9059470035C40D /* JSONAPISession.swift in Sources */,
-				1C8F33C81C9059470035C40D /* UrlExtensions.swift in Sources */,
+				1CFB49201C91BFF4000A3029 /* Transformer.swift in Sources */,
+				1CFB491C1C91BFF4000A3029 /* Routing.swift in Sources */,
+				1CFB491A1C91BFF4000A3029 /* ResourceCollection.swift in Sources */,
 				1C8F33F81C90594E0035C40D /* NetworkSpinner.swift in Sources */,
+				1CFB49031C91BFF4000A3029 /* CDUtils.swift in Sources */,
 				1C8F33A31C9059470035C40D /* CoreService.swift in Sources */,
-				1C8F34151C905F480035C40D /* ResourceField.swift in Sources */,
+				1CFB490A1C91BFF4000A3029 /* CDUpdateInfo.swift in Sources */,
+				1CFB49091C91BFF4000A3029 /* CDManagedEntity.swift in Sources */,
+				1CFB490E1C91BFF4000A3029 /* JSONAPISession.swift in Sources */,
 				1C8F33F61C90594E0035C40D /* Logger.swift in Sources */,
+				1CFB49221C91BFF4000A3029 /* UrlExtensions.swift in Sources */,
+				1CFB491F1C91BFF4000A3029 /* Spine.swift in Sources */,
+				1CFB49211C91BFF4000A3029 /* JSONTransformers.swift in Sources */,
+				1CFB49171C91BFF4000A3029 /* Operation.swift in Sources */,
+				1CFB49161C91BFF4000A3029 /* Networking.swift in Sources */,
+				1CFB49061C91BFF4000A3029 /* UpdateInfoGateway.swift in Sources */,
+				1CFB490D1C91BFF4000A3029 /* BaseJSONAPIManager.swift in Sources */,
 				1CE60F201C90613700ACF75A /* Event.swift in Sources */,
+				1CFB49191C91BFF4000A3029 /* Resource.swift in Sources */,
 				1C8F33FD1C905E1D0035C40D /* Containerable.swift in Sources */,
-				1C8F34181C905F480035C40D /* Serializing.swift in Sources */,
-				1C8F33AB1C9059470035C40D /* CDUtils.swift in Sources */,
+				1CFB491E1C91BFF4000A3029 /* Serializing.swift in Sources */,
+				1CFB490C1C91BFF4000A3029 /* SNExceptionWrapper.m in Sources */,
 				1C8F33F51C90594E0035C40D /* Extensions.swift in Sources */,
-				1C8F34171C905F480035C40D /* SerializeOperation.swift in Sources */,
+				1CFB491B1C91BFF4000A3029 /* ResourceField.swift in Sources */,
 				1C8F33CE1C9059470035C40D /* ManagedEntity.swift in Sources */,
-				1C8F33C31C9059470035C40D /* JSONManagedEntity.swift in Sources */,
-				1C8F340D1C905F480035C40D /* DeserializeOperation.swift in Sources */,
-				1C8F341A1C905F480035C40D /* Transformer.swift in Sources */,
+				1CFB49081C91BFF4000A3029 /* CDLinkableEntity.swift in Sources */,
+				1CFB49131C91BFF4000A3029 /* DeserializeOperation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
