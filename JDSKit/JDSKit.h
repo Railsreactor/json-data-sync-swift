@@ -17,4 +17,11 @@ FOUNDATION_EXPORT const unsigned char JDSKitVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <JDSKit/PublicHeader.h>
 
 
-#import <JDSKit/SNExceptionWrapper.h>
+#import <Foundation/Foundation.h>
+
+@interface SNExceptionWrapper : NSObject
+
++ (BOOL)tryBlock:(void(^)())tryBlock
+           error:(NSError **)error;
+
+@end

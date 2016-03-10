@@ -7,11 +7,3 @@
 //
 
 
-#import <Foundation/Foundation.h>
-
-@interface SNExceptionWrapper : NSObject
-
-+ (BOOL)tryBlock:(void(^)())tryBlock
-           error:(NSError **)error;
-
-@end
