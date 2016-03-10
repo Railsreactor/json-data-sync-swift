@@ -19,6 +19,9 @@ FOUNDATION_EXPORT const unsigned char JDSKitVersionString[];
 
 #import <Foundation/Foundation.h>
 
+
+// ********************* Hack to fix pod bugs with public headers :( ... ********************** //
+
 @interface SNExceptionWrapper : NSObject
 
 + (BOOL)tryBlock:(void(^)())tryBlock

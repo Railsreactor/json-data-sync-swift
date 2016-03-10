@@ -34,7 +34,6 @@
 		1CFB49081C91BFF4000A3029 /* CDLinkableEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48E21C91BFF4000A3029 /* CDLinkableEntity.swift */; };
 		1CFB49091C91BFF4000A3029 /* CDManagedEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48E31C91BFF4000A3029 /* CDManagedEntity.swift */; };
 		1CFB490A1C91BFF4000A3029 /* CDUpdateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48E41C91BFF4000A3029 /* CDUpdateInfo.swift */; };
-		1CFB490B1C91BFF4000A3029 /* SNExceptionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFB48E61C91BFF4000A3029 /* SNExceptionWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1CFB490C1C91BFF4000A3029 /* SNExceptionWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48E71C91BFF4000A3029 /* SNExceptionWrapper.m */; };
 		1CFB490D1C91BFF4000A3029 /* BaseJSONAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48E91C91BFF4000A3029 /* BaseJSONAPIManager.swift */; };
 		1CFB490E1C91BFF4000A3029 /* JSONAPISession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48EB1C91BFF4000A3029 /* JSONAPISession.swift */; };
@@ -93,7 +92,6 @@
 		1CFB48E21C91BFF4000A3029 /* CDLinkableEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDLinkableEntity.swift; sourceTree = "<group>"; };
 		1CFB48E31C91BFF4000A3029 /* CDManagedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDManagedEntity.swift; sourceTree = "<group>"; };
 		1CFB48E41C91BFF4000A3029 /* CDUpdateInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDUpdateInfo.swift; sourceTree = "<group>"; };
-		1CFB48E61C91BFF4000A3029 /* SNExceptionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SNExceptionWrapper.h; sourceTree = "<group>"; };
 		1CFB48E71C91BFF4000A3029 /* SNExceptionWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNExceptionWrapper.m; sourceTree = "<group>"; };
 		1CFB48E91C91BFF4000A3029 /* BaseJSONAPIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseJSONAPIManager.swift; sourceTree = "<group>"; };
 		1CFB48EB1C91BFF4000A3029 /* JSONAPISession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONAPISession.swift; sourceTree = "<group>"; };
@@ -238,7 +236,6 @@
 		1CFB48E51C91BFF4000A3029 /* Obj-C Bridge */ = {
 			isa = PBXGroup;
 			children = (
-				1CFB48E61C91BFF4000A3029 /* SNExceptionWrapper.h */,
 				1CFB48E71C91BFF4000A3029 /* SNExceptionWrapper.m */,
 			);
 			path = "Obj-C Bridge";
@@ -322,7 +319,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C81CB4B1C90553B00580BB6 /* JDSKit.h in Headers */,
-				1CFB490B1C91BFF4000A3029 /* SNExceptionWrapper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
