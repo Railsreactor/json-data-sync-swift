@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15D21" minimumToolsVersion="Xcode 7.0">
+    <entity name="CDAttachment" representedClassName="CDAttachment" parentEntity="CDLinkableEntity" syncable="YES">
+        <attribute name="fileUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="thumbUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDManagedEntity" inverseName="attachments" inverseEntity="CDManagedEntity" syncable="YES"/>
+    </entity>
+    <entity name="CDLinkableEntity" representedClassName="CDLinkableEntity" isAbstract="YES" parentEntity="CDManagedEntity" syncable="YES">
+        <attribute name="parentId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="parentType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="CDManagedEntity" representedClassName="CDManagedEntity" isAbstract="YES" syncable="YES">
+        <attribute name="createDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isLoaded" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES">
+            <userInfo>
+                <entry key="syncOR" value="true"/>
+            </userInfo>
+        </attribute>
+        <attribute name="pendingDelete" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="updateDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <relationship name="attachments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDAttachment" inverseName="parent" inverseEntity="CDAttachment" syncable="YES"/>
+    </entity>
+    <entity name="CDUpdateInfo" representedClassName="UpdateInfo" syncable="YES">
+        <attribute name="entityType" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="filterID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateDate" optional="YES" attributeType="Date" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="CDAttachment" positionX="-54" positionY="-9" width="128" height="105"/>
+        <element name="CDLinkableEntity" positionX="-9" positionY="144" width="128" height="75"/>
+        <element name="CDManagedEntity" positionX="-63" positionY="-18" width="128" height="135"/>
+        <element name="CDUpdateInfo" positionX="-9" positionY="135" width="128" height="90"/>
+    </elements>
+</model>

@@ -1,0 +1,649 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1C81CB4B1C90553B00580BB6 /* JDSKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81CB4A1C90553B00580BB6 /* JDSKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1C8F33A31C9059470035C40D /* CoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F336A1C9059470035C40D /* CoreService.swift */; };
+		1C8F33AA1C9059470035C40D /* EntityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33721C9059470035C40D /* EntityService.swift */; };
+		1C8F33AB1C9059470035C40D /* CDUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33741C9059470035C40D /* CDUtils.swift */; };
+		1C8F33AC1C9059470035C40D /* BaseDBService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33751C9059470035C40D /* BaseDBService.swift */; };
+		1C8F33AD1C9059470035C40D /* GenericEntityGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33771C9059470035C40D /* GenericEntityGateway.swift */; };
+		1C8F33AE1C9059470035C40D /* LinkableEntityGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33781C9059470035C40D /* LinkableEntityGateway.swift */; };
+		1C8F33AF1C9059470035C40D /* UpdateInfoGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33791C9059470035C40D /* UpdateInfoGateway.swift */; };
+		1C8F33B31C9059470035C40D /* CDUpdateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33801C9059470035C40D /* CDUpdateInfo.swift */; };
+		1C8F33B81C9059470035C40D /* RegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33861C9059470035C40D /* RegistryService.swift */; };
+		1C8F33B91C9059470035C40D /* BaseJSONAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33881C9059470035C40D /* BaseJSONAPIManager.swift */; };
+		1C8F33BB1C9059470035C40D /* JSONAPISession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F338B1C9059470035C40D /* JSONAPISession.swift */; };
+		1C8F33BC1C9059470035C40D /* JSONAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F338C1C9059470035C40D /* JSONAttachment.swift */; };
+		1C8F33BE1C9059470035C40D /* JSONEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F338E1C9059470035C40D /* JSONEvent.swift */; };
+		1C8F33C11C9059470035C40D /* JSONLinkableEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33911C9059470035C40D /* JSONLinkableEntity.swift */; };
+		1C8F33C31C9059470035C40D /* JSONManagedEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33931C9059470035C40D /* JSONManagedEntity.swift */; };
+		1C8F33C71C9059470035C40D /* JSONTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33981C9059470035C40D /* JSONTransformers.swift */; };
+		1C8F33C81C9059470035C40D /* UrlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33991C9059470035C40D /* UrlExtensions.swift */; };
+		1C8F33C91C9059470035C40D /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F339A1C9059470035C40D /* SyncService.swift */; };
+		1C8F33CC1C9059470035C40D /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F339F1C9059470035C40D /* Attachment.swift */; };
+		1C8F33CD1C9059470035C40D /* LinkableEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33A01C9059470035C40D /* LinkableEntity.swift */; };
+		1C8F33CE1C9059470035C40D /* ManagedEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33A11C9059470035C40D /* ManagedEntity.swift */; };
+		1C8F33F41C90594E0035C40D /* CoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33E01C90594E0035C40D /* CoreError.swift */; };
+		1C8F33F51C90594E0035C40D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33E11C90594E0035C40D /* Extensions.swift */; };
+		1C8F33F61C90594E0035C40D /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33E21C90594E0035C40D /* Logger.swift */; };
+		1C8F33F71C90594E0035C40D /* MulticastDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33E31C90594E0035C40D /* MulticastDelegate.swift */; };
+		1C8F33F81C90594E0035C40D /* NetworkSpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33E41C90594E0035C40D /* NetworkSpinner.swift */; };
+		1C8F33F91C90594E0035C40D /* Synchronized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33E51C90594E0035C40D /* Synchronized.swift */; };
+		1C8F33FD1C905E1D0035C40D /* Containerable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33FC1C905E1D0035C40D /* Containerable.swift */; };
+		1C8F340D1C905F480035C40D /* DeserializeOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33FF1C905F480035C40D /* DeserializeOperation.swift */; };
+		1C8F340E1C905F480035C40D /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34001C905F480035C40D /* Errors.swift */; };
+		1C8F340F1C905F480035C40D /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34011C905F480035C40D /* Logging.swift */; };
+		1C8F34101C905F480035C40D /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34021C905F480035C40D /* Networking.swift */; };
+		1C8F34111C905F480035C40D /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34031C905F480035C40D /* Operation.swift */; };
+		1C8F34121C905F480035C40D /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34041C905F480035C40D /* Query.swift */; };
+		1C8F34131C905F480035C40D /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34051C905F480035C40D /* Resource.swift */; };
+		1C8F34141C905F480035C40D /* ResourceCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34061C905F480035C40D /* ResourceCollection.swift */; };
+		1C8F34151C905F480035C40D /* ResourceField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34071C905F480035C40D /* ResourceField.swift */; };
+		1C8F34161C905F480035C40D /* Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34081C905F480035C40D /* Routing.swift */; };
+		1C8F34171C905F480035C40D /* SerializeOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F34091C905F480035C40D /* SerializeOperation.swift */; };
+		1C8F34181C905F480035C40D /* Serializing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F340A1C905F480035C40D /* Serializing.swift */; };
+		1C8F34191C905F480035C40D /* Spine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F340B1C905F480035C40D /* Spine.swift */; };
+		1C8F341A1C905F480035C40D /* Transformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F340C1C905F480035C40D /* Transformer.swift */; };
+		1CE60F201C90613700ACF75A /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE60F1F1C90613700ACF75A /* Event.swift */; };
+		1CE60F231C9065C300ACF75A /* AttachmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE60F211C9065C300ACF75A /* AttachmentService.swift */; };
+		1CFB48BD1C90685B000A3029 /* CDAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48BA1C90685B000A3029 /* CDAttachment.swift */; };
+		1CFB48BE1C90685B000A3029 /* CDLinkableEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48BB1C90685B000A3029 /* CDLinkableEntity.swift */; };
+		1CFB48BF1C90685B000A3029 /* CDManagedEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48BC1C90685B000A3029 /* CDManagedEntity.swift */; };
+		1CFB48C41C906CE2000A3029 /* InitialModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48C01C906CBE000A3029 /* InitialModel.xcdatamodeld */; };
+		1CFB48D51C91B0DE000A3029 /* SNExceptionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFB48D21C91B0DE000A3029 /* SNExceptionWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1CFB48D61C91B0DE000A3029 /* SNExceptionWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48D31C91B0DE000A3029 /* SNExceptionWrapper.m */; };
+		3BAC5155902FCD660A1F7063 /* Pods_JDSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C98E2744282DF4AEC1149E2 /* Pods_JDSKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0A965EA8170BBF59C664C173 /* Pods-JDSKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JDSKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-JDSKit/Pods-JDSKit.release.xcconfig"; sourceTree = "<group>"; };
+		1C81CB471C90553B00580BB6 /* JDSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JDSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C81CB4A1C90553B00580BB6 /* JDSKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDSKit.h; sourceTree = "<group>"; };
+		1C81CB4C1C90553B00580BB6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1C8F336A1C9059470035C40D /* CoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreService.swift; sourceTree = "<group>"; };
+		1C8F33721C9059470035C40D /* EntityService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityService.swift; sourceTree = "<group>"; };
+		1C8F33741C9059470035C40D /* CDUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDUtils.swift; sourceTree = "<group>"; };
+		1C8F33751C9059470035C40D /* BaseDBService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseDBService.swift; sourceTree = "<group>"; };
+		1C8F33771C9059470035C40D /* GenericEntityGateway.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericEntityGateway.swift; sourceTree = "<group>"; };
+		1C8F33781C9059470035C40D /* LinkableEntityGateway.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkableEntityGateway.swift; sourceTree = "<group>"; };
+		1C8F33791C9059470035C40D /* UpdateInfoGateway.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateInfoGateway.swift; sourceTree = "<group>"; };
+		1C8F33801C9059470035C40D /* CDUpdateInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDUpdateInfo.swift; sourceTree = "<group>"; };
+		1C8F33861C9059470035C40D /* RegistryService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistryService.swift; sourceTree = "<group>"; };
+		1C8F33881C9059470035C40D /* BaseJSONAPIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseJSONAPIManager.swift; sourceTree = "<group>"; };
+		1C8F338B1C9059470035C40D /* JSONAPISession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONAPISession.swift; sourceTree = "<group>"; };
+		1C8F338C1C9059470035C40D /* JSONAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONAttachment.swift; sourceTree = "<group>"; };
+		1C8F338E1C9059470035C40D /* JSONEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONEvent.swift; sourceTree = "<group>"; };
+		1C8F33911C9059470035C40D /* JSONLinkableEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONLinkableEntity.swift; sourceTree = "<group>"; };
+		1C8F33931C9059470035C40D /* JSONManagedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONManagedEntity.swift; sourceTree = "<group>"; };
+		1C8F33981C9059470035C40D /* JSONTransformers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONTransformers.swift; sourceTree = "<group>"; };
+		1C8F33991C9059470035C40D /* UrlExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UrlExtensions.swift; sourceTree = "<group>"; };
+		1C8F339A1C9059470035C40D /* SyncService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncService.swift; sourceTree = "<group>"; };
+		1C8F339F1C9059470035C40D /* Attachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
+		1C8F33A01C9059470035C40D /* LinkableEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkableEntity.swift; sourceTree = "<group>"; };
+		1C8F33A11C9059470035C40D /* ManagedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagedEntity.swift; sourceTree = "<group>"; };
+		1C8F33E01C90594E0035C40D /* CoreError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreError.swift; sourceTree = "<group>"; };
+		1C8F33E11C90594E0035C40D /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		1C8F33E21C90594E0035C40D /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		1C8F33E31C90594E0035C40D /* MulticastDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MulticastDelegate.swift; sourceTree = "<group>"; };
+		1C8F33E41C90594E0035C40D /* NetworkSpinner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSpinner.swift; sourceTree = "<group>"; };
+		1C8F33E51C90594E0035C40D /* Synchronized.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Synchronized.swift; sourceTree = "<group>"; };
+		1C8F33FC1C905E1D0035C40D /* Containerable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Containerable.swift; sourceTree = "<group>"; };
+		1C8F33FF1C905F480035C40D /* DeserializeOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeserializeOperation.swift; sourceTree = "<group>"; };
+		1C8F34001C905F480035C40D /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		1C8F34011C905F480035C40D /* Logging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		1C8F34021C905F480035C40D /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
+		1C8F34031C905F480035C40D /* Operation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
+		1C8F34041C905F480035C40D /* Query.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.swift; sourceTree = "<group>"; };
+		1C8F34051C905F480035C40D /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
+		1C8F34061C905F480035C40D /* ResourceCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceCollection.swift; sourceTree = "<group>"; };
+		1C8F34071C905F480035C40D /* ResourceField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceField.swift; sourceTree = "<group>"; };
+		1C8F34081C905F480035C40D /* Routing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Routing.swift; sourceTree = "<group>"; };
+		1C8F34091C905F480035C40D /* SerializeOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeOperation.swift; sourceTree = "<group>"; };
+		1C8F340A1C905F480035C40D /* Serializing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Serializing.swift; sourceTree = "<group>"; };
+		1C8F340B1C905F480035C40D /* Spine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spine.swift; sourceTree = "<group>"; };
+		1C8F340C1C905F480035C40D /* Transformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transformer.swift; sourceTree = "<group>"; };
+		1C98E2744282DF4AEC1149E2 /* Pods_JDSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JDSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CE60F1F1C90613700ACF75A /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		1CE60F211C9065C300ACF75A /* AttachmentService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentService.swift; sourceTree = "<group>"; };
+		1CFB48BA1C90685B000A3029 /* CDAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDAttachment.swift; sourceTree = "<group>"; };
+		1CFB48BB1C90685B000A3029 /* CDLinkableEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDLinkableEntity.swift; sourceTree = "<group>"; };
+		1CFB48BC1C90685B000A3029 /* CDManagedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDManagedEntity.swift; sourceTree = "<group>"; };
+		1CFB48C11C906CBE000A3029 /* InitialModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = InitialModel.xcdatamodel; sourceTree = "<group>"; };
+		1CFB48D21C91B0DE000A3029 /* SNExceptionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SNExceptionWrapper.h; sourceTree = "<group>"; };
+		1CFB48D31C91B0DE000A3029 /* SNExceptionWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNExceptionWrapper.m; sourceTree = "<group>"; };
+		B014B7021470727913E69BD5 /* Pods-JDSKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JDSKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JDSKit/Pods-JDSKit.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1C81CB431C90553B00580BB6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3BAC5155902FCD660A1F7063 /* Pods_JDSKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1C81CB3D1C90553B00580BB6 = {
+			isa = PBXGroup;
+			children = (
+				1C81CB491C90553B00580BB6 /* JDSKit */,
+				1C81CB481C90553B00580BB6 /* Products */,
+				52E5B69C5FFD0D7BC1E14C20 /* Pods */,
+				F2B49A0126449A512990B856 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		1C81CB481C90553B00580BB6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1C81CB471C90553B00580BB6 /* JDSKit.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1C81CB491C90553B00580BB6 /* JDSKit */ = {
+			isa = PBXGroup;
+			children = (
+				1CFB48C01C906CBE000A3029 /* InitialModel.xcdatamodeld */,
+				1C8F339E1C9059470035C40D /* Model */,
+				1C8F33691C9059470035C40D /* Core */,
+				1C8F33DF1C90594E0035C40D /* Utils */,
+				1C81CB4A1C90553B00580BB6 /* JDSKit.h */,
+				1C81CB4C1C90553B00580BB6 /* Info.plist */,
+			);
+			path = JDSKit;
+			sourceTree = "<group>";
+		};
+		1C8F33691C9059470035C40D /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				1C8F33861C9059470035C40D /* RegistryService.swift */,
+				1C8F336A1C9059470035C40D /* CoreService.swift */,
+				1C8F33721C9059470035C40D /* EntityService.swift */,
+				1C8F339A1C9059470035C40D /* SyncService.swift */,
+				1CE60F211C9065C300ACF75A /* AttachmentService.swift */,
+				1C8F33731C9059470035C40D /* Local */,
+				1C8F33871C9059470035C40D /* Remote */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		1C8F33731C9059470035C40D /* Local */ = {
+			isa = PBXGroup;
+			children = (
+				1C8F33741C9059470035C40D /* CDUtils.swift */,
+				1C8F33751C9059470035C40D /* BaseDBService.swift */,
+				1C8F33761C9059470035C40D /* Gateways */,
+				1C8F337A1C9059470035C40D /* Model */,
+				1C8F33811C9059470035C40D /* Obj-C Bridge */,
+			);
+			path = Local;
+			sourceTree = "<group>";
+		};
+		1C8F33761C9059470035C40D /* Gateways */ = {
+			isa = PBXGroup;
+			children = (
+				1C8F33771C9059470035C40D /* GenericEntityGateway.swift */,
+				1C8F33781C9059470035C40D /* LinkableEntityGateway.swift */,
+				1C8F33791C9059470035C40D /* UpdateInfoGateway.swift */,
+			);
+			path = Gateways;
+			sourceTree = "<group>";
+		};
+		1C8F337A1C9059470035C40D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				1CFB48BA1C90685B000A3029 /* CDAttachment.swift */,
+				1CFB48BB1C90685B000A3029 /* CDLinkableEntity.swift */,
+				1CFB48BC1C90685B000A3029 /* CDManagedEntity.swift */,
+				1C8F33801C9059470035C40D /* CDUpdateInfo.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		1C8F33811C9059470035C40D /* Obj-C Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				1CFB48D21C91B0DE000A3029 /* SNExceptionWrapper.h */,
+				1CFB48D31C91B0DE000A3029 /* SNExceptionWrapper.m */,
+			);
+			path = "Obj-C Bridge";
+			sourceTree = "<group>";
+		};
+		1C8F33871C9059470035C40D /* Remote */ = {
+			isa = PBXGroup;
+			children = (
+				1C8F33881C9059470035C40D /* BaseJSONAPIManager.swift */,
+				1C8F33FE1C905F480035C40D /* Spine */,
+				1C8F33891C9059470035C40D /* Model */,
+				1C8F33971C9059470035C40D /* Utils */,
+			);
+			path = Remote;
+			sourceTree = "<group>";
+		};
+		1C8F33891C9059470035C40D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				1C8F338B1C9059470035C40D /* JSONAPISession.swift */,
+				1C8F338C1C9059470035C40D /* JSONAttachment.swift */,
+				1C8F338E1C9059470035C40D /* JSONEvent.swift */,
+				1C8F33911C9059470035C40D /* JSONLinkableEntity.swift */,
+				1C8F33931C9059470035C40D /* JSONManagedEntity.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		1C8F33971C9059470035C40D /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				1C8F33981C9059470035C40D /* JSONTransformers.swift */,
+				1C8F33991C9059470035C40D /* UrlExtensions.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		1C8F339E1C9059470035C40D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				1CE60F1F1C90613700ACF75A /* Event.swift */,
+				1C8F33A11C9059470035C40D /* ManagedEntity.swift */,
+				1C8F33A01C9059470035C40D /* LinkableEntity.swift */,
+				1C8F339F1C9059470035C40D /* Attachment.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		1C8F33DF1C90594E0035C40D /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				1C8F33E01C90594E0035C40D /* CoreError.swift */,
+				1C8F33E11C90594E0035C40D /* Extensions.swift */,
+				1C8F33E21C90594E0035C40D /* Logger.swift */,
+				1C8F33E31C90594E0035C40D /* MulticastDelegate.swift */,
+				1C8F33E41C90594E0035C40D /* NetworkSpinner.swift */,
+				1C8F33E51C90594E0035C40D /* Synchronized.swift */,
+				1C8F33FC1C905E1D0035C40D /* Containerable.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		1C8F33FE1C905F480035C40D /* Spine */ = {
+			isa = PBXGroup;
+			children = (
+				1C8F33FF1C905F480035C40D /* DeserializeOperation.swift */,
+				1C8F34001C905F480035C40D /* Errors.swift */,
+				1C8F34011C905F480035C40D /* Logging.swift */,
+				1C8F34021C905F480035C40D /* Networking.swift */,
+				1C8F34031C905F480035C40D /* Operation.swift */,
+				1C8F34041C905F480035C40D /* Query.swift */,
+				1C8F34051C905F480035C40D /* Resource.swift */,
+				1C8F34061C905F480035C40D /* ResourceCollection.swift */,
+				1C8F34071C905F480035C40D /* ResourceField.swift */,
+				1C8F34081C905F480035C40D /* Routing.swift */,
+				1C8F34091C905F480035C40D /* SerializeOperation.swift */,
+				1C8F340A1C905F480035C40D /* Serializing.swift */,
+				1C8F340B1C905F480035C40D /* Spine.swift */,
+				1C8F340C1C905F480035C40D /* Transformer.swift */,
+			);
+			path = Spine;
+			sourceTree = "<group>";
+		};
+		52E5B69C5FFD0D7BC1E14C20 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B014B7021470727913E69BD5 /* Pods-JDSKit.debug.xcconfig */,
+				0A965EA8170BBF59C664C173 /* Pods-JDSKit.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		F2B49A0126449A512990B856 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1C98E2744282DF4AEC1149E2 /* Pods_JDSKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		1C81CB441C90553B00580BB6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CFB48D51C91B0DE000A3029 /* SNExceptionWrapper.h in Headers */,
+				1C81CB4B1C90553B00580BB6 /* JDSKit.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		1C81CB461C90553B00580BB6 /* JDSKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1C81CB4F1C90553B00580BB6 /* Build configuration list for PBXNativeTarget "JDSKit" */;
+			buildPhases = (
+				A5529C2AFE6567CF020B1538 /* Check Pods Manifest.lock */,
+				1C81CB421C90553B00580BB6 /* Sources */,
+				1C81CB431C90553B00580BB6 /* Frameworks */,
+				1C81CB441C90553B00580BB6 /* Headers */,
+				1C81CB451C90553B00580BB6 /* Resources */,
+				557056A7906424922BD25345 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JDSKit;
+			productName = JDSKit;
+			productReference = 1C81CB471C90553B00580BB6 /* JDSKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1C81CB3E1C90553B00580BB6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = RailsReactor;
+				TargetAttributes = {
+					1C81CB461C90553B00580BB6 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+				};
+			};
+			buildConfigurationList = 1C81CB411C90553B00580BB6 /* Build configuration list for PBXProject "JDSKit" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 1C81CB3D1C90553B00580BB6;
+			productRefGroup = 1C81CB481C90553B00580BB6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1C81CB461C90553B00580BB6 /* JDSKit */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1C81CB451C90553B00580BB6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		557056A7906424922BD25345 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-JDSKit/Pods-JDSKit-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A5529C2AFE6567CF020B1538 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1C81CB421C90553B00580BB6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C8F33F71C90594E0035C40D /* MulticastDelegate.swift in Sources */,
+				1C8F34101C905F480035C40D /* Networking.swift in Sources */,
+				1C8F33B91C9059470035C40D /* BaseJSONAPIManager.swift in Sources */,
+				1C8F33C91C9059470035C40D /* SyncService.swift in Sources */,
+				1C8F33CC1C9059470035C40D /* Attachment.swift in Sources */,
+				1C8F33C11C9059470035C40D /* JSONLinkableEntity.swift in Sources */,
+				1C8F33AC1C9059470035C40D /* BaseDBService.swift in Sources */,
+				1C8F34131C905F480035C40D /* Resource.swift in Sources */,
+				1C8F33BE1C9059470035C40D /* JSONEvent.swift in Sources */,
+				1CE60F231C9065C300ACF75A /* AttachmentService.swift in Sources */,
+				1CFB48BF1C90685B000A3029 /* CDManagedEntity.swift in Sources */,
+				1C8F33F41C90594E0035C40D /* CoreError.swift in Sources */,
+				1CFB48BD1C90685B000A3029 /* CDAttachment.swift in Sources */,
+				1C8F33AE1C9059470035C40D /* LinkableEntityGateway.swift in Sources */,
+				1C8F33AF1C9059470035C40D /* UpdateInfoGateway.swift in Sources */,
+				1C8F33AD1C9059470035C40D /* GenericEntityGateway.swift in Sources */,
+				1C8F34161C905F480035C40D /* Routing.swift in Sources */,
+				1CFB48D61C91B0DE000A3029 /* SNExceptionWrapper.m in Sources */,
+				1C8F34191C905F480035C40D /* Spine.swift in Sources */,
+				1C8F340E1C905F480035C40D /* Errors.swift in Sources */,
+				1C8F33C71C9059470035C40D /* JSONTransformers.swift in Sources */,
+				1C8F33F91C90594E0035C40D /* Synchronized.swift in Sources */,
+				1C8F33B81C9059470035C40D /* RegistryService.swift in Sources */,
+				1C8F33B31C9059470035C40D /* CDUpdateInfo.swift in Sources */,
+				1C8F33AA1C9059470035C40D /* EntityService.swift in Sources */,
+				1C8F340F1C905F480035C40D /* Logging.swift in Sources */,
+				1C8F33CD1C9059470035C40D /* LinkableEntity.swift in Sources */,
+				1CFB48BE1C90685B000A3029 /* CDLinkableEntity.swift in Sources */,
+				1C8F34111C905F480035C40D /* Operation.swift in Sources */,
+				1CFB48C41C906CE2000A3029 /* InitialModel.xcdatamodeld in Sources */,
+				1C8F34121C905F480035C40D /* Query.swift in Sources */,
+				1C8F33BC1C9059470035C40D /* JSONAttachment.swift in Sources */,
+				1C8F34141C905F480035C40D /* ResourceCollection.swift in Sources */,
+				1C8F33BB1C9059470035C40D /* JSONAPISession.swift in Sources */,
+				1C8F33C81C9059470035C40D /* UrlExtensions.swift in Sources */,
+				1C8F33F81C90594E0035C40D /* NetworkSpinner.swift in Sources */,
+				1C8F33A31C9059470035C40D /* CoreService.swift in Sources */,
+				1C8F34151C905F480035C40D /* ResourceField.swift in Sources */,
+				1C8F33F61C90594E0035C40D /* Logger.swift in Sources */,
+				1CE60F201C90613700ACF75A /* Event.swift in Sources */,
+				1C8F33FD1C905E1D0035C40D /* Containerable.swift in Sources */,
+				1C8F34181C905F480035C40D /* Serializing.swift in Sources */,
+				1C8F33AB1C9059470035C40D /* CDUtils.swift in Sources */,
+				1C8F33F51C90594E0035C40D /* Extensions.swift in Sources */,
+				1C8F34171C905F480035C40D /* SerializeOperation.swift in Sources */,
+				1C8F33CE1C9059470035C40D /* ManagedEntity.swift in Sources */,
+				1C8F33C31C9059470035C40D /* JSONManagedEntity.swift in Sources */,
+				1C8F340D1C905F480035C40D /* DeserializeOperation.swift in Sources */,
+				1C8F341A1C905F480035C40D /* Transformer.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1C81CB4D1C90553B00580BB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		1C81CB4E1C90553B00580BB6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		1C81CB501C90553B00580BB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B014B7021470727913E69BD5 /* Pods-JDSKit.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = JDSKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.railsreactor.JDSKit;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1C81CB511C90553B00580BB6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0A965EA8170BBF59C664C173 /* Pods-JDSKit.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = JDSKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.railsreactor.JDSKit;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1C81CB411C90553B00580BB6 /* Build configuration list for PBXProject "JDSKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C81CB4D1C90553B00580BB6 /* Debug */,
+				1C81CB4E1C90553B00580BB6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1C81CB4F1C90553B00580BB6 /* Build configuration list for PBXNativeTarget "JDSKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C81CB501C90553B00580BB6 /* Debug */,
+				1C81CB511C90553B00580BB6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		1CFB48C01C906CBE000A3029 /* InitialModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				1CFB48C11C906CBE000A3029 /* InitialModel.xcdatamodel */,
+			);
+			currentVersion = 1CFB48C11C906CBE000A3029 /* InitialModel.xcdatamodel */;
+			path = InitialModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 1C81CB3E1C90553B00580BB6 /* Project object */;
+}
