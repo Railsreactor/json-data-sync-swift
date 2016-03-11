@@ -30,8 +30,8 @@ class JSONEvent: JSONManagedEntity, Event {
         }
     }
 
-    override class var fields: [Field] {
-        return super.fields + fieldsFromDictionary([
+    override class func fields() -> [Field] {
+        return super.fields() + fieldsFromDictionary([
             "_relatedEntityName":    Attribute().serializeAs("entity_type"),
             "relatedEntityId":       Attribute().serializeAs("entity_id"),
             "_action":               Attribute().serializeAs("action"),

@@ -51,25 +51,27 @@ public class AbstractRegistryService: NSObject {
     // Registered representations for models. WARNING! Model Protocol should be always the first one!
     // In most cases you only need to register your models and reps here. Other stuff like DB Gateways or JSON Manager will handle if out of the box.
     
-    public var _modelRepresentations: [[ManagedEntity.Type]] = [
-        [ManagedEntity.self,    DummyManagedEntity.self,        JSONManagedEntity.self,     CDManagedEntity.self],
-        [Attachment.self,       DummyAttachment.self,           JSONAttachment.self,        CDAttachment.self],
-        [Event.self,                                            JSONEvent.self],
-    ]
+    public var _modelRepresentations: [[ManagedEntity.Type]] {
+        return [
+            [ManagedEntity.self,    DummyManagedEntity.self,        JSONManagedEntity.self,     CDManagedEntity.self],
+            [Attachment.self,       DummyAttachment.self,           JSONAttachment.self,        CDAttachment.self],
+            [Event.self,                                            JSONEvent.self]
+        ]
+    }
     
     // ********************************************* Services ********************************************* //
     // List of predefined enitity services.
     
-    public var _predefinedEntityServices: [String: EntityService] = [
-        String(Attachment.self) : AttachmentService()
-    ]
+    public var _predefinedEntityServices: [String: EntityService] {
+        return [ String(Attachment.self) : AttachmentService() ]
+    }
     
     internal var _sharedEntityServices: [String: EntityService] = [:]
     
     // This function returns registered entity service or creates GenericService for requested entity type
     public func entityService<T: ManagedEntity>() -> GenericService<T> {
         let key = String(T)
-        var service = (_sharedEntityServices[key] ?? _predefinedEntityServices[key]) as? GenericService<T>
+        var service = (_sharedEntityServices[key]) as? GenericService<T>
         if service == nil {
             service = GenericService<T>()
             _sharedEntityServices[key] = service
@@ -79,7 +81,7 @@ public class AbstractRegistryService: NSObject {
     
     public func entityService(type: ManagedEntity.Type) -> EntityService {
         let key = String(type)
-        var service = _sharedEntityServices[key] ?? _predefinedEntityServices[key]
+        var service = _sharedEntityServices[key]
         if service == nil {
             service = EntityService(entityType: type)
             _sharedEntityServices[key] = service
@@ -91,15 +93,19 @@ public class AbstractRegistryService: NSObject {
         return entityService(ExtractModel(key))
     }
     
+    internal func performServiceIndexation() {
+        for (key, service) in _predefinedEntityServices {
+            _sharedEntityServices[key] = service
+        }
+    }
+    
     
     // ****************************************** EntityGateways ************************************************** //
     // List of predefined entity gateways. Other gateways will be dynamycaly initialized when requested.
 
-    public var _predefinedEntityGateways: [GenericEntityGateway] = {
-        return [
-            LinkableEntitiyGateway(CDAttachment.self),
-        ]
-    }()
+    public var _predefinedEntityGateways: [GenericEntityGateway] {
+        return [ LinkableEntitiyGateway(CDAttachment.self) ]
+    }
     
     // ************************************************************************************************************ //
     
@@ -112,9 +118,10 @@ public class AbstractRegistryService: NSObject {
         }
     }
     
-    override init() {
+    public override init() {
         super.init()
         performRepresentationsIndexation()
+        performServiceIndexation()
     }
 }
 

@@ -21,6 +21,16 @@ private let EventKey = String(Event.self)
 
 public class AbstractSyncService: CoreService {
     
+    
+    // *************************** Override *******************************
+    // if you want to split some update info between different users or something...
+    
+    public func filterIDForEntityKey(key: String) -> String? {
+        return nil
+    }
+    
+    // *************************************************************************
+    
     public var lastSyncDate = ZeroDate
     public var lastSuccessSyncDate = ZeroDate
 
@@ -69,10 +79,6 @@ public class AbstractSyncService: CoreService {
             
             return Array(itemsToSync)
         }
-    }
-    
-    public func filterIDForEntityKey(key: String) -> String? {
-        return nil
     }
     
     internal func syncInternal() -> Promise<Void> {

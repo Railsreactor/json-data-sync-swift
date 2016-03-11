@@ -50,13 +50,13 @@ public struct Query<T: Resource> {
 	/**
 	Inits a new query for the given resource type and optional resource IDs.
 	
-	- parameter resourceType: The type of resource to query.
+	- parameter resourceType(): The type of resource to query.
 	- parameter resourceIDs:  The IDs of the resources to query. Pass nil to fetch all resources of the given type.
 	
 	- returns: Query
 	*/
 	public init(resourceType: T.Type, resourceIDs: [String]? = nil) {
-		self.resourceType = resourceType.resourceType
+		self.resourceType = resourceType.resourceType()
 		self.resourceIDs = resourceIDs
 	}
 	
@@ -69,7 +69,7 @@ public struct Query<T: Resource> {
 	*/
 	public init(resource: T) {
 		assert(resource.id != nil, "Cannot instantiate query for resource, id is nil.")
-		self.resourceType = resource.resourceType
+		self.resourceType = resource.resourceType()
 		self.URL = resource.URL
 		self.resourceIDs = [resource.id!]
 	}
@@ -82,20 +82,20 @@ public struct Query<T: Resource> {
 	- returns: Query
 	*/
 	public init(resourceType: T.Type, resourceCollection: ResourceCollection) {
-		self.resourceType = T.resourceType
+		self.resourceType = T.resourceType()
 		self.URL = resourceCollection.resourcesURL
 	}
 	
 	/**
-	Inits a new query that fetches resource of type `resourceType`, by using the given URL.
+	Inits a new query that fetches resource of type `resourceType()`, by using the given URL.
 	
-	- parameter resourceType: The type of resource to query.
+	- parameter resourceType(): The type of resource to query.
 	- parameter URL:          The URL used to fetch the resources.
 	
 	- returns: Query
 	*/
 	public init(resourceType: T.Type, path: String) {
-		self.resourceType = T.resourceType
+		self.resourceType = T.resourceType()
 		self.URL = NSURL(string: path)
 	}
 	
@@ -120,10 +120,10 @@ public struct Query<T: Resource> {
 		for relationshipName in relationshipNames {
 			if relationshipName.characters.contains(".") {
 				includes.append(relationshipName)
-			} else if let relationship = T.fields.filter({ $0.name == relationshipName }).first {
+			} else if let relationship = T.fields().filter({ $0.name == relationshipName }).first {
 				includes.append(relationship.serializedName)
 			} else {
-				assertionFailure("Resource of type \(T.resourceType) does not contain a relationship named \(relationshipName)")
+				assertionFailure("Resource of type \(T.resourceType()) does not contain a relationship named \(relationshipName)")
 			}
 		}
 	}
@@ -146,14 +146,14 @@ public struct Query<T: Resource> {
 				} else {
 					assertionFailure("Attempt to remove include that was not included: \(relationshipName)")
 				}
-			} else if let relationship = T.fields.filter({ $0.name == relationshipName }).first {
+			} else if let relationship = T.fields().filter({ $0.name == relationshipName }).first {
 				if let index = includes.indexOf(relationship.serializedName) {
 					includes.removeAtIndex(index)
 				} else {
 					assertionFailure("Attempt to remove include that was not included: \(relationshipName)")
 				}
 			} else {
-				assertionFailure("Resource of type \(T.resourceType) does not contain a relationship named \(relationshipName)")
+				assertionFailure("Resource of type \(T.resourceType()) does not contain a relationship named \(relationshipName)")
 			}
 		}
 	}
@@ -162,7 +162,7 @@ public struct Query<T: Resource> {
 	// MARK: Filtering
 	
 	private mutating func addPredicateWithField(fieldName: String, value: AnyObject, type: NSPredicateOperatorType) {
-		if let field = T.fields.filter({ $0.name == fieldName }).first {
+		if let field = T.fields().filter({ $0.name == fieldName }).first {
 			let predicate = NSComparisonPredicate(
 				leftExpression: NSExpression(forKeyPath: field.serializedName),
 				rightExpression: NSExpression(forConstantValue: value),
@@ -172,7 +172,7 @@ public struct Query<T: Resource> {
 			
 			addPredicate(predicate)
 		} else {
-			assertionFailure("Resource of type \(T.resourceType) does not contain a field named \(fieldName)")
+			assertionFailure("Resource of type \(T.resourceType()) does not contain a field named \(fieldName)")
 		}
 	}
 	

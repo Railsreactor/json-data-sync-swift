@@ -19,8 +19,8 @@ public class JSONAttachment : JSONLinkableEntity, Attachment {
     
     public var tempImage: UIImage?
     
-    public override class var fields: [Field] {
-        return super.fields + fieldsFromDictionary([
+    public override class func fields() -> [Field] {
+        return super.fields() + fieldsFromDictionary([
             "name":                 Attribute(),
             "fileUrl":              Attribute().serializeAs("file_url"),
             "thumbUrl":             Attribute().serializeAs("thumb_url"),

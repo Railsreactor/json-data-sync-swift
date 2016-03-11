@@ -230,7 +230,7 @@ public class GenericService<T: ManagedEntity>: EntityService {
         return super.createBlankEntity() as! T
     }
     
-    internal func saveEntityWithPromise(entity : T, mergeWith: T? = nil) -> Promise<Container> {
+    public func saveEntityWithPromise(entity : T, mergeWith: T? = nil) -> Promise<Container> {
         return runOnBackgroundContext() { () throws -> Container in
             let entity = try self.entityGatway().insertEntity(entity, mergeWith: mergeWith)
             self.localManager.saveSync()

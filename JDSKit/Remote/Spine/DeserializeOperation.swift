@@ -206,7 +206,7 @@ class DeserializeOperation: NSOperation {
 	:param: resource       The resource into which to extract the attributes.
 	*/
 	private func extractAttributes(serializedData: JSON, intoResource resource: Resource) {
-		for case let field as Attribute in resource.fields {
+		for case let field as Attribute in resource.fields() {
 			if let extractedValue: AnyObject = self.extractAttribute(serializedData, key: field.serializedName) {
 				let formattedValue: AnyObject = self.transformers.deserialize(extractedValue, forAttribute: field)
 				resource.setValue(formattedValue, forField: field.name)
@@ -265,7 +265,7 @@ class DeserializeOperation: NSOperation {
 	:param: resource       The resource into which to extract the relationships.
 	*/
 	private func extractRelationships(serializedData: JSON, intoResource resource: Resource) {
-		for field in resource.fields {
+		for field in resource.fields() {
 			switch field {
 			case let toOne as ToOneRelationship:
 				if let linkedResource = extractToOneRelationship(serializedData, key: toOne.serializedName, linkedType: toOne.linkedType, resource: resource) {
@@ -347,7 +347,7 @@ class DeserializeOperation: NSOperation {
 	*/
 	private func resolveRelations() {
 		for resource in resourcePool {
-			for case let field as ToManyRelationship in resource.fields {
+			for case let field as ToManyRelationship in resource.fields() {
 				if let linkedResource = resource.valueForField(field.name) as? LinkedResourceCollection {
 					
 					// We can only resolve if the linkage is known
@@ -360,7 +360,7 @@ class DeserializeOperation: NSOperation {
                                 return [Resource]()
                             }
                             
-                            let filtered = self.resourcePool.filter { $0.resourceType == link.type && $0.id == link.id }
+                            let filtered = self.resourcePool.filter { $0.resourceType() == link.type && $0.id == link.id }
                             if !filtered.isEmpty {
                                 return filtered
                             }
@@ -375,10 +375,10 @@ class DeserializeOperation: NSOperation {
                             linkedResource.isLoaded = !usedFaults
                         }
 					} else {
-						Spine.logInfo(.Serializing, "Cannot resolve to-many link \(resource.resourceType):\(resource.id ?? "nil") - \(field.name) because the foreign IDs are not known.")
+						Spine.logInfo(.Serializing, "Cannot resolve to-many link \(resource.resourceType()):\(resource.id ?? "nil") - \(field.name) because the foreign IDs are not known.")
 					}
 				} else {
-					Spine.logInfo(.Serializing, "Cannot resolve to-many link \(resource.resourceType):\(resource.id ?? "nil") - \(field.name) because the link data is not fetched.")
+					Spine.logInfo(.Serializing, "Cannot resolve to-many link \(resource.resourceType()):\(resource.id ?? "nil") - \(field.name) because the link data is not fetched.")
 				}
 			}
 		}

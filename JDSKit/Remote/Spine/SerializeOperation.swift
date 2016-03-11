@@ -50,7 +50,7 @@ class SerializeOperation: NSOperation {
 	// MARK: Serializing
 	
 	private func serializeResource(resource: Resource) -> [String: AnyObject] {
-		Spine.logDebug(.Serializing, "Serializing resource \(resource) of type '\(resource.resourceType)' with id '\(resource.id)'")
+		Spine.logDebug(.Serializing, "Serializing resource \(resource) of type '\(resource.resourceType())' with id '\(resource.id)'")
 		
 		var serializedData: [String: AnyObject] = [:]
 		
@@ -60,7 +60,7 @@ class SerializeOperation: NSOperation {
 		}
 		
 		// Serialize type
-		serializedData["type"] = resource.resourceType
+		serializedData["type"] = resource.resourceType()
 		
 		// Serialize fields
 		addAttributes(&serializedData, resource: resource)
@@ -85,7 +85,7 @@ class SerializeOperation: NSOperation {
 	private func addAttributes(inout serializedData: [String: AnyObject], resource: Resource) {
 		var attributes = [String: AnyObject]();
 		
-		for case let field as Attribute in resource.fields {
+		for case let field as Attribute in resource.fields() {
 			let key = field.serializedName
 			
 			Spine.logDebug(.Serializing, "Serializing attribute \(field) with name '\(field.name) as '\(key)'")
@@ -128,7 +128,7 @@ class SerializeOperation: NSOperation {
 	- parameter resource:       The resource whose relationships to add.
 	*/
 	private func addRelationships(inout serializedData: [String: AnyObject], resource: Resource) {
-		for case let field as Relationship in resource.fields {
+		for case let field as Relationship in resource.fields() {
 			let key = field.serializedName
 			
 			Spine.logDebug(.Serializing, "Serializing relationship \(field) with name '\(field.name) as '\(key)'")
@@ -187,7 +187,7 @@ class SerializeOperation: NSOperation {
             
             if let resources = linkedResources?.resources {
                 resourceIdentifiers = resources.filter { $0.id != nil }.map { resource in
-                    return ResourceIdentifier(type: resource.resourceType, id: resource.id!)
+                    return ResourceIdentifier(type: resource.resourceType(), id: resource.id!)
                 }
             }
             

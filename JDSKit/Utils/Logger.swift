@@ -8,20 +8,10 @@
 
 import CocoaLumberjack
 
-public enum LoggerLevel: UInt {
-    case Off
-    case Error
-    case Warning
-    case Info
-    case Debug
-    case Verbose
-    case All
-}
-
 public class Logger {
     
-    public static func initialize(logLevel: LoggerLevel = LoggerLevel.All) {
-        let level = DDLogLevel(rawValue: logLevel.rawValue)!
+    public static func initialize(logLevel: DDLogLevel = DDLogLevel.All) {
+        let level = logLevel
         
         DDLog.addLogger(DDTTYLogger.sharedInstance(), withLevel: level) // TTY = Xcode console
         DDLog.addLogger(DDASLLogger.sharedInstance(), withLevel: level) // ASL = Apple System Logs

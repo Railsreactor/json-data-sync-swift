@@ -26,12 +26,11 @@ public class JSONLinkableEntity: JSONManagedEntity {
     
     public var linkedEntity: JSONManagedEntity?
     
-    public override class var fields: [Field] {
-        return super.fields + fieldsFromDictionary([
+    public override class func fields() -> [Field] {
+        return super.fields() + fieldsFromDictionary([
             "parentId":              Attribute().serializeAs("entity_id").skipMap(),
             "parentType":            Attribute().serializeAs("entity_type").skipMap(),
-            "linkedEntity":          ToOneRelationship(JSONManagedEntity.resourceType).serializeAs("entity").mapAs("parent")
+            "linkedEntity":          ToOneRelationship(JSONManagedEntity.resourceType()).serializeAs("entity").mapAs("parent")
         ])
     }
-
 }

@@ -30,7 +30,7 @@ private func convertResourcesToLinkage(resources: [Resource]) -> [[String: Strin
 	} else {
 		return resources.map { resource in
 			assert(resource.id != nil, "Attempt to convert resource without id to linkage. Only resources with ids can be converted to linkage.")
-			return [resource.resourceType: resource.id!]
+			return [resource.resourceType(): resource.id!]
 		}
 	}
 }
@@ -246,7 +246,7 @@ class SaveOperation: ConcurrentOperation {
 		let URL: NSURL, method: String, payload: NSData
 
 		if isNewResource {
-			URL = router.URLForResourceType(resource.resourceType)
+			URL = router.URLForResourceType(resource.resourceType())
 			method = "POST"
 			payload = serializer.serializeResources([resource], options: SerializationOptions(includeID: false, dirtyFieldsOnly: false, includeToOne: true, includeToMany: true))
 		} else {
@@ -317,7 +317,7 @@ class SaveOperation: ConcurrentOperation {
 			}
 		}
 		
-		for field in resource.fields {
+		for field in resource.fields() {
 			switch field {
 			case let toOne as ToOneRelationship:
 				let operation = RelationshipReplaceOperation(resource: resource, relationship: toOne, spine: spine)

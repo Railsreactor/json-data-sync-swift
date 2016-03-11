@@ -28,19 +28,18 @@ public class JSONManagedEntity: Resource, ManagedEntity {
         }
     }
     
-   
-    public override class var fields: [Field] {
-        return super.fields + fieldsFromDictionary([
+    override public class func fields() -> [Field] {
+        return super.fields() + fieldsFromDictionary([
                 "createDate":           DateAttribute().serializeAs("created_at"),
                 "updateDate":           DateAttribute().serializeAs("updated_at"),
-                "linkedAttachments":    ToManyRelationship(JSONAttachment.resourceType).serializeAs("attachments").mapAs("attachments"),
+                "linkedAttachments":    ToManyRelationship(JSONAttachment.resourceType()).serializeAs("attachments").mapAs("attachments"),
             ])
     }
     
     public class var fieldKeyMap: [String: String] {
         var _fieldKeyMap = [String: String]()
         
-        for field in fields {
+        for field in fields() {
             _fieldKeyMap[field.mappedName] = field.serializedName
         }
         
@@ -51,10 +50,9 @@ public class JSONManagedEntity: Resource, ManagedEntity {
         super.init()
     }
     
-    public override class var resourceType: String {
+    override public class func resourceType() -> String {
         return resourceName
     }
-
 
     public required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

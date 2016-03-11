@@ -41,16 +41,17 @@ public class BaseJSONAPIManager: NSObject {
     let clientToken     : String
     let clientSecret    : String
     
-    private let spine : Spine;
+    public let spine : Spine;
     
-    private var sessionInfo : JSONAPISession? {
+    public var sessionInfo : JSONAPISession? {
         didSet {
             didRefreshSessionInfo()
         }
     }
 
-    private let authLock = NSRecursiveLock()
-    init(urlString: String, clientToken token: String, clientSecret secret: String) {
+    public let authLock = NSRecursiveLock()
+    
+    public init(urlString: String, clientToken token: String, clientSecret secret: String) {
         baseURLString = urlString
         spine = Spine(baseURL: NSURL(string: urlString)!)
         clientToken = token
@@ -65,30 +66,30 @@ public class BaseJSONAPIManager: NSObject {
     
     // MARK: Entities Mapping
     
-    private var jsonClassByEntityName: [String : JSONManagedEntity.Type] = [:]
+    public var jsonClassByEntityName: [String : JSONManagedEntity.Type] = [:]
     
-    private func registerClasses() {
+    public func registerClasses() {
         
         spine.registerTransformer(Base64Transformer())
         spine.registerTransformer(NumberTransformer())
         
         for case let resource as JSONManagedEntity.Type in ExtractAllReps(JSONManagedEntity.self) {
-            spine.registerResource(resource.resourceType) { resource.init() }
+            spine.registerResource(resource.resourceType()) { resource.init() }
         }
     }
     
-    internal func asJsonClass(type: ManagedEntity.Type) -> JSONManagedEntity.Type {
+    public func asJsonClass(type: ManagedEntity.Type) -> JSONManagedEntity.Type {
         return type.extractRepresentation(JSONManagedEntity.self)
     }
     
-    internal func asJsonEntity(entity: ManagedEntity) -> JSONManagedEntity {
+    public func asJsonEntity(entity: ManagedEntity) -> JSONManagedEntity {
         
         let result = (ExtractRep(entity.entityType, subclassOf: JSONManagedEntity.self) as! JSONManagedEntity.Type).init()
         
         let entityObj = entity as! NSObject
         
         result.setValue(entityObj.valueForKey("id"), forField: "id")
-        for field in result.dynamicType.fields {
+        for field in result.dynamicType.fields() {
             if !field.skip {
                 let name = field.mappedName
                 result.setValue(entityObj.valueForKey(name), forField: name)
@@ -110,7 +111,7 @@ public class BaseJSONAPIManager: NSObject {
         }
     }
     
-    private func generateError(code: Int, cause: NSError?, desc: String? = nil) -> ErrorType {
+    public func generateError(code: Int, cause: NSError?, desc: String? = nil) -> ErrorType {
         
         var wrappedError: ErrorType?
         
@@ -137,7 +138,7 @@ public class BaseJSONAPIManager: NSObject {
         return wrappedError!
     }
     
-    private func findAndExtractErrors(userInfo: [NSObject: AnyObject]) -> [NSError]? {
+    public func findAndExtractErrors(userInfo: [NSObject: AnyObject]) -> [NSError]? {
         var apiErrors = [NSError]()
         if let errors = userInfo["errors"] as? [String: AnyObject] {
             for case let (errorTitle, errorMsg as [String]) in errors {
@@ -149,7 +150,7 @@ public class BaseJSONAPIManager: NSObject {
         return nil
     }
     
-    private func wrapErrorIfNeed(error: ErrorType) -> ErrorType {
+    public func wrapErrorIfNeed(error: ErrorType) -> ErrorType {
         if error is CoreError {
             return error
         }

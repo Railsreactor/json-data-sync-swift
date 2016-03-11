@@ -9,9 +9,7 @@
 import Foundation
 import CoreData
 
-@objc(CDUpdateInfo)
-
-public class CDUpdateInfo: NSManagedObject, Containerable {
+@objc public class CDUpdateInfo: NSManagedObject, Containerable {
     @NSManaged public var filterID:    String?
     @NSManaged public var entityType:  String?
     @NSManaged public var updateDate:  NSDate?
@@ -20,3 +18,4 @@ public class CDUpdateInfo: NSManagedObject, Containerable {
         return ObjectIDContainer(contained: self.objectID)
     }
 }
+

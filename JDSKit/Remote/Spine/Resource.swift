@@ -41,13 +41,15 @@ A base recource class that provides some defaults for resources.
 You can create custom resource classes by subclassing from Resource.
 */
 public class Resource: NSObject, NSCoding {
-	public class var resourceType: ResourceType {
-		fatalError("Override resourceType in a subclass.")
+    
+	public class func resourceType() -> ResourceType {
+		fatalError("Override resourceType() in a subclass.")
 	}
-	final public var resourceType: ResourceType { return self.dynamicType.resourceType }
+    
+	final public func resourceType() -> ResourceType { return self.dynamicType.resourceType() }
 	
-	public class var fields: [Field] { return [] }
-	final public var fields: [Field] { return self.dynamicType.fields }
+	public class func fields() -> [Field] { return [] }
+	final public func fields() -> [Field] { return self.dynamicType.fields() }
 	
 	public var id: String?
 	public var URL: NSURL?
@@ -81,7 +83,7 @@ public class Resource: NSObject, NSCoding {
 	
 	/// Sets all fields of resource `resource` to nil and sets `isLoaded` to false.
 	public func unload() {
-		for field in self.fields {
+		for field in self.fields() {
 			self.setValue(nil, forField: field.name)
 		}
 		
@@ -91,7 +93,7 @@ public class Resource: NSObject, NSCoding {
 
 extension Resource {
 	override public var description: String {
-		return "\(self.resourceType)(\(self.id), \(self.URL))"
+		return "\(self.resourceType())(\(self.id), \(self.URL))"
 	}
 	
 	override public var debugDescription: String {
@@ -100,5 +102,5 @@ extension Resource {
 }
 
 public func == <T: Resource> (left: T, right: T) -> Bool {
-	return (left.id == right.id) && (left.resourceType == right.resourceType)
+	return (left.id == right.id) && (left.resourceType() == right.resourceType())
 }
