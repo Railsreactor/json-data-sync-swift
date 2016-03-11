@@ -22,7 +22,7 @@
         <attribute name="updateDate" optional="YES" attributeType="Date" syncable="YES"/>
         <relationship name="attachments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDAttachment" inverseName="parent" inverseEntity="CDAttachment" syncable="YES"/>
     </entity>
-    <entity name="CDUpdateInfo" representedClassName="UpdateInfo" syncable="YES">
+    <entity name="CDUpdateInfo" representedClassName="JDSKit.CDUpdateInfo" syncable="YES">
         <attribute name="entityType" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="filterID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="updateDate" optional="YES" attributeType="Date" syncable="YES"/>
