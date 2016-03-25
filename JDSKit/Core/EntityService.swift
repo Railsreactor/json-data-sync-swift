@@ -27,9 +27,11 @@ public class EntityService: CoreService {
         return self.localManager.entityGatewayByEntityType(self.entityType)
     }
     
-    private func cachedEntity(var query: String = "", arguments: [AnyObject]? = nil, sortKeys: [String]? = nil) -> [ManagedEntity] {
+    private func cachedEntity(inputQuery: String = "", arguments: [AnyObject]? = nil, sortKeys: [String]? = nil) -> [ManagedEntity] {
         
         let descriptors: [NSSortDescriptor] = sortKeys?.sortDescriptors() ?? [NSSortDescriptor(key: "createDate", ascending: false)]
+        
+        var query = inputQuery
         
         if !query.isEmpty {
             query += " && "

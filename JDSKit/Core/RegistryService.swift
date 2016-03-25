@@ -136,19 +136,14 @@ class ModelRegistry: NSObject {
     var registeredModelByRep    = [String : ManagedEntity.Type]()
     var registeredRepsByModel   = [String : [ManagedEntity.Type]]()
     
-    func register(modelType: ManagedEntity.Type, var key: String? = nil) -> Bool {
-        if key == nil {
-            key =  String(modelType)
-        }
-        
+    func register(modelType: ManagedEntity.Type, key inKey: String? = nil) -> Bool {
+        let key = inKey ?? String(modelType)
         let typeKey = String(modelType)
         
         registeredModelByType[typeKey]  = modelType
         
-        if let key = key {
-            registeredKeyByModel[typeKey]   = key
-            registeredModelByKey[key] = modelType
-        }
+        registeredKeyByModel[typeKey]   = key
+        registeredModelByKey[key] = modelType
         
         return true
     }

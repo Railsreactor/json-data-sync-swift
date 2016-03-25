@@ -181,10 +181,11 @@ public class BaseJSONAPIManager: NSObject {
     
     public func call(method: String, path: String, request: [String: AnyObject], completion: RemoteResultBlock) {
         
-        call(method, path: path, request: request) { (statusCode, data, var error) -> Void in
+        call(method, path: path, request: request) { (statusCode, data, error) -> Void in
             
             var result: AnyObject? = nil
             var serrializeError: ErrorType?
+            var finalError = error
             
             if let data = data {
                 do {
@@ -197,15 +198,15 @@ public class BaseJSONAPIManager: NSObject {
             if let code = statusCode where !(200 ... 203 ~= code)  {
                 if let userInfo = result as? [String: AnyObject] where userInfo["errors"] != nil {
                     if let apiErrors = self.findAndExtractErrors(userInfo) {
-                        if error == nil {
-                            error = NSError(domain: "shine.service.error", code: 422, userInfo: [SNAPIErrorsKey: apiErrors])
+                        if finalError == nil {
+                            finalError = NSError(domain: "shine.service.error", code: 422, userInfo: [SNAPIErrorsKey: apiErrors])
                         }
                     }
                 }
-                completion(result: nil, error: self.generateError(code, cause: error))
+                completion(result: nil, error: self.generateError(code, cause: finalError))
                 return
-            } else if error != nil {
-                completion(result: nil, error: self.generateError(RemoteError.Unknown.rawValue, cause: error))
+            } else if finalError != nil {
+                completion(result: nil, error: self.generateError(RemoteError.Unknown.rawValue, cause: finalError))
                 return
             }
             
@@ -217,11 +218,13 @@ public class BaseJSONAPIManager: NSObject {
     // MARK: API
     
     // MARK: Private auth
-    public func authenticate(var request : [String: String], completion: RemoteResultBlock) {
+    public func authenticate(inputRequest: [String: String], completion: RemoteResultBlock) {
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)) { () -> Void in
             if self.authLock.tryLock() {
                 self.sessionInfo = nil
 
+                var request = inputRequest
+                
                 request["client_id"] = self.clientToken
                 request["client_secret"] = self.clientSecret
                 

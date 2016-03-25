@@ -26,7 +26,7 @@ public enum CoreError: ErrorType {
     case ValidationError(apiErrors: [NSError])
     case EntityMisstype(input: String, target: String)
     
-    var errorInfo: (code: Int, message: String?, cause: NSError?, actionTitle: String?) {
+    public var errorInfo: (code: Int, message: String?, cause: NSError?, actionTitle: String?) {
         
         var code: Int, message: String?, cause: NSError?, actionTitle: String?
         
@@ -66,7 +66,7 @@ public enum CoreError: ErrorType {
         return (code: code, message: message, cause: cause, actionTitle: actionTitle)
     }
     
-    func extractAPIErrors() -> [NSError] {
+    public func extractAPIErrors() -> [NSError] {
         switch self {
         case .ValidationError(let apiErrors):
             return apiErrors
@@ -76,7 +76,7 @@ public enum CoreError: ErrorType {
         return [NSError]()
     }
     
-    func localizedDescriptionFromAPIErrors() -> String {
+    public func localizedDescriptionFromAPIErrors() -> String {
         var description = ""
         for apiError in extractAPIErrors() {
             if let source = apiError.userInfo[SNAPIErrorSourceKey] as? [String: String] {

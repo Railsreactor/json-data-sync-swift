@@ -15,13 +15,13 @@ public class NetworkSpinner: NSObject {
     private var activeConnectionsCounter: Int = 0
     
     public func startActiveConnection() {
-        activeConnectionsCounter++
+        activeConnectionsCounter += 1
         updateNetworkIndicator()
     }
     
     public func stopActiveConnection() {
         if activeConnectionsCounter == 0 { return }
-        activeConnectionsCounter--
+        activeConnectionsCounter -= 1
         
         updateNetworkIndicator()
     }

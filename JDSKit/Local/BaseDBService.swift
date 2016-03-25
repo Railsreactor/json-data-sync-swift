@@ -35,7 +35,7 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         initilizePredefinedGateways()
         
         let nc = NSNotificationCenter.defaultCenter()
-        nc.addObserver(self, selector: "mergeChangesOnMainThread:", name: NSManagedObjectContextDidSaveNotification, object: backgroundManagedObjectContext)
+        nc.addObserver(self, selector: #selector(BaseDBService.mergeChangesOnMainThread(_:)), name: NSManagedObjectContextDidSaveNotification, object: backgroundManagedObjectContext)
     }
     
     // ******************************************************
@@ -335,10 +335,8 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
     public func countEntities(ofType: NSManagedObject.Type) -> Int {
         let context = contextForCurrentThread()
         let fetchRequest = generateFetchRequestForEntity(ofType, context: context)
-        
-        let errorPtr: NSErrorPointer = NSErrorPointer()
-
-        let count = context.countForFetchRequest(fetchRequest, error: errorPtr)
+    
+        let count = context.countForFetchRequest(fetchRequest, error: nil)
         
         if(count == NSNotFound) {
             return 0

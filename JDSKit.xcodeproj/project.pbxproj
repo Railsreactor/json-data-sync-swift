@@ -93,7 +93,7 @@
 		1CFB48E31C91BFF4000A3029 /* CDManagedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDManagedEntity.swift; sourceTree = "<group>"; };
 		1CFB48E41C91BFF4000A3029 /* CDUpdateInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDUpdateInfo.swift; sourceTree = "<group>"; };
 		1CFB48E71C91BFF4000A3029 /* SNExceptionWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SNExceptionWrapper.m; sourceTree = "<group>"; };
-		1CFB48E91C91BFF4000A3029 /* BaseJSONAPIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BaseJSONAPIManager.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		1CFB48E91C91BFF4000A3029 /* BaseJSONAPIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = BaseJSONAPIManager.swift; sourceTree = "<group>"; };
 		1CFB48EB1C91BFF4000A3029 /* JSONAPISession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONAPISession.swift; sourceTree = "<group>"; };
 		1CFB48EC1C91BFF4000A3029 /* JSONAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONAttachment.swift; sourceTree = "<group>"; };
 		1CFB48ED1C91BFF4000A3029 /* JSONEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONEvent.swift; sourceTree = "<group>"; };
