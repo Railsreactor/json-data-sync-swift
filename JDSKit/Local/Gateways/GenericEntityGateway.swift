@@ -153,12 +153,12 @@ public class GenericEntityGateway: NSObject {
         return managedObject as! T
     }
     
-    public func insertEnities( entities : [ManagedEntity], isFirstInsert: Bool = false, var userInfo:[String : AnyObject] = [:]) throws -> [ManagedEntity]? {
+    public func insertEnities( entities : [ManagedEntity], isFirstInsert: Bool = false, userInfo inputUserInfo:[String : AnyObject] = [:]) throws -> [ManagedEntity]? {
         
         var insertedItems: [ManagedEntity] = []
         
         do {
-            
+            var userInfo = inputUserInfo
             // Lets try to prefetch all existing entities to speed-up mapping
             let ids: [String] = entities.flatMap { $0.id }
             if ids.count > 0 {
@@ -229,7 +229,7 @@ public class GenericEntityGateway: NSObject {
         return fromRelationship.destinationEntity?.gateway()
     }
     
-    public func mapEntityRelations(inputEntity: ManagedEntity, managedObject: CDManagedEntity, var exceptRelationship : NSRelationshipDescription?, userInfo:[String : AnyObject] = [:] ) throws {
+    public func mapEntityRelations(inputEntity: ManagedEntity, managedObject: CDManagedEntity, exceptRelationship inExceptRelationship: NSRelationshipDescription?, userInfo:[String : AnyObject] = [:] ) throws {
         
         
         var key : String?
@@ -238,10 +238,7 @@ public class GenericEntityGateway: NSObject {
         if let inputEntityObj = inputEntity as? NSObject {
             for relationship in managedObject.entity.relationshipsByName.values  {
             
-                
-                if (exceptRelationship == nil) {
-                    exceptRelationship = userInfo[MappingConstans.ReverceRelation] as? NSRelationshipDescription;
-                }
+                let exceptRelationship = inExceptRelationship ?? userInfo[MappingConstans.ReverceRelation] as? NSRelationshipDescription
             
                 if exceptRelationship != nil && exceptRelationship!.isEqual(relationship) {
                     continue;

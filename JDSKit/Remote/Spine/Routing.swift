@@ -214,7 +214,7 @@ public extension NSComparisonPredicate {
     }
     
     convenience init(format: String, optionals: [AnyObject]?=nil) {
-        self.init(format: format, UnsafePointer<Void>())
+        self.init(format: format, UnsafePointer<Void>(nil))
         self.optionals = optionals
     }
     

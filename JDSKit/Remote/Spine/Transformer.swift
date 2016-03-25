@@ -13,9 +13,9 @@ The Transformer protocol declares methods and properties that a transformer must
 A transformer transforms values between the serialized and deserialized form.
 */
 public protocol Transformer {
-	typealias SerializedType
-	typealias DeserializedType
-	typealias AttributeType
+	associatedtype SerializedType
+	associatedtype DeserializedType
+	associatedtype AttributeType
 	
 	/**
 	Returns the deserialized form of the given value for the given attribute.

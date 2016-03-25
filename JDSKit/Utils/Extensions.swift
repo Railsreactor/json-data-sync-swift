@@ -23,18 +23,16 @@ public extension NSSet {
 
 public extension UIViewController {
     
-    public class func fromStoryboard(storyboardNamed: String, identifier: String = "") -> Self {
+    public class func fromStoryboard(storyboardNamed: String, identifier: String? = nil) -> Self {
         return fromStoryboardGeneric(UIStoryboard(name: storyboardNamed, bundle: nil), identifier: identifier)
     }
     
-    public class func fromStoryboard(storyboard instance: UIStoryboard, identifier: String = "") -> Self {
+    public class func fromStoryboard(storyboard instance: UIStoryboard, identifier: String? = nil) -> Self {
         return fromStoryboardGeneric(instance, identifier: identifier)
     }
     
-    internal class func fromStoryboardGeneric<T: UIViewController>(storyboard: UIStoryboard, var identifier: String = "") -> T {
-        if identifier.isEmpty {
-            identifier = String(self)
-        }
+    internal class func fromStoryboardGeneric<T: UIViewController>(storyboard: UIStoryboard, identifier: String? = nil) -> T {
+        let identifier = identifier ?? String(self)
         return storyboard.instantiateViewControllerWithIdentifier(identifier) as! T
     }
 }
