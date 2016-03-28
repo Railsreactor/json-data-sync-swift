@@ -23,7 +23,13 @@ class JSONEvent: JSONManagedEntity, Event {
     var _action: String?
     var action: String {
         get {
-            if let nativeString: String = _action where nativeString.containsString("deleted") {
+            var normalizedName = resourceType().lowercaseString;
+            
+            if normalizedName.characters.last == Character("s") {
+               normalizedName = normalizedName.substringToIndex(normalizedName.endIndex.predecessor())
+            }
+            
+            if let nativeString: String = _action where nativeString.containsString("\(normalizedName).deleted") {
                 return Action.Deleted
             }
             return Action.Updated
