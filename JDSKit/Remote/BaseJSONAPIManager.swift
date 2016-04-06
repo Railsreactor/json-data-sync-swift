@@ -361,21 +361,28 @@ public class BaseJSONAPIManager: NSObject {
         return loadEntity(id, ofType: ofType, include: include).then { $0 as! T }
     }
     
-    public func loadEntities(ofType: ManagedEntity.Type, filters: [NSComparisonPredicate]?, include: [String]?=nil) -> Promise<[ManagedEntity]> {
+    public func loadEntities(ofType: ManagedEntity.Type, filters: [NSComparisonPredicate]?, include: [String]?=nil, fields: [String]?=nil) -> Promise<[ManagedEntity]> {
         return executeRequestWithSessionCheck({
             let entityClass = self.asJsonClass(ofType)
+
+            var query = Query(resourceType: entityClass)
             
-            let mappedRelations = include?.map { entityClass.fieldKeyMap[$0]! }
-            let pagination = OffsetBasedPagination(offset: 0, limit: 500)
+            query.filters = filters ?? [NSComparisonPredicate]()
+            query.includes = include?.map { entityClass.fieldKeyMap[$0]! } ?? [String]()
+            query.paginate(OffsetBasedPagination(offset: 0, limit: 500))
             
-            return self.spine.findAll(entityClass, filters: filters, include: mappedRelations, pagination: pagination).then({ (resources, meta, jsonapi) -> [ManagedEntity] in
+            if let fields = fields {
+                query.fields = [entityClass.resourceType() : fields.map { entityClass.fieldKeyMap[$0]! }]
+            }
+            
+            return self.spine.find(query).then({ (resources, meta, jsonapi) -> [ManagedEntity] in
                 return resources.map { $0 as! ManagedEntity }
             })
         })
     }
 
-    public func loadEntities<T: ManagedEntity>(ofType: T.Type = T.self, filters: [NSComparisonPredicate]?, include: [String]?=nil) -> Promise<[T]> {
-        return loadEntities(ofType, filters: filters, include: include).then { (resources: [ManagedEntity]) -> [T] in
+    public func loadEntities<T: ManagedEntity>(ofType: T.Type = T.self, filters: [NSComparisonPredicate]?, include: [String]?=nil, fields: [String]?=nil) -> Promise<[T]> {
+        return loadEntities(ofType, filters: filters, include: include, fields: fields).then { (resources: [ManagedEntity]) -> [T] in
             return resources as! [T]
         }
     }

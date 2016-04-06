@@ -56,10 +56,10 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
         
 //        Clean up DB for debug purpose:
-//        do {
-//            try NSFileManager.defaultManager().removeItemAtURL(url);
-//        } catch {
-//        }
+        do {
+            try NSFileManager.defaultManager().removeItemAtURL(url);
+        } catch {
+        }
         
         do {
             // Cleanup local cache if store going to migrate. Hack to avoid bug when newly added properties not set during sync, because existed entities wasn't updated since last sync.

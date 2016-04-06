@@ -203,6 +203,8 @@ public class GenericEntityGateway: NSObject {
             return
         }
         
+        let isLoaded = entity.isLoaded?.boolValue ?? false
+        
         if let entity = entity as? NSObject {
             let object = managedObject as NSObject
             for attribute in managedObject.entity.attributesByName.values {
@@ -211,16 +213,21 @@ public class GenericEntityGateway: NSObject {
                     continue;
                 }
                 
-                if let value:AnyObject = entity.valueForKey(attribute.name) ?? object.valueForKey(attribute.name) ?? attribute.defaultValue {
-                    
-                    if asBool(attribute.userInfo?[MappingConstans.SyncOR]) {
-                        if let value = object.valueForKey(attribute.name) as? NSNumber where value.boolValue {
-                            continue;
-                        }
-                    }
-                    
-                    object.setValue(value, forKey: attribute.name)
+                var value:AnyObject? = entity.valueForKey(attribute.name)
+                
+                if !isLoaded && value == nil {
+                    value = object.valueForKey(attribute.name) ?? attribute.defaultValue
+                } else if value == nil {
+                    value = attribute.defaultValue
                 }
+                
+                if asBool(attribute.userInfo?[MappingConstans.SyncOR]) {
+                    if let value = object.valueForKey(attribute.name) as? NSNumber where value.boolValue {
+                        continue;
+                    }
+                }
+                
+                object.setValue(value, forKey: attribute.name)
             }
         }
     }

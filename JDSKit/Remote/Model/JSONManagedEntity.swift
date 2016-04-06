@@ -40,7 +40,11 @@ public class JSONManagedEntity: Resource, ManagedEntity {
         var _fieldKeyMap = [String: String]()
         
         for field in fields() {
-            _fieldKeyMap[field.mappedName] = field.serializedName
+            var varName = field.mappedName
+            if varName.hasPrefix("_") {
+                varName = String(varName.characters.dropFirst())
+            }
+            _fieldKeyMap[varName] = field.serializedName
         }
         
         return _fieldKeyMap

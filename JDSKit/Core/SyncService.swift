@@ -21,6 +21,7 @@ private let EventKey = String(Event.self)
 
 public class AbstractSyncService: CoreService {
     
+    var liteSyncEnabled = false
     
     // *************************** Override *******************************
     // if you want to split some update info between different users or something...
@@ -52,7 +53,7 @@ public class AbstractSyncService: CoreService {
     internal func checkForUpdates(eventSyncDate: NSDate) -> Promise<SyncInfo> {
         DDLogDebug("Checking for updates... \(eventSyncDate)")
         let predicate = NSComparisonPredicate(format: "created_at_gteq == %@", eventSyncDate.toSystemString());
-        return self.remoteManager.loadEntities(Event.self, filters: [predicate]).thenInBGContext { (events: [Event]) -> SyncInfo in
+        return self.remoteManager.loadEntities(Event.self, filters: [predicate], include: nil, fields: liteSyncEnabled ? ["relatedEntityName", "relatedEntityId", "action"] : nil).thenInBGContext { (events: [Event]) -> SyncInfo in
             var itemsToSync = Set<String>()
             let requiredItems = Set(self.entitiesToSync())
             
