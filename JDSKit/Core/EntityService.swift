@@ -23,7 +23,7 @@ public class EntityService: CoreService {
         return AbstractRegistryService.mainRegistryService.entityService(entityType)
     }
     
-    public func entityGatway() -> GenericEntityGateway {
+    public func entityGatway() -> GenericEntityGateway? {
         return self.localManager.entityGatewayByEntityType(self.entityType)
     }
     
@@ -40,8 +40,10 @@ public class EntityService: CoreService {
         query += "isLoaded == %@ && pendingDelete != %@"
         
         do {
-            let entities = try self.entityGatway().fetchEntities(query, arguments: (arguments ?? [AnyObject]()) + [true, true], sortDescriptors: descriptors) as [ManagedEntity]
-            return entities
+            if let entitiyGateway = self.entityGatway() {
+                let entities = try entitiyGateway.fetchEntities(query, arguments: (arguments ?? [AnyObject]()) + [true, true], sortDescriptors: descriptors) as [ManagedEntity]
+                return entities
+            }
         } catch {
             DDLogDebug("Failed to fetch cars: \(error)")
         }
@@ -51,13 +53,16 @@ public class EntityService: CoreService {
 
     public func syncEntityInternal(query: String = "", arguments: [AnyObject]? = nil, remoteFilters: [NSComparisonPredicate]?=nil, includeRelations: [String]?=nil) -> Promise<Void> {
         return self.remoteManager.loadEntities(self.entityType, filters: remoteFilters, include: includeRelations).thenInBackground { (input) -> Promise<Void> in
-    
+            
             return self.runOnBackgroundContext { () -> Void in
                 let start = NSDate()
                 DDLogDebug("Will Insert \(input.count) Entities of type: \(String(self.entityType))" )
-
-                let newItems: [ManagedEntity] = try self.entityGatway().insertEnities(input, isFirstInsert: false) ?? []
-                DDLogDebug("Did Insert \(newItems.count ?? 0) Entities of type: \(String(self.entityType)) Time Spent: \(abs(start.timeIntervalSinceNow))" )
+                if let entityGateway = self.entityGatway() {
+                    let newItems: [ManagedEntity] = try entityGateway.insertEnities(input, isFirstInsert: false) ?? []
+                    DDLogDebug("Did Insert \(newItems.count ?? 0) Entities of type: \(String(self.entityType)) Time Spent: \(abs(start.timeIntervalSinceNow))" )
+                } else {
+                    DDLogDebug("No gateway for Entities of type: \(String(self.entityType)). Skipped. Time Spent: \(abs(start.timeIntervalSinceNow))" )
+                }
             }
         }
     }
@@ -121,7 +126,7 @@ public class EntityService: CoreService {
         return self.remoteManager.loadEntities(self.entityType, filters: [predicate],  include: includeRelations).thenInBackground { entities -> Promise<Void> in
             return self.runOnBackgroundContext {
                 if let entity = entities.first {
-                    try self.entityGatway().insertEntity(entity)
+                    try self.entityGatway()?.insertEntity(entity)
                 }
                 self.localManager.saveSync()
             }
@@ -132,7 +137,7 @@ public class EntityService: CoreService {
     private func saveEntity(entity: ManagedEntity) -> Promise<ManagedEntity> {
         return self.remoteManager.saveEntity(entity).thenInBackground { (remoteEntity) -> Promise<Container> in
             return self.runOnBackgroundContext { () -> Container in
-                let result = try self.entityGatway().insertEntity(remoteEntity)
+                let result = try self.entityGatway()?.insertEntity(remoteEntity) ?? remoteEntity
                 self.localManager.saveSync()
                 return result.objectContainer()
             }
@@ -157,7 +162,7 @@ public class EntityService: CoreService {
             }
         }).thenInBackground({ () -> Void in
             return self.runOnBackgroundContext { () -> Void in
-                try self.entityGatway().deleteEntity(countainer.containedObject()!)
+                try self.entityGatway()?.deleteEntity(countainer.containedObject()!)
                 self.localManager.saveSync()
             }
         })
@@ -177,7 +182,7 @@ public class EntityService: CoreService {
         
         return self.remoteManager.saveEntity(patch).thenInBackground { (remoteEntity) -> Promise<Container> in
             return self.runOnBackgroundContext { () -> Container in
-                let result = try self.entityGatway().insertEntity(remoteEntity)
+                let result = try self.entityGatway()?.insertEntity(remoteEntity) ?? remoteEntity
                 self.localManager.saveSync()
                 return result.objectContainer()
             }
@@ -230,13 +235,5 @@ public class GenericService<T: ManagedEntity>: EntityService {
     
     public func createBlankEntity() -> T {
         return super.createBlankEntity() as! T
-    }
-    
-    public func saveEntityWithPromise(entity : T, mergeWith: T? = nil) -> Promise<Container> {
-        return runOnBackgroundContext() { () throws -> Container in
-            let entity = try self.entityGatway().insertEntity(entity, mergeWith: mergeWith)
-            self.localManager.saveSync()
-            return entity.objectContainer()
-        }
     }
 }

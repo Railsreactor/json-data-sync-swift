@@ -127,26 +127,27 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         }
     }
     
-    public func entityGatewayByEntityTypeKey(typeKey: String) -> GenericEntityGateway {
+    public func entityGatewayByEntityTypeKey(typeKey: String) -> GenericEntityGateway? {
         var gateway = entityGatewaysByType[typeKey]
         if gateway == nil {
             synchronized(syncObject) { () -> () in
                 gateway = self.entityGatewaysByType[typeKey]
                 if gateway == nil {
-                    let type = ExtractRep(ExtractModel(typeKey), subclassOf: CDManagedEntity.self) as! CDManagedEntity.Type
-                    gateway = GenericEntityGateway(type)
-                    self.entityGatewaysByType[typeKey] = gateway
+                    if let type = ExtractRep(ExtractModel(typeKey), subclassOf: CDManagedEntity.self) as? CDManagedEntity.Type {
+                        gateway = GenericEntityGateway(type)
+                        self.entityGatewaysByType[typeKey] = gateway
+                    }
                 }
             }
         }
-        return gateway!
+        return gateway
     }
 
-    public func entityGatewayByEntityType(type: ManagedEntity.Type) -> GenericEntityGateway {
+    public func entityGatewayByEntityType(type: ManagedEntity.Type) -> GenericEntityGateway? {
         return entityGatewayByEntityTypeKey(String(type))
     }
     
-    public func entityGatewayByMOType(type: CDManagedEntity.Type) -> GenericEntityGateway {
+    public func entityGatewayByMOType(type: CDManagedEntity.Type) -> GenericEntityGateway? {
         return entityGatewayByEntityTypeKey(String(type.entityType))
     }
     

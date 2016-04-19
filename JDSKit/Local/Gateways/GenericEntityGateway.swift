@@ -12,7 +12,7 @@ import CocoaLumberjack
 
 public protocol ManagedObjectContextProvider: class {
     
-    func entityGatewayByEntityTypeKey(typeKey: String) -> GenericEntityGateway
+    func entityGatewayByEntityTypeKey(typeKey: String) -> GenericEntityGateway?
     
     func contextForCurrentThread() -> NSManagedObjectContext
     
@@ -313,7 +313,7 @@ public class GenericEntityGateway: NSObject {
 }
 
 public extension NSEntityDescription {
-    public func gateway() -> GenericEntityGateway {
+    public func gateway() -> GenericEntityGateway? {
         return BaseDBService.sharedInstance.entityGatewayByMOType((NSClassFromString(self.managedObjectClassName) as! CDManagedEntity.Type))
     }
 }

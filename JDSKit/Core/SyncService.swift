@@ -70,7 +70,7 @@ public class AbstractSyncService: CoreService {
                 
                 if let id = event.relatedEntityId where event.action == Action.Deleted {
                     do {
-                        try AbstractRegistryService.mainRegistryService.entityServiceByKey(entityName).entityGatway().deleteEntityWithID(id)
+                        try AbstractRegistryService.mainRegistryService.entityServiceByKey(entityName).entityGatway()?.deleteEntityWithID(id)
                         DDLogDebug("Deleted \(entityName) with id: \(id)")
                     } catch {
                     }
@@ -119,7 +119,7 @@ public class AbstractSyncService: CoreService {
                     
                     var finalSyncDate = ZeroDate
                     if self.lastSyncDate == ZeroDate {
-                        let topMostEntity: ManagedEntity? = try service.entityGatway().fetchEntities(nil, sortDescriptors: ["-updateDate"].sortDescriptors()).first
+                        let topMostEntity: ManagedEntity? = try service.entityGatway()?.fetchEntities(nil, sortDescriptors: ["-updateDate"].sortDescriptors()).first
                         finalSyncDate = topMostEntity?.updateDate ?? syncDate
                     } else {
                         finalSyncDate = self.lastSyncDate
