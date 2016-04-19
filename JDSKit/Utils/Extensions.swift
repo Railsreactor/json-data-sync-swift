@@ -39,11 +39,13 @@ public extension UIViewController {
 
 public extension NSDate {
     
+    
+    
     public func toSystemString() -> String {
         let formatter = NSDateFormatter()
         formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
         formatter.timeZone = NSTimeZone(abbreviation: "GMT")
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        formatter.dateFormat = Constants.APIDateTimeFormat
         return formatter.stringFromDate(self)
     }
     

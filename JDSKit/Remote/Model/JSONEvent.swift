@@ -8,12 +8,12 @@
 
 import UIKit
 
-class JSONEvent: JSONManagedEntity, Event {    
+public class JSONEvent: JSONManagedEntity, Event {
     
-    var relatedEntityId: String?
+    public var relatedEntityId: String?
     
     var _relatedEntityName: String?
-    var relatedEntityName: String? {
+    public var relatedEntityName: String? {
         get {
             if _relatedEntityName == "ZipCode" { return "Zip" }
             return _relatedEntityName
@@ -21,7 +21,7 @@ class JSONEvent: JSONManagedEntity, Event {
     }
     
     var _action: String?
-    var action: String {
+    public var action: String {
         get {
             var normalizedName = resourceType().lowercaseString;
             
@@ -36,7 +36,7 @@ class JSONEvent: JSONManagedEntity, Event {
         }
     }
 
-    override class func fields() -> [Field] {
+    override public class func fields() -> [Field] {
         return super.fields() + fieldsFromDictionary([
             "_relatedEntityName":    Attribute().serializeAs("entity_type"),
             "relatedEntityId":       Attribute().serializeAs("entity_id"),

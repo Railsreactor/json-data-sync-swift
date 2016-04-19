@@ -8,17 +8,12 @@
 
 import Foundation
 
-//struct Action {
-//    static let Updated = "updated"
-//    static let Deleted = "deleted"
-//}
-
-struct Action {
-    static let Updated = "updated"
-    static let Deleted = "deleted"
+public struct Action {
+    public static let Updated = "updated"
+    public static let Deleted = "deleted"
 }
 
-@objc protocol Event: ManagedEntity {
+@objc public protocol Event: ManagedEntity {
     var relatedEntityName: String? { get }
     var relatedEntityId: String?   { get }
     

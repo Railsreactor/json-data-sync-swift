@@ -42,7 +42,7 @@ public extension ManagedEntity {
     }
     
     public static var resourceName: String  {
-        return entityName.lowercaseString + "s"
+        return entityName.pluralize().lowercaseString
     }
     
     public var resourceName: String        {
