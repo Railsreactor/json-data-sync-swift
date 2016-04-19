@@ -56,9 +56,8 @@ public class EntityService: CoreService {
                 let start = NSDate()
                 DDLogDebug("Will Insert \(input.count) Entities of type: \(String(self.entityType))" )
 
-                var newItems: [ManagedEntity]? = nil
-                newItems = try self.entityGatway().insertEnities(input, isFirstInsert: false)
-                DDLogDebug("Did Insert \(newItems?.count ?? 0) Entities of type: \(String(self.entityType)) Time Spent: \(abs(start.timeIntervalSinceNow))" )
+                let newItems: [ManagedEntity] = try self.entityGatway().insertEnities(input, isFirstInsert: false) ?? []
+                DDLogDebug("Did Insert \(newItems.count ?? 0) Entities of type: \(String(self.entityType)) Time Spent: \(abs(start.timeIntervalSinceNow))" )
             }
         }
     }
