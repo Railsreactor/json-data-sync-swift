@@ -238,6 +238,9 @@ public class GenericEntityGateway: NSObject {
     
     public func mapEntityRelations(inputEntity: ManagedEntity, managedObject: CDManagedEntity, exceptRelationship inExceptRelationship: NSRelationshipDescription?, userInfo:[String : AnyObject] = [:] ) throws {
         
+        if let isLoaded = inputEntity.isLoaded?.boolValue where !isLoaded {
+            return
+        }
         
         var key : String?
         let managedNSObject = managedObject as NSObject

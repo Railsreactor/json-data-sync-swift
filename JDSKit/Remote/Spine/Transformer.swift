@@ -157,6 +157,8 @@ private struct DateTransformer: Transformer {
 	func formatter(attribute: DateAttribute) -> NSDateFormatter {
 		let formatter = NSDateFormatter()
 		formatter.dateFormat = attribute.format
+        formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+        formatter.timeZone = NSTimeZone(abbreviation: "GMT")
 		return formatter
 	}
 	

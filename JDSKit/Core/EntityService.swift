@@ -57,7 +57,7 @@ public class EntityService: CoreService {
                 DDLogDebug("Will Insert \(input.count) Entities of type: \(String(self.entityType))" )
 
                 let newItems: [ManagedEntity] = try self.entityGatway().insertEnities(input, isFirstInsert: false) ?? []
-                DDLogDebug("Did Insert \(newItems.count) Entities of type: \(String(self.entityType)) Time Spent: \(abs(start.timeIntervalSinceNow))" )
+                DDLogDebug("Did Insert \(newItems.count ?? 0) Entities of type: \(String(self.entityType)) Time Spent: \(abs(start.timeIntervalSinceNow))" )
             }
         }
     }
@@ -69,7 +69,7 @@ public class EntityService: CoreService {
                 
                 var predicates: [NSComparisonPredicate]? = nil
                 if updateDate != nil {
-                    predicates = [NSComparisonPredicate(format: "updated_at_gteq == %@", updateDate!.toSystemString())]
+                    predicates = [NSComparisonPredicate(format: "updated_at_gt == %@", updateDate!.toSystemString())]
                 }
                 DDLogDebug("Will download \(self.entityType) Delta From: \(updateDate ?? "nil")")                
                 return self.syncEntityInternal("", arguments: nil, remoteFilters: predicates, includeRelations: nil).always {

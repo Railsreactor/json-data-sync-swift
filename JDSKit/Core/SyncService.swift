@@ -21,13 +21,17 @@ private let EventKey = String(Event.self)
 
 public class AbstractSyncService: CoreService {
     
-    var liteSyncEnabled = false
+    public var liteSyncEnabled = false
     
     // *************************** Override *******************************
     // if you want to split some update info between different users or something...
     
     public func filterIDForEntityKey(key: String) -> String? {
         return nil
+    }
+    
+    public func shouldSyncEntityOfType(managedEntityKey: String, lastUpdateDate: NSDate?) -> Bool {
+        return true
     }
     
     // *************************************************************************
@@ -52,7 +56,7 @@ public class AbstractSyncService: CoreService {
 
     internal func checkForUpdates(eventSyncDate: NSDate) -> Promise<SyncInfo> {
         DDLogDebug("Checking for updates... \(eventSyncDate)")
-        let predicate = NSComparisonPredicate(format: "created_at_gteq == %@", eventSyncDate.toSystemString());
+        let predicate = NSComparisonPredicate(format: "created_at_gt == %@", eventSyncDate.toSystemString());
         return self.remoteManager.loadEntities(Event.self, filters: [predicate], include: nil, fields: liteSyncEnabled ? ["relatedEntityName", "relatedEntityId", "action"] : nil).thenInBGContext { (events: [Event]) -> SyncInfo in
             var itemsToSync = Set<String>()
             let requiredItems = Set(self.entitiesToSync())
@@ -106,6 +110,10 @@ public class AbstractSyncService: CoreService {
                 let filter = self.filterIDForEntityKey(entityKey)
                 let syncDate = try self.updateInfoGateway.updateInfoForKey(entityKey, filterID: filter)?.updateDate ?? ZeroDate
                 
+                if !self.shouldSyncEntityOfType(entityKey, lastUpdateDate: syncDate) {
+                    continue
+                }
+                
                 let syncPromise = service.syncEntityDelta(syncDate).thenInBGContext { _ -> NSDate in
                     let updateInfo: CDUpdateInfo = try self.updateInfoGateway.updateInfoForKey(entityKey, filterID: filter, createIfNeed: true)!
                     
@@ -143,7 +151,9 @@ public class AbstractSyncService: CoreService {
             self.lastSuccessSyncDate = self.lastSyncDate
             eventSyncInfo?.updateDate = self.lastSyncDate
         }.always (on: dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) {
-            self.localManager.saveSync()
+            self.runOnBackgroundContext { () -> Void in
+                self.localManager.saveSync()
+            }
         }
     }
     
