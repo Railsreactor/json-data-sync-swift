@@ -120,6 +120,9 @@ public class AbstractRegistryService: NSObject {
     
     public override init() {
         super.init()
+        if AbstractRegistryService.mainRegistryService == nil {
+            AbstractRegistryService.mainRegistryService = self
+        }
         performRepresentationsIndexation()
         performServiceIndexation()
     }

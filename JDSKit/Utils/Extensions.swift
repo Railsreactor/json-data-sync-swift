@@ -39,8 +39,6 @@ public extension UIViewController {
 
 public extension NSDate {
     
-    
-    
     public func toSystemString() -> String {
         let formatter = NSDateFormatter()
         formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")

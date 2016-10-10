@@ -1,10 +1,10 @@
 #import <Foundation/NSDictionary.h>
-#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLSession.h>
 #import <Foundation/NSURLRequest.h>
 #import <PromiseKit/AnyPromise.h>
 
 /**
- To import the `NSURLConnection` category:
+ To import the `NSURLSession` category:
 
     use_frameworks!
     pod "PromiseKit/Foundation"
@@ -44,7 +44,7 @@
 
  @see https://github.com/mxcl/OMGHTTPURLRQ
 */
-@interface NSURLConnection (PromiseKit)
+@interface NSURLSession (PromiseKit)
 
 /**
  Makes a GET request to the provided URL.

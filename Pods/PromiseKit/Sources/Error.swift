@@ -28,6 +28,9 @@ public enum Error: ErrorType {
      programming error. It is also invalid per Promises/A+.
     */
     case ReturnedSelf
+
+    /** `when()` was called with a concurrency of <= 0 */
+    case WhenConcurrentlyZero
 }
 
 public enum URLError: ErrorType {
@@ -75,6 +78,10 @@ public enum URLError: ErrorType {
 
 public enum JSONError: ErrorType {
     case UnexpectedRootNode(AnyObject)
+}
+
+public enum CastingError: ErrorType {
+    case CastingAnyPromiseFailed(Any.Type)
 }
 
 
@@ -202,7 +209,8 @@ extension NSError {
     }
 }
 
-func unconsume(error error: NSError, var reusingToken token: ErrorConsumptionToken? = nil) {
+func unconsume(error error: NSError, reusingToken t: ErrorConsumptionToken? = nil) {
+    var token = t
     if token != nil {
         objc_setAssociatedObject(error, &handle, token, .OBJC_ASSOCIATION_RETAIN)
     } else {

@@ -47,7 +47,6 @@ static inline NSMutableURLRequest *OMGMutableURLRequest() {
     [body appendData:[ln1 dataUsingEncoding:NSUTF8StringEncoding]];
     [body appendData:[ln2 dataUsingEncoding:NSUTF8StringEncoding]];
     [body appendData:payload];
-    [body appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
 }
 
 - (void)addFile:(NSData *)payload parameterName:(NSString *)name filename:(NSString *)filename contentType:(NSString *)contentType
@@ -71,8 +70,8 @@ static inline NSMutableURLRequest *OMGMutableURLRequest() {
 @implementation OMGHTTPURLRQ
 
 + (NSMutableURLRequest *)GET:(NSString *)urlString :(NSDictionary *)params error:(NSError **)error {
-    id queryString = OMGFormURLEncode(params);
-    if (queryString) urlString = [urlString stringByAppendingFormat:@"?%@", queryString];
+    NSString *queryString = OMGFormURLEncode(params);
+    if (queryString.length) urlString = [urlString stringByAppendingFormat:@"?%@", queryString];
 
     id url = [NSURL URLWithString:urlString];
     if (!url) {
@@ -162,6 +161,12 @@ static NSMutableURLRequest *OMGFormURLEncodedRequest(NSString *urlString, NSStri
 + (NSMutableURLRequest *)PUT:(NSString *)url JSON:(id)params error:(NSError **)error {
     NSMutableURLRequest *rq = [OMGHTTPURLRQ POST:url JSON:params error:error];
     rq.HTTPMethod = @"PUT";
+    return rq;
+}
+
++ (NSMutableURLRequest *)PATCH:(NSString *)url JSON:(id)params error:(NSError **)error {
+    NSMutableURLRequest *rq = [OMGHTTPURLRQ POST:url JSON:params error:error];
+    rq.HTTPMethod = @"PATCH";
     return rq;
 }
 

@@ -39,6 +39,15 @@ public class CoreService: NSObject {
         }
         return self.dynamicType.sharedLocalManager!
     }
+    
+    
+    public override init() {
+        super.init()
+        // Initialize managers if need
+        self.remoteManager
+        self.localManager
+    }
+
 
     
     // MARK: Helpers

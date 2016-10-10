@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "JDSKit"
-  s.version      = "1.1.1"
+  s.version      = "1.1.2"
   s.summary      = "JDS Kit aggregates a core functionality to sync and store data using spiked-JSON-API protocol :D"
   s.homepage     = "https://github.com/Railsreactor/json-data-sync-swift" 
   s.license      = "MIT"  
@@ -16,4 +16,6 @@ Pod::Spec.new do |s|
   s.dependency 'CocoaLumberjack/Swift', '~> 2.2.0'
   s.dependency 'PromiseKit', '~> 3.0.3'
   s.dependency 'SwiftyJSON', '~> 2.3.2'
+  s.pod_target_xcconfig = { 'SWIFT_OPTIMIZATION_LEVEL' => '-Onone', 'GCC_OPTIMIZATION_LEVEL' => '0' }
 end
+

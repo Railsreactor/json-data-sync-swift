@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C7975CC1DABF165005E82D9 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7975CB1DABF165005E82D9 /* Constants.swift */; };
 		1C81CB4B1C90553B00580BB6 /* JDSKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81CB4A1C90553B00580BB6 /* JDSKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1C8F33A31C9059470035C40D /* CoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F336A1C9059470035C40D /* CoreService.swift */; };
 		1C8F33AA1C9059470035C40D /* EntityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F33721C9059470035C40D /* EntityService.swift */; };
@@ -58,11 +59,12 @@
 		1CFB49201C91BFF4000A3029 /* Transformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB48FE1C91BFF4000A3029 /* Transformer.swift */; };
 		1CFB49211C91BFF4000A3029 /* JSONTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB49001C91BFF4000A3029 /* JSONTransformers.swift */; };
 		1CFB49221C91BFF4000A3029 /* UrlExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFB49011C91BFF4000A3029 /* UrlExtensions.swift */; };
-		3BAC5155902FCD660A1F7063 /* Pods_JDSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C98E2744282DF4AEC1149E2 /* Pods_JDSKit.framework */; };
+		E7833175062836DD7AB1CE92 /* Pods_JDSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22FBC60889DD79F1981E5AAD /* Pods_JDSKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0A965EA8170BBF59C664C173 /* Pods-JDSKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JDSKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-JDSKit/Pods-JDSKit.release.xcconfig"; sourceTree = "<group>"; };
+		0DEEE60CC2FA2D7BC5516C3F /* Pods-JDSKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JDSKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JDSKit/Pods-JDSKit.debug.xcconfig"; sourceTree = "<group>"; };
+		1C7975CB1DABF165005E82D9 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		1C81CB471C90553B00580BB6 /* JDSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JDSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C81CB4A1C90553B00580BB6 /* JDSKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDSKit.h; sourceTree = "<group>"; };
 		1C81CB4C1C90553B00580BB6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -80,7 +82,6 @@
 		1C8F33E41C90594E0035C40D /* NetworkSpinner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSpinner.swift; sourceTree = "<group>"; };
 		1C8F33E51C90594E0035C40D /* Synchronized.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Synchronized.swift; sourceTree = "<group>"; };
 		1C8F33FC1C905E1D0035C40D /* Containerable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Containerable.swift; sourceTree = "<group>"; };
-		1C98E2744282DF4AEC1149E2 /* Pods_JDSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JDSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDAA9F71CC24ED4006B3741 /* Pluralize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pluralize.swift; sourceTree = "<group>"; };
 		1CE60F1F1C90613700ACF75A /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		1CE60F211C9065C300ACF75A /* AttachmentService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentService.swift; sourceTree = "<group>"; };
@@ -117,7 +118,8 @@
 		1CFB48FE1C91BFF4000A3029 /* Transformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transformer.swift; sourceTree = "<group>"; };
 		1CFB49001C91BFF4000A3029 /* JSONTransformers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONTransformers.swift; sourceTree = "<group>"; };
 		1CFB49011C91BFF4000A3029 /* UrlExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UrlExtensions.swift; sourceTree = "<group>"; };
-		B014B7021470727913E69BD5 /* Pods-JDSKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JDSKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JDSKit/Pods-JDSKit.debug.xcconfig"; sourceTree = "<group>"; };
+		22FBC60889DD79F1981E5AAD /* Pods_JDSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JDSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF0E7D6433E75F6CAB7BCE19 /* Pods-JDSKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JDSKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-JDSKit/Pods-JDSKit.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,7 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3BAC5155902FCD660A1F7063 /* Pods_JDSKit.framework in Frameworks */,
+				E7833175062836DD7AB1CE92 /* Pods_JDSKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,8 +139,8 @@
 			children = (
 				1C81CB491C90553B00580BB6 /* JDSKit */,
 				1C81CB481C90553B00580BB6 /* Products */,
-				52E5B69C5FFD0D7BC1E14C20 /* Pods */,
-				F2B49A0126449A512990B856 /* Frameworks */,
+				4C57B1B84EA8840C771C837E /* Pods */,
+				F7FF9C888CD5CD758C40CFA2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -191,6 +193,7 @@
 		1C8F33DF1C90594E0035C40D /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				1C7975CB1DABF165005E82D9 /* Constants.swift */,
 				1CDAA9F71CC24ED4006B3741 /* Pluralize.swift */,
 				1C8F33E01C90594E0035C40D /* CoreError.swift */,
 				1C8F33E11C90594E0035C40D /* Extensions.swift */,
@@ -297,19 +300,19 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		52E5B69C5FFD0D7BC1E14C20 /* Pods */ = {
+		4C57B1B84EA8840C771C837E /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B014B7021470727913E69BD5 /* Pods-JDSKit.debug.xcconfig */,
-				0A965EA8170BBF59C664C173 /* Pods-JDSKit.release.xcconfig */,
+				0DEEE60CC2FA2D7BC5516C3F /* Pods-JDSKit.debug.xcconfig */,
+				DF0E7D6433E75F6CAB7BCE19 /* Pods-JDSKit.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		F2B49A0126449A512990B856 /* Frameworks */ = {
+		F7FF9C888CD5CD758C40CFA2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1C98E2744282DF4AEC1149E2 /* Pods_JDSKit.framework */,
+				22FBC60889DD79F1981E5AAD /* Pods_JDSKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -332,12 +335,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1C81CB4F1C90553B00580BB6 /* Build configuration list for PBXNativeTarget "JDSKit" */;
 			buildPhases = (
-				A5529C2AFE6567CF020B1538 /* Check Pods Manifest.lock */,
+				7D74A75EEE95F94F105F3D9A /* [CP] Check Pods Manifest.lock */,
 				1C81CB421C90553B00580BB6 /* Sources */,
 				1C81CB431C90553B00580BB6 /* Frameworks */,
 				1C81CB441C90553B00580BB6 /* Headers */,
 				1C81CB451C90553B00580BB6 /* Resources */,
-				557056A7906424922BD25345 /* Copy Pods Resources */,
+				9FCEA7F8ED5F41F5C8C2004E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -390,34 +393,34 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		557056A7906424922BD25345 /* Copy Pods Resources */ = {
+		7D74A75EEE95F94F105F3D9A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		9FCEA7F8ED5F41F5C8C2004E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-JDSKit/Pods-JDSKit-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A5529C2AFE6567CF020B1538 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -462,6 +465,7 @@
 				1C8F33F61C90594E0035C40D /* Logger.swift in Sources */,
 				1CFB49221C91BFF4000A3029 /* UrlExtensions.swift in Sources */,
 				1CFB491F1C91BFF4000A3029 /* Spine.swift in Sources */,
+				1C7975CC1DABF165005E82D9 /* Constants.swift in Sources */,
 				1CFB49211C91BFF4000A3029 /* JSONTransformers.swift in Sources */,
 				1CFB49171C91BFF4000A3029 /* Operation.swift in Sources */,
 				1CFB49161C91BFF4000A3029 /* Networking.swift in Sources */,
@@ -574,7 +578,7 @@
 		};
 		1C81CB501C90553B00580BB6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B014B7021470727913E69BD5 /* Pods-JDSKit.debug.xcconfig */;
+			baseConfigurationReference = 0DEEE60CC2FA2D7BC5516C3F /* Pods-JDSKit.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
@@ -593,7 +597,7 @@
 		};
 		1C81CB511C90553B00580BB6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0A965EA8170BBF59C664C173 /* Pods-JDSKit.release.xcconfig */;
+			baseConfigurationReference = DF0E7D6433E75F6CAB7BCE19 /* Pods-JDSKit.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
