@@ -56,12 +56,12 @@ public class JSONAPIRouter: Router {
 	public init() { }
 	
 	public func URLForResourceType(type: ResourceType) -> NSURL {
-		return baseURL.URLByAppendingPathComponent(type)
+		return baseURL.URLByAppendingPathComponent(type)!
 	}
 	
 	public func URLForRelationship<T: Resource>(relationship: Relationship, ofResource resource: T) -> NSURL {
 		let resourceURL = resource.URL ?? URLForResourceType(resource.dynamicType.resourceType()).URLByAppendingPathComponent("/\(resource.id!)")
-		return resourceURL.URLByAppendingPathComponent("/links/\(relationship.serializedName)")
+		return resourceURL!.URLByAppendingPathComponent("/links/\(relationship.serializedName)")!
 	}
 
 	public func URLForQuery<T: Resource>(query: Query<T>) -> NSURL {

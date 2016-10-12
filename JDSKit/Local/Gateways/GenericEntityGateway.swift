@@ -104,8 +104,7 @@ public class GenericEntityGateway: NSObject {
         fetchRequest.fetchLimit = 0
         fetchRequest.predicate = predicate
         
-        var error: NSError? = nil
-        return context.countForFetchRequest(fetchRequest, error: &error)
+        return (try? context.countForFetchRequest(fetchRequest)) ?? 0
     }
     
     //MARK: - Delete

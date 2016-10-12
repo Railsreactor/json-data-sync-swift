@@ -302,14 +302,9 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         fetchRequest.fetchLimit = 1
         fetchRequest.predicate = predicate
         
-        var error: NSError? = nil
         var entity: NSManagedObject? = nil
-        if context.countForFetchRequest(fetchRequest, error: &error) > 0 {
+        if try context.countForFetchRequest(fetchRequest) > 0 {
             entity = try context.executeFetchRequest(fetchRequest).last as? NSManagedObject
-        } else {
-            if let error = error {
-                throw error
-            }
         }
         return entity
     }
@@ -321,14 +316,10 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         
         fetchRequest.predicate = predicate
         fetchRequest.sortDescriptors = sortDescriptors
-        var error: NSError? = nil
+        
         var entities: [CDManagedEntity] = []
-        if context.countForFetchRequest(fetchRequest, error: &error) > 0 {
+        if try context.countForFetchRequest(fetchRequest) > 0 {
             entities = try context.executeFetchRequest(fetchRequest) as! [CDManagedEntity]
-        } else {
-            if let error = error {
-                throw error
-            }
         }
         return entities
     }
@@ -337,7 +328,7 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         let context = contextForCurrentThread()
         let fetchRequest = generateFetchRequestForEntity(ofType, context: context)
     
-        let count = context.countForFetchRequest(fetchRequest, error: nil)
+        let count = (try? context.countForFetchRequest(fetchRequest)) ?? 0
         
         if(count == NSNotFound) {
             return 0

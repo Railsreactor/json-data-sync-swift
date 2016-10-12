@@ -145,7 +145,7 @@ private struct URLTransformer: Transformer {
 	}
 	
 	func serialize(value: NSURL, attribute: URLAttribute) -> AnyObject {
-		return value.absoluteString
+		return value.absoluteString!
 	}
 }
 

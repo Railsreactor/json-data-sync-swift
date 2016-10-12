@@ -25,19 +25,19 @@ PODS:
     - PromiseKit/CorePromise
   - PromiseKit/UIKit (3.5.1):
     - PromiseKit/CorePromise
-  - SwiftyJSON (2.3.3)
+  - SwiftyJSON (2.4.0)
 
 DEPENDENCIES:
   - CocoaLumberjack/Swift (~> 2.2.0)
-  - PromiseKit (~> 3.5.1)
-  - SwiftyJSON (~> 2.3.2)
+  - PromiseKit (~> 3.5)
+  - SwiftyJSON (~> 2.4)
 
 SPEC CHECKSUMS:
   CocoaLumberjack: 17fe8581f84914d5d7e6360f7c70022b173c3ae0
   OMGHTTPURLRQ: 1e54807cb7d5dbb506926e53498e1e9ac5720c79
   PromiseKit: 99ea973444a4bff6c38ffb97fa1bb175e619bcf0
-  SwiftyJSON: 0fd0a115a3c0c09b277d2ab801df154902b942c3
+  SwiftyJSON: 96918c1bf505efa50c4f72957018dd3452090c9c
 
-PODFILE CHECKSUM: fe84124864bfd6602ac3631f40b022b19b770265
+PODFILE CHECKSUM: 2f03cb609feadacc0f7e200d343b4974aea2e9b6
 
-COCOAPODS: 1.1.0.rc.1
+COCOAPODS: 1.1.0.rc.3
