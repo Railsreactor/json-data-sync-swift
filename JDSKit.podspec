@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "JDSKit"
-  s.version      = "1.2.1"
+  s.version      = "1.2.0"
   s.summary      = "JDS Kit aggregates a core functionality to sync and store data using spiked-JSON-API protocol :D"
   s.homepage     = "https://github.com/Railsreactor/json-data-sync-swift" 
   s.license      = "MIT"  
