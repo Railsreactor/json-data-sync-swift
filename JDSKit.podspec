@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   s.platform     = :ios
   s.ios.deployment_target = '8.0'
-  s.source       = { :git => "https://github.com/Railsreactor/json-data-sync-swift.git", :tag => "1.1.6" }
+  s.source       = { :git => "https://github.com/Railsreactor/json-data-sync-swift.git", :tag => "1.2.1" }
   s.source_files  = "JDSKit", "JDSKit/**/*.{sh,h,m,swift}"    
   s.preserve_paths = "JDSKit/InitialModel.xcdatamodeld"
   s.resource = "JDSKit/InitialModel.xcdatamodeld"
