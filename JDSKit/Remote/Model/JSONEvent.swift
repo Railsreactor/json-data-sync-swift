@@ -23,9 +23,7 @@ public class JSONEvent: JSONManagedEntity, Event {
     var _action: String?
     public var action: String {
         get {
-            var normalizedName = _relatedEntityName.lowercaseString;
-            
-            if let nativeString: String = _action where nativeString.containsString("\(normalizedName).deleted") {
+            if let normalizedName = _relatedEntityName?.lowercaseString, let nativeString: String = _action where nativeString.containsString("\(normalizedName).deleted") {
                 return Action.Deleted
             }
             return Action.Updated
