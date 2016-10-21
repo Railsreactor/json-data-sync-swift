@@ -151,9 +151,7 @@ public class AbstractSyncService: CoreService {
             self.lastSuccessSyncDate = self.lastSyncDate
             eventSyncInfo?.updateDate = self.lastSyncDate
         }.always (on: dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) {
-            self.runOnBackgroundContext { () -> Void in
-                self.localManager.saveSync()
-            }
+            self.localManager.saveSync()
         }
     }
     
