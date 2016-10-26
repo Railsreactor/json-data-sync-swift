@@ -33,7 +33,7 @@ class DeserializeOperation: NSOperation {
 	private var extractedLinks: [String: NSURL]?
 	private var extractedJSONAPI: [String: AnyObject]?
 	
-	private var resourcePool: [Resource] = []
+    private var resourcePool: [String: Resource] = [:]
 	
 	
 	// MARK: Initializers
@@ -50,9 +50,8 @@ class DeserializeOperation: NSOperation {
 		// We can only map onto resources that are not loaded yet
 		for resource in targets {
 			assert(resource.isLoaded == false, "Cannot map onto loaded resource \(resource)")
+            cacheResource(&resourcePool, resource: resource)
 		}
-		
-		resourcePool += targets
 	}
 	
 	
@@ -82,11 +81,11 @@ class DeserializeOperation: NSOperation {
 		// Extract resources
 		do {
 			if let data = self.data["data"].array {
-				for (index, representation) in data.enumerate() {
-					try extractedPrimaryResources.append(deserializeSingleRepresentation(representation, mappingTargetIndex: index))
+				for (_, representation) in data.enumerate() {
+                    try extractedPrimaryResources.append(deserializeSingleRepresentation(representation))
 				}
 			} else if let _ = self.data["data"].dictionary {
-				try extractedPrimaryResources.append(deserializeSingleRepresentation(self.data["data"], mappingTargetIndex: resourcePool.startIndex))
+                try extractedPrimaryResources.append(deserializeSingleRepresentation(self.data["data"]))
 			}
 
 			if let data = self.data["included"].array {
@@ -164,7 +163,7 @@ class DeserializeOperation: NSOperation {
 	
 	:returns: A Resource object with values mapped from the representation.
 	*/
-	private func deserializeSingleRepresentation(representation: JSON, mappingTargetIndex: Int? = nil) throws -> Resource {
+	private func deserializeSingleRepresentation(representation: JSON) throws -> Resource {
 		guard representation.dictionary != nil else {
 			throw NSError(domain: SpineSerializingErrorDomain, code: SpineErrorCodes.InvalidResourceStructure, userInfo: nil)
 		}
@@ -178,7 +177,7 @@ class DeserializeOperation: NSOperation {
 		}
 		
 		// Dispense a resource
-		let resource = resourceFactory.dispense(type, id: id, pool: &resourcePool, index: mappingTargetIndex)
+		let resource = resourceFactory.dispense(type, id: id, pool: &resourcePool)
 		
 		// Extract data
 		resource.id = id
@@ -346,13 +345,13 @@ class DeserializeOperation: NSOperation {
 	Resolves the relations of the primary resources.
 	*/
 	private func resolveRelations() {
-		for resource in resourcePool {
+        for (_,resource) in resourcePool {
 			for case let field as ToManyRelationship in resource.fields() {
 				if let linkedResource = resource.valueForField(field.name) as? LinkedResourceCollection {
 					
 					// We can only resolve if the linkage is known
 					if let linkage = linkedResource.linkage {
-						var localPool = [Resource]()
+                        var localPool = [String: Resource]()
                         var usedFaults = false
 						let targetResources = linkage.flatMap { link -> [Resource] in
                             
@@ -360,12 +359,12 @@ class DeserializeOperation: NSOperation {
                                 return [Resource]()
                             }
                             
-                            let filtered = self.resourcePool.filter { $0.resourceType() == link.type && $0.id == link.id }
-                            if !filtered.isEmpty {
-                                return filtered
+                            let cached = findResource(localPool, type: link.type, id: link.id)
+                            if cached != nil {
+                                return [cached!]
                             }
                             
-                            let fault = self.resourceFactory.dispense(link.type, id: link.id, pool: &localPool, index: nil)
+                            let fault = self.resourceFactory.dispense(link.type, id: link.id, pool: &localPool)
                             usedFaults = true
 							return [fault]
 						}

@@ -46,7 +46,15 @@ public class Resource: NSObject, NSCoding {
 		fatalError("Override resourceType() in a subclass.")
 	}
     
-	final public func resourceType() -> ResourceType { return self.dynamicType.resourceType() }
+    private var _internalResourceType: ResourceType?
+    
+    final public func resourceType() -> ResourceType {
+        if _internalResourceType == nil {
+            _internalResourceType = self.dynamicType.resourceType()
+        }
+        return _internalResourceType!
+    }
+
 	
 	public class func fields() -> [Field] { return [] }
 	final public func fields() -> [Field] { return self.dynamicType.fields() }

@@ -398,8 +398,14 @@ public extension Spine {
 // MARK: - Utilities
 
 /// Return the first resource of `domain`, that is of the resource type `type` and has id `id`.
-func findResource<C: CollectionType where C.Generator.Element: Resource>(domain: C, type: ResourceType, id: String) -> C.Generator.Element? {
-	return domain.filter { $0.resourceType() == type && $0.id == id }.first
+func findResource(keyValueCache: [String : Resource], type: ResourceType, id: String) -> Resource? {
+    return keyValueCache[String(type) + ":$" + id]
+}
+
+func cacheResource(inout keyValueCache: [String : Resource], resource: Resource) {
+    if let id = resource.id {
+        keyValueCache[String(resource.resourceType()) + ":$" + id] = resource
+    }
 }
 
 
