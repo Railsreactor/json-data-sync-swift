@@ -159,7 +159,11 @@ public class JSONAPIRouter: Router {
             }
         }
         
-		return NSURLQueryItem(name: format, value: "\(filter.rightExpression.constantValue)")
+        if let value = filter.rightExpression.constantValue {
+            return NSURLQueryItem(name: format, value: "\(value)")
+        } else {
+            fatalError("The built in router only supports Query filter expressions of type 'equalTo' with both values")
+        }
 	}
 
 	/**
