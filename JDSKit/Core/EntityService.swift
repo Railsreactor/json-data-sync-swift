@@ -106,7 +106,7 @@ public class EntityService: CoreService {
             if self.trySync() {
                 return self.syncEntityInternal(query, arguments: arguments, remoteFilters: remoteFilters, includeRelations: includeRelations).thenInBackground { () -> Void in
                     if !skipSave {
-                        self.localManager.saveSync()
+                        self.localManager.saveSyncSafe()
                     }
                 }.always {
                     self.endSync()
@@ -128,7 +128,7 @@ public class EntityService: CoreService {
                 if let entity = entities.first {
                     try self.entityGatway()?.insertEntity(entity)
                 }
-                self.localManager.saveSync()
+                self.localManager.saveSyncSafe()
             }
         }
     }
@@ -138,7 +138,7 @@ public class EntityService: CoreService {
         return self.remoteManager.saveEntity(entity).thenInBackground { (remoteEntity) -> Promise<Container> in
             return self.runOnBackgroundContext { () -> Container in
                 let result = try self.entityGatway()?.insertEntity(remoteEntity) ?? remoteEntity
-                self.localManager.saveSync()
+                self.localManager.saveBackgroundUnsafe()
                 return result.objectContainer()
             }
         }.then { (container) -> ManagedEntity in
@@ -163,7 +163,7 @@ public class EntityService: CoreService {
         }).thenInBackground({ () -> Void in
             return self.runOnBackgroundContext { () -> Void in
                 try self.entityGatway()?.deleteEntity(countainer.containedObject()!)
-                self.localManager.saveSync()
+                self.localManager.saveBackgroundUnsafe()
             }
         })
     }
@@ -183,7 +183,7 @@ public class EntityService: CoreService {
         return self.remoteManager.saveEntity(patch).thenInBackground { (remoteEntity) -> Promise<Container> in
             return self.runOnBackgroundContext { () -> Container in
                 let result = try self.entityGatway()?.insertEntity(remoteEntity) ?? remoteEntity
-                self.localManager.saveSync()
+                self.localManager.saveBackgroundUnsafe()
                 return result.objectContainer()
             }
         }.then { (container) -> ManagedEntity in

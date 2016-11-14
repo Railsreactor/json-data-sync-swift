@@ -16,8 +16,6 @@ public protocol ManagedObjectContextProvider: class {
     
     func contextForCurrentThread() -> NSManagedObjectContext
     
-    func saveContext(context: NSManagedObjectContext)
-    
     func generateFetchRequestForEntity(enitityType : NSManagedObject.Type, context: NSManagedObjectContext) -> NSFetchRequest
     
     func createEntity(type: NSManagedObject.Type, temp: Bool) -> NSManagedObject

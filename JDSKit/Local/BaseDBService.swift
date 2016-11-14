@@ -185,56 +185,42 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         do {
             try context.save()
         } catch let error as NSError {
-            print("Failed to save to data store: \(error.localizedDescription)")
+            DDLogError("Failed to save to data store: \(error.localizedDescription)")
             if let detailedErrors = error.userInfo[NSDetailedErrorsKey] as? [NSError] {
                 for detailedError in detailedErrors {
-                    print("DetailedError: \(detailedError.userInfo)")
+                    DDLogError("DetailedError: \(detailedError.userInfo)")
                 }
             }
             abort();
         }
     }
     
-    public func saveContextSync(context: NSManagedObjectContext) {
+    public func saveContextSyncSafe(context: NSManagedObjectContext) {
         context.performBlockAndWait { () -> Void in
             self.saveUnsafe(context)
         }
     }
     
-    public func saveContext(context: NSManagedObjectContext) {
+    public func saveContextSafe(context: NSManagedObjectContext) {
         context.performBlock { () -> Void in
             self.saveUnsafe(context)
         }
     }
     
-    public func saveSync() {
-        self.saveContextSync(self.contextForCurrentThread())
+    public func saveSyncSafe() {
+        self.saveContextSyncSafe(self.backgroundManagedObjectContext)
     }
     
-    public func save() {
-        self.backgroundManagedObjectContext.performBlock { () -> Void in
-            self.saveUnsafe(self.backgroundManagedObjectContext)
-            self.saveContext(self.mainUIManagedObjectContext)
-        }
-    }
-    
-    //MARK: - Entities
-    public func contextForCurrentThread() -> NSManagedObjectContext {
-        let context: NSManagedObjectContext = NSThread.isMainThread() ? mainUIManagedObjectContext : backgroundManagedObjectContext
-        return context
+    public func saveBackgroundUnsafe() {
+        self.saveUnsafe(self.backgroundManagedObjectContext)
     }
     
     public func performBlockOnBackgroundContext(block: () -> Void) {
-        if NSThread.isMainThread() {
-            abort()
-        }
         backgroundManagedObjectContext.performBlock(block)
     }
     
     public func performPromiseOnBackgroundContext<T>(block: () throws -> T) -> Promise<T> {
-        
         return Promise<T> { fulfill, reject in
-            
             self.performBlockOnBackgroundContext({ () -> () in
                 do {
                     fulfill (try block())
@@ -244,19 +230,16 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
             })
         }
     }
-
-    //MARK: - Reset
-    public func resetUIContext() {
-        self.mainUIManagedObjectContext.reset()
-    }
-    
-    public func resetMainBackgroundContext() {
-        self.backgroundManagedObjectContext.reset()
-    }
     
     //MARK: -
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    //MARK: - Entities
+    public func contextForCurrentThread() -> NSManagedObjectContext {
+        let context: NSManagedObjectContext = NSThread.isMainThread() ? mainUIManagedObjectContext : backgroundManagedObjectContext
+        return context
     }
     
     public func fetchEntity(managedObjectID: NSManagedObjectID) throws -> NSManagedObject? {
