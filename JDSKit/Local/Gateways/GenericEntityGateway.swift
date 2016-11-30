@@ -126,6 +126,7 @@ open class GenericEntityGateway: NSObject {
         }
     }
     
+    @discardableResult
     open func insertEntity<T: ManagedEntity>(_ entity: T, mergeWith: T?=nil, isFirstInsert: Bool = false, userInfo:[String : AnyObject] = [:]) throws -> T {
         
         if type(of: entity).entityName != self.managedObjectType.entityName {

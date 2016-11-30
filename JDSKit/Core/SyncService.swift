@@ -9,7 +9,7 @@
 import Foundation
 import PromiseKit
 import CocoaLumberjack
-import When
+//import When
 
 public enum SyncError: Error {
     case checkForUpdates(Date)
@@ -55,7 +55,7 @@ open class AbstractSyncService: CoreService {
         }
     }
 
-    internal func checkForUpdates(_ eventSyncDate: Date) -> PromiseKit.Promise<SyncInfo> {
+    internal func checkForUpdates(_ eventSyncDate: Date) -> Promise<SyncInfo> {
         DDLogDebug("Checking for updates... \(eventSyncDate)")
         let predicate = NSComparisonPredicate(format: "created_at_gt == %@", eventSyncDate.toSystemString());
         return self.remoteManager.loadEntities(Event.self, filters: [predicate], include: nil, fields: liteSyncEnabled ? ["relatedEntityName", "relatedEntityId", "action"] : nil).thenInBGContext { (events: [Event]) -> SyncInfo in
@@ -87,24 +87,24 @@ open class AbstractSyncService: CoreService {
         }
     }
     
-    internal func syncInternal() -> When.Promise<Void> {
+    internal func syncInternal() -> Promise<Void> {
         return self.runOnBackgroundContext { () -> SyncInfo in
             
             if let eventSyncInfo = try self.updateInfoGateway.updateInfoForKey(EventKey, filterID: self.filterIDForEntityKey(EventKey)) {
-                throw SyncError.CheckForUpdates(eventSyncInfo.updateDate!)
+                throw SyncError.checkForUpdates(eventSyncInfo.updateDate!)
             } else {
                 DDLogDebug("Going to sync at first time...")
                 return self.entitiesToSync()
             }
-        }.recover(on: dispatch_get_global_queue(Int(QOS_CLASS_DEFAULT.rawValue), 0)) { error -> PromiseKit.Promise<SyncInfo> in
+        }.recover(on: .global()) { error -> Promise<SyncInfo> in
             switch error {
-            case SyncError.CheckForUpdates(let syncInfo):
+            case SyncError.checkForUpdates(let syncInfo):
                 return self.checkForUpdates(syncInfo)
             default:
                 throw error
             }
-        }.thenInBGContext { updateEntitiesKeys -> [PromiseKit.Promise<NSDate>] in
-            var syncPromises = [Promise<NSDate>]()
+        }.thenInBGContext { updateEntitiesKeys -> [Promise<Date>] in
+            var syncPromises = [Promise<Date>]()
 
             for entityKey in updateEntitiesKeys {
                 let service = AbstractRegistryService.mainRegistryService.entityServiceByKey(entityKey)
@@ -115,7 +115,7 @@ open class AbstractSyncService: CoreService {
                     continue
                 }
                 
-                let syncPromise = service.syncEntityDelta(syncDate).thenInBGContext { _ -> NSDate in
+                let syncPromise = service.syncEntityDelta(syncDate).thenInBGContext { _ -> Date in
                     let updateInfo: CDUpdateInfo = try self.updateInfoGateway.updateInfoForKey(entityKey, filterID: filter, createIfNeed: true)!
                     
                     var finalSyncDate = ZeroDate
@@ -141,7 +141,7 @@ open class AbstractSyncService: CoreService {
                     var latestDate = ZeroDate
                     
                     dates.forEach {
-                        if latestDate.compare($0) == NSComparisonResult.OrderedAscending {
+                        if latestDate.compare($0) == ComparisonResult.orderedAscending {
                             latestDate = $0
                         }
                     }
@@ -151,12 +151,14 @@ open class AbstractSyncService: CoreService {
             
             self.lastSuccessSyncDate = self.lastSyncDate
             eventSyncInfo?.updateDate = self.lastSyncDate
-        }.always (on: dispatch_get_global_queue(Int(QOS_CLASS_DEFAULT.rawValue), 0)) {
-            self.localManager.saveSyncSafe()
         }
+        
+//        }.always (on: dispatch_get_global_queue(Int(QOS_CLASS_DEFAULT.rawValue), 0)) {
+//            self.localManager.saveSyncSafe()
+//        }
     }
     
-    open func sync() -> PromiseKit.Promise<Void> {
+    open func sync() -> Promise<Void> {
         return DispatchQueue.global().promise {}.then(on: .global()) { _ in
             if self.trySync() {
                 return self.syncInternal().always {_ in

@@ -59,7 +59,7 @@ open class EntityService: CoreService {
                 DDLogDebug("Will Insert \(input.count) Entities of type: \(String(describing: self.entityType))" )
                 if let entityGateway = self.entityGatway() {
                     let newItems: [ManagedEntity] = try entityGateway.insertEnities(input, isFirstInsert: false) ?? []
-                    DDLogDebug("Did Insert \(newItems.count ?? 0) Entities of type: \(String(describing: self.entityType)) Time Spent: \(abs(start.timeIntervalSinceNow))" )
+                    DDLogDebug("Did Insert \(newItems.count) Entities of type: \(String(describing: self.entityType)) Time Spent: \(abs(start.timeIntervalSinceNow))" )
                 } else {
                     DDLogDebug("No gateway for Entities of type: \(String(describing: self.entityType)). Skipped. Time Spent: \(abs(start.timeIntervalSinceNow))" )
                 }
@@ -90,12 +90,12 @@ open class EntityService: CoreService {
     
     open func syncEntity(_ query: String = "", arguments: [AnyObject]? = nil, remoteFilters: [NSComparisonPredicate]?=nil, includeRelations: [String]?=nil, includeEntities: [ManagedEntity.Type]?=nil, skipSave: Bool = false) -> Promise<Void> {
         
-        let promiseChain = Promise<Void>(value:())
+        var promiseChain = Promise<Void>(value:())
         
         if includeEntities != nil {
             for type in includeEntities! {
                 let includeService = AbstractRegistryService.mainRegistryService.entityService(type)
-                promiseChain.then(on: .global()) {
+                promiseChain = promiseChain.then(on: .global()) {
                     return includeService.syncEntity("", arguments: nil, remoteFilters: nil, includeRelations: nil, includeEntities: nil, skipSave: true)
                 }
             }
@@ -152,7 +152,7 @@ open class EntityService: CoreService {
         entity.pendingDelete = true
         let countainer = entity.objectContainer()
         
-        return self.remoteManager.deleteEntity(entity).recover(execute:{ (error) -> Void in
+        return self.remoteManager.deleteEntity(entity).recover { (error) -> Void in
             switch error {
             case CoreError.serviceError(_, _):
                 return
@@ -160,12 +160,10 @@ open class EntityService: CoreService {
                 entity.pendingDelete = nil
                 throw error
             }
-        }).then(on: .global())(execute:{ () -> Void in
-            return self.runOnBackgroundContext { () -> Void in
-                try self.entityGatway()?.deleteEntity(countainer.containedObject()!)
-                self.localManager.saveBackgroundUnsafe()
-            }
-        })
+        }.thenInBGContext { () -> Void in
+            try self.entityGatway()?.deleteEntity(countainer.containedObject()!)
+            self.localManager.saveBackgroundUnsafe()
+        }
     }
     
     fileprivate func createBlankEntity() -> ManagedEntity {
@@ -180,12 +178,10 @@ open class EntityService: CoreService {
 
         applyPatch(patch)
         
-        return self.remoteManager.saveEntity(patch).then(on: .global()) { (remoteEntity) -> Promise<Container> in
-            return self.runOnBackgroundContext { () -> Container in
-                let result = try self.entityGatway()?.insertEntity(remoteEntity) ?? remoteEntity
-                self.localManager.saveBackgroundUnsafe()
-                return result.objectContainer()
-            }
+        return self.remoteManager.saveEntity(patch).thenInBGContext { (remoteEntity) -> Container in
+            let result = try self.entityGatway()?.insertEntity(remoteEntity) ?? remoteEntity
+            self.localManager.saveBackgroundUnsafe()
+            return result.objectContainer()
         }.then { (container) -> ManagedEntity in
             let entity = try (container.containedObject()! as ManagedEntity)
             entity.refresh()
