@@ -11,20 +11,20 @@ import PromiseKit
 import CocoaLumberjack
 
 
-public typealias RemoteResultBlock = (result: AnyObject?, error: ErrorType?) -> (Void)
-public typealias AuthCheckBlock = (completion: RemoteResultBlock) -> (Void)
+public typealias RemoteResultBlock = (_ result: Any?, _ error: Error?) -> (Void)
+public typealias AuthCheckBlock = (_ completion: RemoteResultBlock) -> (Void)
 
 
 public enum RemoteError: Int {
-    case SerializationFailure           = -2
-    case Unknown                        = -1
+    case serializationFailure           = -2
+    case unknown                        = -1
     
-    case AuthFailed                     = 401
-    case NoAccess                       = 403
-    case NotFound                       = 404
-    case ValidationFailure              = 422
-    case ServerException                = 500
-    case ServerNotResponding            = 502
+    case authFailed                     = 401
+    case noAccess                       = 403
+    case notFound                       = 404
+    case validationFailure              = 422
+    case serverException                = 500
+    case serverNotResponding            = 502
 }
 
 
@@ -35,40 +35,40 @@ public struct BaseAPI {
     static let Auth = "oauth/token"
 }
 
-public class BaseJSONAPIManager: NSObject {
+open class BaseJSONAPIManager: NSObject {
 
     let baseURLString   : String
     let clientToken     : String
     let clientSecret    : String
     
-    public let spine : Spine;
+    open let spine : Spine;
     
-    public var sessionInfo : JSONAPISession? {
+    open var sessionInfo : JSONAPISession? {
         didSet {
             didRefreshSessionInfo()
         }
     }
 
-    public let authLock = NSRecursiveLock()
+    open let authLock = NSRecursiveLock()
     
     public init(urlString: String, clientToken token: String, clientSecret secret: String) {
         baseURLString = urlString
-        spine = Spine(baseURL: NSURL(string: urlString)!)
+        spine = Spine(baseURL: URL(string: urlString)!)
         clientToken = token
         clientSecret = secret
         
         super.init()
         
-        Spine.setLogLevel(.Debug, forDomain: .Networking)
+        Spine.setLogLevel(.debug, forDomain: .networking)
         
         self.registerClasses()
     }
     
     // MARK: Entities Mapping
     
-    public var jsonClassByEntityName: [String : JSONManagedEntity.Type] = [:]
+    open var jsonClassByEntityName: [String : JSONManagedEntity.Type] = [:]
     
-    public func registerClasses() {
+    open func registerClasses() {
         
         spine.registerTransformer(Base64Transformer())
         spine.registerTransformer(NumberTransformer())
@@ -78,21 +78,21 @@ public class BaseJSONAPIManager: NSObject {
         }
     }
     
-    public func asJsonClass(type: ManagedEntity.Type) -> JSONManagedEntity.Type {
+    open func asJsonClass(_ type: ManagedEntity.Type) -> JSONManagedEntity.Type {
         return type.extractRepresentation(JSONManagedEntity.self)
     }
     
-    public func asJsonEntity(entity: ManagedEntity) -> JSONManagedEntity {
+    open func asJsonEntity(_ entity: ManagedEntity) -> JSONManagedEntity {
         
         let result = (ExtractRep(entity.entityType, subclassOf: JSONManagedEntity.self) as! JSONManagedEntity.Type).init()
         
         let entityObj = entity as! NSObject
         
-        result.setValue(entityObj.valueForKey("id"), forField: "id")
-        for field in result.dynamicType.fields() {
+        result.setValue(entityObj.value(forKey: "id") as AnyObject?, forField: "id")
+        for field in type(of: result).fields() {
             if !field.skip {
                 let name = field.mappedName
-                result.setValue(entityObj.valueForKey(name), forField: name)
+                result.setValue(entityObj.value(forKey: name) as AnyObject?, forField: name)
             }
         }
         
@@ -102,7 +102,7 @@ public class BaseJSONAPIManager: NSObject {
 
     // MARK: Base Operations
     
-    private func didRefreshSessionInfo() {
+    fileprivate func didRefreshSessionInfo() {
         let networkClient = spine.networkClient as! HTTPClient
         if let session = sessionInfo?.sessionToken {
             networkClient.setHeader("Authorization", to: "Bearer \(session)")
@@ -111,34 +111,34 @@ public class BaseJSONAPIManager: NSObject {
         }
     }
     
-    public func generateError(code: Int, cause: NSError?, desc: String? = nil) -> ErrorType {
+    open func generateError(_ code: Int, cause: NSError?, desc: String? = nil) -> Error {
         
-        var wrappedError: ErrorType?
+        var wrappedError: Error?
         
         if cause?.domain == NSURLErrorDomain {
-            wrappedError = CoreError.ConnectionProblem(description: "Seems there are some problems with connection", cause: cause)
+            wrappedError = CoreError.connectionProblem(description: "Seems there are some problems with connection", cause: cause)
         } else {
             switch code {
-            case RemoteError.AuthFailed.rawValue:
-                wrappedError = CoreError.WrongCredentials
-            case RemoteError.NoAccess.rawValue, RemoteError.NotFound.rawValue:
-                wrappedError = CoreError.ServiceError(description: desc ?? "You have no access to this feature.", cause: cause)
-            case RemoteError.ValidationFailure.rawValue:
+            case RemoteError.authFailed.rawValue:
+                wrappedError = CoreError.wrongCredentials
+            case RemoteError.noAccess.rawValue, RemoteError.notFound.rawValue:
+                wrappedError = CoreError.serviceError(description: desc ?? "You have no access to this feature.", cause: cause)
+            case RemoteError.validationFailure.rawValue:
                 let apiErrors = cause?.userInfo[SNAPIErrorsKey] as? [NSError]
-                wrappedError = CoreError.ValidationError(apiErrors: apiErrors ?? [NSError]())
-            case RemoteError.ServerNotResponding.rawValue:
-                wrappedError = CoreError.ServiceError(description: "Server is not available at this time. Please try again later.", cause: cause)
-            case RemoteError.ServerException.rawValue:
+                wrappedError = CoreError.validationError(apiErrors: apiErrors ?? [NSError]())
+            case RemoteError.serverNotResponding.rawValue:
+                wrappedError = CoreError.serviceError(description: "Server is not available at this time. Please try again later.", cause: cause)
+            case RemoteError.serverException.rawValue:
                 fallthrough
             default:
-                wrappedError = CoreError.ServiceError(description: desc ?? "Server cannot process request. Please try again later or provide steps to reproduce this issue to the development team.", cause: cause)
+                wrappedError = CoreError.serviceError(description: desc ?? "Server cannot process request. Please try again later or provide steps to reproduce this issue to the development team.", cause: cause)
             }
         }
         
         return wrappedError!
     }
     
-    public func findAndExtractErrors(userInfo: [NSObject: AnyObject]) -> [NSError]? {
+    open func findAndExtractErrors(_ userInfo: [AnyHashable: Any]) -> [NSError]? {
         var apiErrors = [NSError]()
         if let errors = userInfo["errors"] as? [String: AnyObject] {
             for case let (errorTitle, errorMsg as [String]) in errors {
@@ -150,7 +150,7 @@ public class BaseJSONAPIManager: NSObject {
         return nil
     }
     
-    public func wrapErrorIfNeed(error: ErrorType) -> ErrorType {
+    open func wrapErrorIfNeed(_ error: Error) -> Error {
         if error is CoreError {
             return error
         }
@@ -158,59 +158,59 @@ public class BaseJSONAPIManager: NSObject {
         return self.generateError(error.code, cause: error)
     }
     
-    public func call(method: String, path: String, request: [String: AnyObject], rawCompletion: NetworkClientCallback) {
+    open func call(_ method: String, path: String, request: [String: AnyObject], rawCompletion: @escaping NetworkClientCallback) {
         var urlString = baseURLString + path
-        var data: NSData?
+        var data: Data?
         
         switch method {
         case "GET":
             urlString = urlString + "?" + request.stringFromHttpParameters()
         default:
             do {
-                data = try NSJSONSerialization.dataWithJSONObject(request, options: NSJSONWritingOptions())
+                data = try JSONSerialization.data(withJSONObject: request, options: JSONSerialization.WritingOptions())
             }
             catch _ {
-                let errorCode = RemoteError.SerializationFailure.rawValue
-                rawCompletion(statusCode: errorCode, data: nil, error: NSError(domain: BaseJSONAPIManagerErrorDomain, code: errorCode, userInfo: nil))
+                let errorCode = RemoteError.serializationFailure.rawValue
+                rawCompletion(errorCode, nil, NSError(domain: BaseJSONAPIManagerErrorDomain, code: errorCode, userInfo: nil))
                 return
             }
         }
         
-        spine.networkClient.request(method, URL: NSURL(string: urlString)!, payload: data, callback: rawCompletion)
+        spine.networkClient.request(method: method, url: URL(string: urlString)!, payload: data, callback: rawCompletion)
     }
     
-    public func call(method: String, path: String, request: [String: AnyObject], completion: RemoteResultBlock) {
+    open func call(_ method: String, path: String, request: [String: AnyObject], completion: @escaping RemoteResultBlock) {
         
         call(method, path: path, request: request) { (statusCode, data, error) -> Void in
             
-            var result: AnyObject? = nil
-            var serrializeError: ErrorType?
+            var result: Any? = nil
+            var serrializeError: Error?
             var finalError = error
             
             if let data = data {
                 do {
-                    result = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions())
+                    result = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions())
                 } catch {
-                    serrializeError = self.generateError(RemoteError.SerializationFailure.rawValue, cause: nil)
+                    serrializeError = self.generateError(RemoteError.serializationFailure.rawValue, cause: nil)
                 }
             }
             
-            if let code = statusCode where !(200 ... 203 ~= code)  {
-                if let userInfo = result as? [String: AnyObject] where userInfo["errors"] != nil {
+            if let code = statusCode, !(200 ... 203 ~= code)  {
+                if let userInfo = result as? [String: AnyObject], userInfo["errors"] != nil {
                     if let apiErrors = self.findAndExtractErrors(userInfo) {
                         if finalError == nil {
                             finalError = NSError(domain: "shine.service.error", code: 422, userInfo: [SNAPIErrorsKey: apiErrors])
                         }
                     }
                 }
-                completion(result: nil, error: self.generateError(code, cause: finalError))
+                completion(nil, self.generateError(code, cause: finalError))
                 return
             } else if finalError != nil {
-                completion(result: nil, error: self.generateError(RemoteError.Unknown.rawValue, cause: finalError))
+                completion(nil, self.generateError(RemoteError.unknown.rawValue, cause: finalError))
                 return
             }
             
-            completion(result: result, error: serrializeError)
+            completion(result, serrializeError)
         }
     }
     
@@ -218,9 +218,9 @@ public class BaseJSONAPIManager: NSObject {
     // MARK: API
     
     // MARK: Private auth
-    public func authenticate(inputRequest: [String: String], completion: RemoteResultBlock) {
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)) { () -> Void in
-            if self.authLock.tryLock() {
+    open func authenticate(_ inputRequest: [String: String], completion: @escaping RemoteResultBlock) {
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive).async { () -> Void in
+            if self.authLock.try() {
                 self.sessionInfo = nil
 
                 var request = inputRequest
@@ -228,46 +228,46 @@ public class BaseJSONAPIManager: NSObject {
                 request["client_id"] = self.clientToken
                 request["client_secret"] = self.clientSecret
                 
-                let fd_sema = dispatch_semaphore_create(0)
+                let fd_sema = DispatchSemaphore(value: 0)
                 
                 
-                self.call("POST", path: BaseAPI.Auth, request: request, completion: { (result: AnyObject?, error: ErrorType?) -> Void in
-                    if let dictionary = result as? [String : AnyObject] where error == nil {
+                self.call("POST", path: BaseAPI.Auth, request: request as [String : AnyObject], completion: { (result: AnyObject?, error: Error?) -> Void in
+                    if let dictionary = result as? [String : AnyObject], error == nil {
                         if let token = dictionary["access_token"] {
                             self.sessionInfo = JSONAPISession(sessionToken: token as! String, refreshToken: dictionary["refresh_token"] as? String)
                         }
                     }
-                    dispatch_semaphore_signal(fd_sema);
-                    completion(result: self.sessionInfo?.sessionToken != nil, error: error)
-                })
+                    fd_sema.signal();
+                    completion(self.sessionInfo?.sessionToken != nil, error)
+                } as! RemoteResultBlock)
                 
-                dispatch_semaphore_wait(fd_sema, DISPATCH_TIME_FOREVER);
+                fd_sema.wait(timeout: DispatchTime.distantFuture);
                 self.authLock.unlock()
             } else {
                 self.authLock.lock()
                 self.authLock.unlock()
-                completion(result: self.sessionInfo?.sessionToken != nil, error: nil)
+                completion(self.sessionInfo?.sessionToken != nil, nil)
             }
         }
     }
     
-    public func authorizeClient(completion: RemoteResultBlock) {
+    open func authorizeClient(_ completion: @escaping RemoteResultBlock) {
         let request = ["grant_type"    : "client_credentials"]
         self.authenticate(request, completion: completion)
     }
     
-    public func authorizeUser(userName: String, password: String, completion: RemoteResultBlock) {
+    open func authorizeUser(_ userName: String, password: String, completion: @escaping RemoteResultBlock) {
         let request : [String: String] = [
             "grant_type"    : "password",
             "username"      : userName,
             "password"      : password]
         self.authenticate(request) { (result, error) -> (Void) in
-            completion(result: result, error: error)
+            completion(result, error)
         }
 
     }
     
-    public func refreshSessionToken(refreshToken: String, completion: RemoteResultBlock) -> Void {
+    open func refreshSessionToken(_ refreshToken: String, completion: @escaping RemoteResultBlock) -> Void {
         let request : [String: String] = [
             "grant_type"    : "refresh_token",
             "refresh_token" : refreshToken]
@@ -275,26 +275,26 @@ public class BaseJSONAPIManager: NSObject {
         self.authenticate(request, completion: completion)
     }
     
-    public func renewSession(completion: RemoteResultBlock) -> Void {
+    open func renewSession(_ completion: @escaping RemoteResultBlock) -> Void {
         if let refreshToken = sessionInfo?.refreshToken {
             refreshSessionToken(refreshToken, completion: completion)
         } else if sessionInfo?.sessionToken != nil  {
             authorizeClient(completion)
         } else {
-            if self.authLock.tryLock() {
+            if self.authLock.try() {
                 self.authLock.unlock()
-                completion(result: nil, error: generateError(RemoteError.AuthFailed.rawValue, cause: nil))
+                completion(nil, generateError(RemoteError.authFailed.rawValue, cause: nil))
             } else {
-                dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), { () -> Void in
+                DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive).async(execute: { () -> Void in
                     self.authLock.lock()
                     self.authLock.unlock()
-                    completion(result: self.sessionInfo?.sessionToken != nil, error: nil)
+                    completion(self.sessionInfo?.sessionToken != nil, nil)
                 })
             }
         }
     }
     
-    public func executeRequestWithSessionCheck<B>(requestBlock: (Void -> Promise<B>)) -> Promise<B> {
+    open func executeRequestWithSessionCheck<B>(_ requestBlock: @escaping ((Void) -> Promise<B>)) -> Promise<B> {
         return firstly {
             return requestBlock()
         }.recoverOnAuthError { (_) -> Promise<B> in
@@ -306,7 +306,7 @@ public class BaseJSONAPIManager: NSObject {
                         fulfill()
                     }
                 }
-            }.thenInBackground { () -> Promise<B> in
+            }.then(on: .global()) { () -> Promise<B> in
                 return requestBlock()
             }
         }.recover { (error) throws -> Promise<B> in
@@ -316,7 +316,7 @@ public class BaseJSONAPIManager: NSObject {
     
     // MARK: Public API: Auth
     
-    public func authenticate(username: String?, password: String?) -> Promise<Void> {
+    open func authenticate(_ username: String?, password: String?) -> Promise<Void> {
         return Promise<Void> { fulfill, reject in
             if let username = username, let password = password {
                 authorizeUser(username, password: password, completion: { (result, error) -> (Void) in
@@ -332,36 +332,36 @@ public class BaseJSONAPIManager: NSObject {
     
     // MARK: Public API: Resources
     
-    public func saveEntity<T: ManagedEntity>(entity : T) -> Promise<T> {
+    open func saveEntity<T: ManagedEntity>(_ entity : T) -> Promise<T> {
         let jsonEnitity = self.asJsonEntity(entity)
         
         return executeRequestWithSessionCheck({
-            return self.spine.save(jsonEnitity).then({ (resource) -> T in
+            return self.spine.save(resource: jsonEnitity).then(execute:{ (resource) -> T in
                 return resource as! T
             })
         })
     }
     
-    public func deleteEntity<T: ManagedEntity>(entity : T) -> Promise<Void> {
+    open func deleteEntity<T: ManagedEntity>(_ entity : T) -> Promise<Void> {
         let serialized = self.asJsonEntity(entity) as JSONManagedEntity
         return executeRequestWithSessionCheck({
             return self.spine.delete(serialized)
         })
     }
     
-    public func loadEntity(id: String, ofType: ManagedEntity.Type, include: [ManagedEntity.Type]?=nil) -> Promise<ManagedEntity> {
+    open func loadEntity(_ id: String, ofType: ManagedEntity.Type, include: [ManagedEntity.Type]?=nil) -> Promise<ManagedEntity> {
         return executeRequestWithSessionCheck({
-            return self.spine.findOne(id, ofType: self.asJsonClass(ofType)).then({ (resource, meta, jsonapi) -> ManagedEntity in
+            return self.spine.findOne(id, ofType: self.asJsonClass(ofType)).then (execute:{ (resource, meta, jsonapi) -> ManagedEntity in
                 return resource
             })
         })
     }
     
-    public func loadEntity<T: ManagedEntity>(id: String, ofType: T.Type, include: [ManagedEntity.Type]?=nil) -> Promise<T> {
+    open func loadEntity<T: ManagedEntity>(_ id: String, ofType: T.Type, include: [ManagedEntity.Type]?=nil) -> Promise<T> {
         return loadEntity(id, ofType: ofType, include: include).then { $0 as! T }
     }
     
-    public func loadEntities(ofType: ManagedEntity.Type, filters: [NSComparisonPredicate]?, include: [String]?=nil, fields: [String]?=nil) -> Promise<[ManagedEntity]> {
+    open func loadEntities(_ ofType: ManagedEntity.Type, filters: [NSComparisonPredicate]?, include: [String]?=nil, fields: [String]?=nil) -> Promise<[ManagedEntity]> {
         return executeRequestWithSessionCheck({
             let entityClass = self.asJsonClass(ofType)
 
@@ -375,13 +375,13 @@ public class BaseJSONAPIManager: NSObject {
                 query.fields = [entityClass.resourceType() : fields.map { entityClass.fieldKeyMap[$0]! }]
             }
             
-            return self.spine.find(query).then({ (resources, meta, jsonapi) -> [ManagedEntity] in
+            return self.spine.find(query).then(execute:{ (resources, meta, jsonapi) -> [ManagedEntity] in
                 return resources.map { $0 as! ManagedEntity }
             })
         })
     }
 
-    public func loadEntities<T: ManagedEntity>(ofType: T.Type = T.self, filters: [NSComparisonPredicate]?, include: [String]?=nil, fields: [String]?=nil) -> Promise<[T]> {
+    open func loadEntities<T: ManagedEntity>(_ ofType: T.Type = T.self, filters: [NSComparisonPredicate]?, include: [String]?=nil, fields: [String]?=nil) -> Promise<[T]> {
         return loadEntities(ofType, filters: filters, include: include, fields: fields).then { (resources: [ManagedEntity]) -> [T] in
             return resources as! [T]
         }
@@ -392,19 +392,19 @@ public class BaseJSONAPIManager: NSObject {
 
 public extension Promise {
     
-    public func recoverOnAuthError(body: (ErrorType) throws -> Promise) -> Promise {
+    public func recoverOnAuthError(_ body: @escaping (Error) throws -> Promise) -> Promise {
         return self.recover { (error) throws -> Promise in
             let anError = (error as Any) as! NSError
             
             if let shineError = error as? CoreError {
                 switch(shineError) {
-                case .WrongCredentials:
+                case .wrongCredentials:
                     return try body(error)
                 default: break;
                 }
             }
             
-            if anError.code == RemoteError.AuthFailed.rawValue {
+            if anError.code == RemoteError.authFailed.rawValue {
                 return try body(error)
             }
             

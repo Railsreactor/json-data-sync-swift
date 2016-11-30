@@ -8,10 +8,11 @@
 
 import UIKit
 import PromiseKit
+import When
 
 
-public func asBool(value: Any?) -> Bool {
-    if let value = value as? String where NSString(string: value).boolValue {
+public func asBool(_ value: Any?) -> Bool {
+    if let value = value as? String, NSString(string: value).boolValue {
         return true
     }
     return false
@@ -25,7 +26,7 @@ public extension NSSet {
 
 public extension UIViewController {
     
-    public class func fromStoryboard(storyboardNamed: String, identifier: String? = nil) -> Self {
+    public class func fromStoryboard(_ storyboardNamed: String, identifier: String? = nil) -> Self {
         return fromStoryboardGeneric(UIStoryboard(name: storyboardNamed, bundle: nil), identifier: identifier)
     }
     
@@ -33,33 +34,33 @@ public extension UIViewController {
         return fromStoryboardGeneric(instance, identifier: identifier)
     }
     
-    internal class func fromStoryboardGeneric<T: UIViewController>(storyboard: UIStoryboard, identifier: String? = nil) -> T {
-        let identifier = identifier ?? String(self)
-        return storyboard.instantiateViewControllerWithIdentifier(identifier) as! T
+    internal class func fromStoryboardGeneric<T: UIViewController>(_ storyboard: UIStoryboard, identifier: String? = nil) -> T {
+        let identifier = identifier ?? String(describing: self)
+        return storyboard.instantiateViewController(withIdentifier: identifier) as! T
     }
 }
 
-public extension NSDate {
+public extension Date {
     
     public func toSystemString() -> String {
-        let formatter = NSDateFormatter()
-        formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
-        formatter.timeZone = NSTimeZone(abbreviation: "GMT")
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(abbreviation: "GMT")
         formatter.dateFormat = Constants.APIDateTimeFormat
-        return formatter.stringFromDate(self)
+        return formatter.string(from: self)
     }
 }
 
-public extension Promise {
-    public func rawError() -> Promise {
-        return self.recover { (error) throws -> Promise in
-            switch error {
-            case PromiseKit.Error .When(_, let err):
-                throw err
-            default:
-                throw error
-            }
-        }
-    }
-}
+//public extension Promise {
+//    public func rawError() -> Promise {
+//        return self.recover { (error) throws -> Promise in
+//            switch error {
+//            case PromiseKit.PKError .When(_, let err):
+//                throw err
+//            default:
+//                throw error
+//            }
+//        }
+//    }
+//}
 

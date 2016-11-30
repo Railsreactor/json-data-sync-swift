@@ -12,14 +12,14 @@ import UIKit
     func objectContainer() -> Container
 }
 
-public class Container: NSObject {
-    public var content: AnyObject
+open class Container: NSObject {
+    open var content: AnyObject
     
     public init(contained: AnyObject) {
         content = contained
     }
     
-    public func containedObject<T>() throws -> T? {
+    open func containedObject<T>() throws -> T? {
         return content as? T
     }
 }

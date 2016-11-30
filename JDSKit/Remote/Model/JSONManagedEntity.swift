@@ -10,16 +10,16 @@ import Foundation
 
 
 
-public class JSONManagedEntity: Resource, ManagedEntity {
+open class JSONManagedEntity: Resource, ManagedEntity {
 
-    public var createDate: NSDate?
-    public var updateDate: NSDate?
+    open var createDate: Date?
+    open var updateDate: Date?
     
-    public var pendingDelete: NSNumber?
+    open var pendingDelete: NSNumber?
     
     
-    public var linkedAttachments:    LinkedResourceCollection?
-    public var attachments : NSSet? {
+    open var linkedAttachments:    LinkedResourceCollection?
+    open var attachments : NSSet? {
         get {
             return NSSet(array: linkedAttachments?.resources.map { $0 as! Attachment } ?? [])
         }
@@ -28,7 +28,7 @@ public class JSONManagedEntity: Resource, ManagedEntity {
         }
     }
     
-    override public class func fields() -> [Field] {
+    override open class func fields() -> [Field] {
         return super.fields() + fieldsFromDictionary([
                 "createDate":           DateAttribute().serializeAs("created_at"),
                 "updateDate":           DateAttribute().serializeAs("updated_at"),
@@ -36,7 +36,7 @@ public class JSONManagedEntity: Resource, ManagedEntity {
             ])
     }
     
-    public class var fieldKeyMap: [String: String] {
+    open class var fieldKeyMap: [String: String] {
         var _fieldKeyMap = [String: String]()
         
         for field in fields() {
@@ -54,7 +54,7 @@ public class JSONManagedEntity: Resource, ManagedEntity {
         super.init()
     }
     
-    override public class func resourceType() -> String {
+    override open class func resourceType() -> String {
         return resourceName
     }
 
@@ -62,15 +62,15 @@ public class JSONManagedEntity: Resource, ManagedEntity {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func objectContainer() -> Container {
+    open func objectContainer() -> Container {
         return Container(contained: self)
     }
     
-    public func refresh() {
+    open func refresh() {
 
     }
     
-    public func isTemp() -> Bool {
+    open func isTemp() -> Bool {
         return self.id == nil
     }
 }

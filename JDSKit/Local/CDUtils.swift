@@ -16,7 +16,7 @@ public extension Array {
                 var final = ""
                 var accending = true
                 if ( value.hasPrefix("-") ) {
-                    final = value.substringFromIndex(value.startIndex.advancedBy(1))
+                    final = value.substring(from: value.characters.index(value.startIndex, offsetBy: 1))
                     accending = false
                 } else {
                     final = value
@@ -30,12 +30,12 @@ public extension Array {
     }
 }
 
-public class ObjectIDContainer: Container {
+open class ObjectIDContainer: Container {
     public override init(contained: AnyObject) {
         super.init(contained: contained)
     }
     
-    public override func containedObject<T: ManagedEntity>() throws -> T? {
+    open override func containedObject<T: ManagedEntity>() throws -> T? {
         return try BaseDBService.sharedInstance.fetchEntity(content as! NSManagedObjectID) as? T
     }
 }

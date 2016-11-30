@@ -13,9 +13,9 @@ Pod::Spec.new do |s|
   s.preserve_paths = "JDSKit/InitialModel.xcdatamodeld"
   s.resource = "JDSKit/InitialModel.xcdatamodeld"
   s.frameworks = "UIKit", "Foundation"
-  s.dependency 'CocoaLumberjack/Swift', '~> 2.2.0'
-  s.dependency 'PromiseKit', '~> 3.5'
-  s.dependency 'SwiftyJSON', '~> 2.4'
+  s.dependency 'CocoaLumberjack/Swift'
+  s.dependency 'PromiseKit'
+  s.dependency 'SwiftyJSON'
   s.pod_target_xcconfig = { 'SWIFT_OPTIMIZATION_LEVEL' => '-Onone', 'GCC_OPTIMIZATION_LEVEL' => '0' }
 end
 

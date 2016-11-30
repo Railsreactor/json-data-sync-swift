@@ -28,7 +28,7 @@ public struct Query<T: Resource> {
 	var resourceIDs: [String]?
 	
 	/// The optional base URL
-	internal var URL: NSURL?
+	internal var URL: Foundation.URL?
 	
 	/// Related resources that must be included in a compound document.
 	public internal(set) var includes: [String] = []
@@ -70,7 +70,7 @@ public struct Query<T: Resource> {
 	public init(resource: T) {
 		assert(resource.id != nil, "Cannot instantiate query for resource, id is nil.")
 		self.resourceType = resource.resourceType()
-		self.URL = resource.URL
+		self.URL = resource.URL as URL?
 		self.resourceIDs = [resource.id!]
 	}
 	
@@ -83,7 +83,7 @@ public struct Query<T: Resource> {
 	*/
 	public init(resourceType: T.Type, resourceCollection: ResourceCollection) {
 		self.resourceType = T.resourceType()
-		self.URL = resourceCollection.resourcesURL
+		self.URL = resourceCollection.resourcesURL as URL?
 	}
 	
 	/**
@@ -96,10 +96,10 @@ public struct Query<T: Resource> {
 	*/
 	public init(resourceType: T.Type, path: String) {
 		self.resourceType = T.resourceType()
-		self.URL = NSURL(string: path)
+		self.URL = Foundation.URL(string: path)
 	}
 	
-	internal init(URL: NSURL) {
+	internal init(URL: Foundation.URL) {
 		self.URL = URL
 	}
 	
@@ -116,7 +116,7 @@ public struct Query<T: Resource> {
 	
 	- returns: The query.
 	*/
-	public mutating func include(relationshipNames: String...) {
+	public mutating func include(_ relationshipNames: String...) {
 		for relationshipName in relationshipNames {
 			if relationshipName.characters.contains(".") {
 				includes.append(relationshipName)
@@ -138,17 +138,17 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func removeInclude(relationshipNames: String...) {
+	public mutating func removeInclude(_ relationshipNames: String...) {
 		for relationshipName in relationshipNames {
 			if relationshipName.characters.contains(".") {
-				if let index = includes.indexOf(relationshipName) {
-					includes.removeAtIndex(index)
+				if let index = includes.index(of: relationshipName) {
+					includes.remove(at: index)
 				} else {
 					assertionFailure("Attempt to remove include that was not included: \(relationshipName)")
 				}
 			} else if let relationship = T.fields().filter({ $0.name == relationshipName }).first {
-				if let index = includes.indexOf(relationship.serializedName) {
-					includes.removeAtIndex(index)
+				if let index = includes.index(of: relationship.serializedName) {
+					includes.remove(at: index)
 				} else {
 					assertionFailure("Attempt to remove include that was not included: \(relationshipName)")
 				}
@@ -161,12 +161,12 @@ public struct Query<T: Resource> {
 	
 	// MARK: Filtering
 	
-	private mutating func addPredicateWithField(fieldName: String, value: AnyObject, type: NSPredicateOperatorType) {
+	fileprivate mutating func addPredicateWithField(_ fieldName: String, value: AnyObject, type: NSComparisonPredicate.Operator) {
 		if let field = T.fields().filter({ $0.name == fieldName }).first {
 			let predicate = NSComparisonPredicate(
 				leftExpression: NSExpression(forKeyPath: field.serializedName),
 				rightExpression: NSExpression(forConstantValue: value),
-				modifier: .DirectPredicateModifier,
+				modifier: .direct,
 				type: type,
 				options: [])
 			
@@ -181,7 +181,7 @@ public struct Query<T: Resource> {
 	
 	- parameter predicate: The predicate to add.
 	*/
-	public mutating func addPredicate(predicate: NSComparisonPredicate) {
+	public mutating func addPredicate(_ predicate: NSComparisonPredicate) {
 		filters.append(predicate)
 	}
 	
@@ -193,8 +193,8 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func whereAttribute(attributeName: String, equalTo: AnyObject) {
-		addPredicateWithField(attributeName, value: equalTo, type: .EqualToPredicateOperatorType)
+	public mutating func whereAttribute(_ attributeName: String, equalTo: AnyObject) {
+		addPredicateWithField(attributeName, value: equalTo, type: .equalTo)
 	}
 
 	/**
@@ -205,8 +205,8 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func whereAttribute(attributeName: String, notEqualTo: AnyObject) {
-		addPredicateWithField(attributeName, value: notEqualTo, type: .NotEqualToPredicateOperatorType)
+	public mutating func whereAttribute(_ attributeName: String, notEqualTo: AnyObject) {
+		addPredicateWithField(attributeName, value: notEqualTo, type: .notEqualTo)
 	}
 
 	/**
@@ -217,8 +217,8 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func whereAttribute(attributeName: String, lessThan: AnyObject) {
-		addPredicateWithField(attributeName, value: lessThan, type: .LessThanPredicateOperatorType)
+	public mutating func whereAttribute(_ attributeName: String, lessThan: AnyObject) {
+		addPredicateWithField(attributeName, value: lessThan, type: .lessThan)
 	}
 
 	/**
@@ -229,8 +229,8 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func whereAttribute(attributeName: String, lessThanOrEqualTo: AnyObject) {
-		addPredicateWithField(attributeName, value: lessThanOrEqualTo, type: .LessThanOrEqualToPredicateOperatorType)
+	public mutating func whereAttribute(_ attributeName: String, lessThanOrEqualTo: AnyObject) {
+		addPredicateWithField(attributeName, value: lessThanOrEqualTo, type: .lessThanOrEqualTo)
 	}
 	
 	/**
@@ -241,8 +241,8 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func whereAttribute(attributeName: String, greaterThan: AnyObject) {
-		addPredicateWithField(attributeName, value: greaterThan, type: .GreaterThanPredicateOperatorType)
+	public mutating func whereAttribute(_ attributeName: String, greaterThan: AnyObject) {
+		addPredicateWithField(attributeName, value: greaterThan, type: .greaterThan)
 	}
 
 	/**
@@ -253,8 +253,8 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func whereAttribute(attributeName: String, greaterThanOrEqualTo: AnyObject) {
-		addPredicateWithField(attributeName, value: greaterThanOrEqualTo, type: .GreaterThanOrEqualToPredicateOperatorType)
+	public mutating func whereAttribute(_ attributeName: String, greaterThanOrEqualTo: AnyObject) {
+		addPredicateWithField(attributeName, value: greaterThanOrEqualTo, type: .greaterThanOrEqualTo)
 	}
 	
 	/**
@@ -266,9 +266,9 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func whereRelationship(relationshipName: String, isOrContains resource: Resource) {
+	public mutating func whereRelationship(_ relationshipName: String, isOrContains resource: Resource) {
 		assert(resource.id != nil, "Attempt to add a where filter on a relationship, but the target resource does not have an id.")
-		addPredicateWithField(relationshipName, value: resource.id!, type: .EqualToPredicateOperatorType)
+		addPredicateWithField(relationshipName, value: resource.id! as AnyObject, type: .equalTo)
 	}
 	
 	
@@ -282,7 +282,7 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func restrictFieldsTo(fieldNames: String...) {
+	public mutating func restrictFieldsTo(_ fieldNames: String...) {
 		assert(resourceType != nil, "Cannot restrict fields for query without resource type, use `restrictFieldsOfResourceType` or set a resource type.")
 		
 		if var fields = fields[resourceType!] {
@@ -303,7 +303,7 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func restrictFieldsOfResourceType(type: String, to fieldNames: String...) {
+	public mutating func restrictFieldsOfResourceType(_ type: String, to fieldNames: String...) {
 		if var fields = fields[type] {
 			fields += fieldNames
 		} else {
@@ -321,7 +321,7 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func addAscendingOrder(property: String) {
+	public mutating func addAscendingOrder(_ property: String) {
 		sortDescriptors.append(NSSortDescriptor(key: property, ascending: true))
 	}
 	
@@ -332,7 +332,7 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func addDescendingOrder(property: String) {
+	public mutating func addDescendingOrder(_ property: String) {
 		sortDescriptors.append(NSSortDescriptor(key: property, ascending: false))
 	}
 	
@@ -346,7 +346,7 @@ public struct Query<T: Resource> {
 	
 	- returns: The query
 	*/
-	public mutating func paginate(pagination: Pagination?) {
+	public mutating func paginate(_ pagination: Pagination?) {
 		self.pagination = pagination
 	}
 }

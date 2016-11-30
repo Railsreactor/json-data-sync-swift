@@ -11,11 +11,11 @@ import CoreData
 
 
 @objc(CDAttachment)
-public class CDAttachment: CDLinkableEntity, Attachment  {
-    @NSManaged public var fileUrl: String?
-    @NSManaged public var name: String?
-    @NSManaged public var thumbUrl: String?
+open class CDAttachment: CDLinkableEntity, Attachment  {
+    @NSManaged open var fileUrl: String?
+    @NSManaged open var name: String?
+    @NSManaged open var thumbUrl: String?
 
-    public var tempImage: UIImage?
-    public var data: NSData?
+    open var tempImage: UIImage?
+    open var data: Data?
 }

@@ -9,37 +9,38 @@
 import Foundation
 import PromiseKit
 import CocoaLumberjack
+import When
 
-public enum SyncError: ErrorType {
-    case CheckForUpdates(NSDate)
+public enum SyncError: Error {
+    case checkForUpdates(Date)
 }
 
 public typealias SyncInfo = [String]
 
-private let ZeroDate = NSDate(timeIntervalSince1970: 0)
-private let EventKey = String(Event.self)
+private let ZeroDate = Date(timeIntervalSince1970: 0)
+private let EventKey = String(describing: Event.self)
 
-public class AbstractSyncService: CoreService {
+open class AbstractSyncService: CoreService {
     
-    public var liteSyncEnabled = false
+    open var liteSyncEnabled = false
     
     // *************************** Override *******************************
     // if you want to split some update info between different users or something...
     
-    public func filterIDForEntityKey(key: String) -> String? {
+    open func filterIDForEntityKey(_ key: String) -> String? {
         return nil
     }
     
-    public func shouldSyncEntityOfType(managedEntityKey: String, lastUpdateDate: NSDate?) -> Bool {
+    open func shouldSyncEntityOfType(_ managedEntityKey: String, lastUpdateDate: Date?) -> Bool {
         return true
     }
     
     // *************************************************************************
     
-    public var lastSyncDate = ZeroDate
-    public var lastSuccessSyncDate = ZeroDate
+    open var lastSyncDate = ZeroDate
+    open var lastSuccessSyncDate = ZeroDate
 
-    public lazy var updateInfoGateway: UpdateInfoGateway = {
+    open lazy var updateInfoGateway: UpdateInfoGateway = {
         return UpdateInfoGateway(self.localManager)
     } ()
     
@@ -54,7 +55,7 @@ public class AbstractSyncService: CoreService {
         }
     }
 
-    internal func checkForUpdates(eventSyncDate: NSDate) -> Promise<SyncInfo> {
+    internal func checkForUpdates(_ eventSyncDate: Date) -> PromiseKit.Promise<SyncInfo> {
         DDLogDebug("Checking for updates... \(eventSyncDate)")
         let predicate = NSComparisonPredicate(format: "created_at_gt == %@", eventSyncDate.toSystemString());
         return self.remoteManager.loadEntities(Event.self, filters: [predicate], include: nil, fields: liteSyncEnabled ? ["relatedEntityName", "relatedEntityId", "action"] : nil).thenInBGContext { (events: [Event]) -> SyncInfo in
@@ -64,11 +65,11 @@ public class AbstractSyncService: CoreService {
             for event in events {
                 guard let entityName = event.relatedEntityName else { continue }
                 
-                if let date = event.updateDate where self.lastSyncDate.compare(date) == NSComparisonResult.OrderedAscending {
+                if let date = event.updateDate, self.lastSyncDate.compare(date) == ComparisonResult.orderedAscending {
                     self.lastSyncDate = date
                 }
                 
-                if let id = event.relatedEntityId where event.action == Action.Deleted {
+                if let id = event.relatedEntityId, event.action == Action.Deleted {
                     do {
                         try AbstractRegistryService.mainRegistryService.entityServiceByKey(entityName).entityGatway()?.deleteEntityWithID(id)
                         DDLogDebug("Deleted \(entityName) with id: \(id)")
@@ -86,7 +87,7 @@ public class AbstractSyncService: CoreService {
         }
     }
     
-    internal func syncInternal() -> Promise<Void> {
+    internal func syncInternal() -> When.Promise<Void> {
         return self.runOnBackgroundContext { () -> SyncInfo in
             
             if let eventSyncInfo = try self.updateInfoGateway.updateInfoForKey(EventKey, filterID: self.filterIDForEntityKey(EventKey)) {
@@ -95,14 +96,14 @@ public class AbstractSyncService: CoreService {
                 DDLogDebug("Going to sync at first time...")
                 return self.entitiesToSync()
             }
-        }.recover(on: dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) { error -> Promise<SyncInfo> in
+        }.recover(on: dispatch_get_global_queue(Int(QOS_CLASS_DEFAULT.rawValue), 0)) { error -> PromiseKit.Promise<SyncInfo> in
             switch error {
             case SyncError.CheckForUpdates(let syncInfo):
                 return self.checkForUpdates(syncInfo)
             default:
                 throw error
             }
-        }.thenInBGContext { updateEntitiesKeys -> [Promise<NSDate>] in
+        }.thenInBGContext { updateEntitiesKeys -> [PromiseKit.Promise<NSDate>] in
             var syncPromises = [Promise<NSDate>]()
 
             for entityKey in updateEntitiesKeys {
@@ -131,8 +132,8 @@ public class AbstractSyncService: CoreService {
             }
             
             return syncPromises
-        }.thenInBackground { promises in
-            return when(promises)
+        }.then(on: .global()) { promises in
+            return when(fulfilled: promises)
         }.thenInBGContext { dates -> Void in
             let eventSyncInfo = try self.updateInfoGateway.updateInfoForKey(EventKey, filterID: self.filterIDForEntityKey(EventKey), createIfNeed: true)
             if let eventSync = eventSyncInfo?.updateDate {
@@ -150,20 +151,20 @@ public class AbstractSyncService: CoreService {
             
             self.lastSuccessSyncDate = self.lastSyncDate
             eventSyncInfo?.updateDate = self.lastSyncDate
-        }.always (on: dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) {
+        }.always (on: dispatch_get_global_queue(Int(QOS_CLASS_DEFAULT.rawValue), 0)) {
             self.localManager.saveSyncSafe()
         }
     }
     
-    public func sync() -> Promise<Void> {
-        return dispatch_promise {}.thenInBackground {
+    open func sync() -> PromiseKit.Promise<Void> {
+        return DispatchQueue.global().promise {}.then(on: .global()) { _ in
             if self.trySync() {
-                return self.syncInternal().always {
+                return self.syncInternal().always {_ in
                     self.endSync()
                 }
             } else {
                 self.waitForSync()
-                return Promise<Void>()
+                return Promise(value:())
             }
         }
     }

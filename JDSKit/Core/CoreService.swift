@@ -11,33 +11,33 @@ import PromiseKit
 import CocoaLumberjack
 
 
-public class CoreService: NSObject {
+open class CoreService: NSObject {
     
-    private static var sharedRemoteManager: BaseJSONAPIManager?
-    private static var sharedLocalManager: BaseDBService?
+    fileprivate static var sharedRemoteManager: BaseJSONAPIManager?
+    fileprivate static var sharedLocalManager: BaseDBService?
     
-    private static let lockObject = NSObject()
+    fileprivate static let lockObject = NSObject()
     
-    public var remoteManager: BaseJSONAPIManager {
-        if self.dynamicType.sharedRemoteManager == nil {
+    open var remoteManager: BaseJSONAPIManager {
+        if type(of: self).sharedRemoteManager == nil {
             synchronized(CoreService.lockObject) {
-                if self.dynamicType.sharedRemoteManager == nil {
-                    self.dynamicType.sharedRemoteManager = AbstractRegistryService.mainRegistryService.createRemoteManager()
+                if type(of: self).sharedRemoteManager == nil {
+                    type(of: self).sharedRemoteManager = AbstractRegistryService.mainRegistryService.createRemoteManager()
                 }
             }
         }
-        return self.dynamicType.sharedRemoteManager!
+        return type(of: self).sharedRemoteManager!
     }
     
-    public var localManager: BaseDBService {
-        if self.dynamicType.sharedLocalManager == nil {
+    open var localManager: BaseDBService {
+        if type(of: self).sharedLocalManager == nil {
             synchronized(CoreService.lockObject) {
-                if self.dynamicType.sharedLocalManager == nil {
-                    self.dynamicType.sharedLocalManager = AbstractRegistryService.mainRegistryService.createLocalManager()                    
+                if type(of: self).sharedLocalManager == nil {
+                    type(of: self).sharedLocalManager = AbstractRegistryService.mainRegistryService.createLocalManager()                    
                 }
             }
         }
-        return self.dynamicType.sharedLocalManager!
+        return type(of: self).sharedLocalManager!
     }
     
     
@@ -52,7 +52,7 @@ public class CoreService: NSObject {
     
     // MARK: Helpers
     
-    public func runOnBackgroundContext<R> (executeBlock: () throws -> R) -> Promise<R> {
+    open func runOnBackgroundContext<R> (_ executeBlock: @escaping () throws -> R) -> Promise<R> {
         return self.localManager.performPromiseOnBackgroundContext { () throws -> R in
             return try executeBlock()
         }
@@ -61,35 +61,35 @@ public class CoreService: NSObject {
     //MARK: - Sync lock
     
     internal var syncLock: Bool = false
-    internal let syncSemaphore = dispatch_semaphore_create(1)
-    internal let lockQueue = dispatch_queue_create("com.jdskit.LockQueue.\(self)", nil)
+    internal let syncSemaphore = DispatchSemaphore(value: 1)
+    internal let lockQueue = DispatchQueue(label: "com.jdskit.LockQueue.\(self)", attributes: [])
     
-    public func trySync() -> Bool {
+    open func trySync() -> Bool {
         var shouldSync = false
         if !self.syncLock {
-            dispatch_sync(self.lockQueue) {
+            self.lockQueue.sync {
                 if !self.syncLock {
                     self.syncLock = true
                     shouldSync = true
-                    dispatch_semaphore_wait(self.syncSemaphore, DISPATCH_TIME_FOREVER)
+                    self.syncSemaphore.wait(timeout: DispatchTime.distantFuture)
                 }
             }
         }
         return shouldSync
     }
     
-    public func endSync() {
-        dispatch_sync(self.lockQueue) {
+    open func endSync() {
+        self.lockQueue.sync {
             if self.syncLock {
                 self.syncLock = false
-                dispatch_semaphore_signal(self.syncSemaphore)
+                self.syncSemaphore.signal()
             }
         }
     }
     
-    public func waitForSync() {
-        dispatch_semaphore_wait(self.syncSemaphore, DISPATCH_TIME_FOREVER)
-        dispatch_semaphore_signal(self.syncSemaphore)
+    open func waitForSync() {
+        self.syncSemaphore.wait(timeout: DispatchTime.distantFuture)
+        self.syncSemaphore.signal()
     }
     
     

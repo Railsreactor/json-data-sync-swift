@@ -8,12 +8,12 @@
 
 import Foundation
 
-public class JSONLinkableEntity: JSONManagedEntity {
+open class JSONLinkableEntity: JSONManagedEntity {
     
-    public var parentId: String?
-    public var parentType: String?
+    open var parentId: String?
+    open var parentType: String?
     
-    public var parent: ManagedEntity? {
+    open var parent: ManagedEntity? {
         get {
             return linkedEntity as? ManagedEntity
         }
@@ -24,9 +24,9 @@ public class JSONLinkableEntity: JSONManagedEntity {
     }
     
     
-    public var linkedEntity: JSONManagedEntity?
+    open var linkedEntity: JSONManagedEntity?
     
-    public override class func fields() -> [Field] {
+    open override class func fields() -> [Field] {
         return super.fields() + fieldsFromDictionary([
             "parentId":              Attribute().serializeAs("entity_id").skipMap(),
             "parentType":            Attribute().serializeAs("entity_type").skipMap(),

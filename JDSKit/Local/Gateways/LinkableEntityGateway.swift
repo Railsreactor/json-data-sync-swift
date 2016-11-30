@@ -9,9 +9,9 @@
 import Foundation
 import CoreData
 
-public class LinkableEntitiyGateway: GenericEntityGateway {
+open class LinkableEntitiyGateway: GenericEntityGateway {
     
-    public override func gatewayForEntity(inputEntity: ManagedEntity, fromRelationship: NSRelationshipDescription) -> GenericEntityGateway? {
+    open override func gatewayForEntity(_ inputEntity: ManagedEntity, fromRelationship: NSRelationshipDescription) -> GenericEntityGateway? {
         if let linkableEntity = inputEntity as? LinkableEntity {
             guard linkableEntity.parentType != nil else {
                 return nil

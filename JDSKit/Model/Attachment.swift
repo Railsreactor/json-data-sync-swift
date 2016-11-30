@@ -13,18 +13,18 @@ import Foundation
     var fileUrl: String?    { set get }
     var thumbUrl: String?   { set get }
     
-    var data: NSData?       { set get }
+    var data: Data?       { set get }
     
     var tempImage: UIImage? { set get }
 }
 
 
-public class DummyAttachment: DummyLinkableEntity, Attachment {     
-    public var name: String?
-    public var fileUrl: String?
-    public var thumbUrl: String?
+open class DummyAttachment: DummyLinkableEntity, Attachment {     
+    open var name: String?
+    open var fileUrl: String?
+    open var thumbUrl: String?
     
-    public var data: NSData?
+    open var data: Data?
     
-    public var tempImage: UIImage?
+    open var tempImage: UIImage?
 }

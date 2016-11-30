@@ -16,48 +16,48 @@ public let SNAPIErrorSourceKey: String  = "kSNAAPISource"
 public let SNAPIErrorsKey: String       = "kSNAPIErrors"
 
 
-public enum CoreError: ErrorType {
+public enum CoreError: Error {
     
-    case RuntimeError(description: String, cause: NSError?)
-    case ConnectionProblem(description: String, cause: NSError?)
+    case runtimeError(description: String, cause: NSError?)
+    case connectionProblem(description: String, cause: NSError?)
     
-    case WrongCredentials
-    case ServiceError(description: String, cause: NSError?)
-    case ValidationError(apiErrors: [NSError])
-    case EntityMisstype(input: String, target: String)
+    case wrongCredentials
+    case serviceError(description: String, cause: NSError?)
+    case validationError(apiErrors: [NSError])
+    case entityMisstype(input: String, target: String)
     
     public var errorInfo: (code: Int, message: String?, cause: NSError?, actionTitle: String?) {
         
         var code: Int, message: String?, cause: NSError?, actionTitle: String?
         
         switch self {
-        case .RuntimeError(let aDescription, let aCause):
+        case .runtimeError(let aDescription, let aCause):
             code = 0
             cause = aCause
             message = aDescription
             
-        case .ConnectionProblem(let aDescription, let aCause):
+        case .connectionProblem(let aDescription, let aCause):
             code = 1
             cause = aCause
             message = aDescription
             
-        case .ServiceError(let aDescription, let aCause):
+        case .serviceError(let aDescription, let aCause):
             code = 2
             cause = aCause
             message = aDescription
             
-        case .ValidationError(let apiErrors):
+        case .validationError(let apiErrors):
             code = 3
             if apiErrors.count > 0 {
                 message = localizedDescriptionFromAPIErrors()
             }
             
-        case .WrongCredentials:
+        case .wrongCredentials:
             code = 4
             message = "Wrong username or password."
             actionTitle = "Logout"
             
-        case .EntityMisstype(let input, let target):
+        case .entityMisstype(let input, let target):
             code = 8
             message = "Failed to save entity of type \(input). Expected: \(target)"
             actionTitle = "OK"
@@ -68,7 +68,7 @@ public enum CoreError: ErrorType {
     
     public func extractAPIErrors() -> [NSError] {
         switch self {
-        case .ValidationError(let apiErrors):
+        case .validationError(let apiErrors):
             return apiErrors
         default:
             break
@@ -84,7 +84,7 @@ public enum CoreError: ErrorType {
                     let titleChars = pointer.characters.split { $0 == "/" }.last
                     
                     if titleChars != nil && !titleChars!.elementsEqual("base".characters) {
-                        description += String(titleChars!).capitalizedString + " "
+                        description += String(titleChars!).capitalized + " "
                     }
                 }
                 description += apiError.localizedDescription + "\n"

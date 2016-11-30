@@ -11,9 +11,9 @@ import CoreData
 
 
 @objc (CDLinkableEntity)
-public class CDLinkableEntity: CDManagedEntity, LinkableEntity {
-    @NSManaged public var parentId: String?
-    @NSManaged public var parentType: String?
+open class CDLinkableEntity: CDManagedEntity, LinkableEntity {
+    @NSManaged open var parentId: String?
+    @NSManaged open var parentType: String?
     
-    @NSManaged public var parent: ManagedEntity?
+    @NSManaged open var parent: ManagedEntity?
 }

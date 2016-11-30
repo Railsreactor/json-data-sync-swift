@@ -14,7 +14,7 @@ The router is used to build URLs for API requests.
 */
 public protocol Router {
 	/// The base URL of the API.
-	var baseURL: NSURL! { get set }
+	var baseURL: URL! { get set }
 	
 	/**
 	Returns an NSURL that points to the collection of resources with a given type.
@@ -23,9 +23,9 @@ public protocol Router {
 	
 	- returns: The NSURL.
 	*/
-	func URLForResourceType(type: ResourceType) -> NSURL
+	func URLForResourceType(_ type: ResourceType) -> URL
 	
-	func URLForRelationship<T: Resource>(relationship: Relationship, ofResource resource: T) -> NSURL
+	func URLForRelationship<T: Resource>(_ relationship: Relationship, ofResource resource: T) -> URL
 	
 	/**
 	Returns an NSURL that represents the given query.
@@ -34,7 +34,7 @@ public protocol Router {
 	
 	- returns: The NSURL.
 	*/
-	func URLForQuery<T: Resource>(query: Query<T>) -> NSURL
+	func URLForQuery<T: Resource>(_ query: Query<T>) -> URL
 }
 
 /**
@@ -50,27 +50,27 @@ Pagination
 Only PageBasedPagination and OffsetBasedPagination are supported. You can subclass Router
 and override `queryItemsForPagination` to add support for other pagination strategies.
 */
-public class JSONAPIRouter: Router {
-	public var baseURL: NSURL!
+open class JSONAPIRouter: Router {
+	open var baseURL: URL!
 
 	public init() { }
 	
-	public func URLForResourceType(type: ResourceType) -> NSURL {
-		return baseURL.URLByAppendingPathComponent(type)!
+	open func URLForResourceType(_ type: ResourceType) -> URL {
+		return baseURL.appendingPathComponent(type)
 	}
 	
-	public func URLForRelationship<T: Resource>(relationship: Relationship, ofResource resource: T) -> NSURL {
-		let resourceURL = resource.URL ?? URLForResourceType(resource.dynamicType.resourceType()).URLByAppendingPathComponent("/\(resource.id!)")
-		return resourceURL!.URLByAppendingPathComponent("/links/\(relationship.serializedName)")!
+	open func URLForRelationship<T: Resource>(_ relationship: Relationship, ofResource resource: T) -> URL {
+		let resourceURL = resource.URL ?? URLForResourceType(type(of: resource).resourceType()).appendingPathComponent("/\(resource.id!)")
+		return resourceURL.appendingPathComponent("/links/\(relationship.serializedName)")
 	}
 
-	public func URLForQuery<T: Resource>(query: Query<T>) -> NSURL {
-		var URL: NSURL!
+	open func URLForQuery<T: Resource>(_ query: Query<T>) -> URL {
+		var URL: Foundation.URL!
 		var preBuiltURL = false
 		
 		// Base URL
 		if let URLString = query.URL?.absoluteString {
-			URL = NSURL(string: URLString, relativeToURL: baseURL)
+			URL = Foundation.URL(string: URLString, relativeTo: baseURL)
 			preBuiltURL = true
 		} else if let type = query.resourceType {
 			URL = URLForResourceType(type)
@@ -78,16 +78,16 @@ public class JSONAPIRouter: Router {
 			assertionFailure("Cannot build URL for query. Query does not have a URL, nor a resource type.")
 		}
 		
-		let URLComponents = NSURLComponents(URL: URL, resolvingAgainstBaseURL: true)!
-		var queryItems: [NSURLQueryItem] = URLComponents.queryItems ?? []
+		var URLComponents = Foundation.URLComponents(url: URL, resolvingAgainstBaseURL: true)!
+		var queryItems: [URLQueryItem] = URLComponents.queryItems ?? []
 		
 		// Resource IDs
 		if !preBuiltURL {
 			if let IDs = query.resourceIDs {
 				if IDs.count == 1 {
-					URLComponents.path = (URLComponents.path! as NSString).stringByAppendingPathComponent(IDs.first!)
+					URLComponents.path = (URLComponents.path as NSString).appendingPathComponent(IDs.first!)
 				} else {
-					let item = NSURLQueryItem(name: "filter[id]", value: IDs.joinWithSeparator(","))
+					let item = URLQueryItem(name: "filter[id]", value: IDs.joined(separator: ","))
 					setQueryItem(item, forQueryItems: &queryItems)
 				}
 			}
@@ -95,7 +95,7 @@ public class JSONAPIRouter: Router {
 		
 		// Includes
 		if !query.includes.isEmpty {
-			let item = NSURLQueryItem(name: "include", value: query.includes.joinWithSeparator(","))
+			let item = URLQueryItem(name: "include", value: query.includes.joined(separator: ","))
 			setQueryItem(item, forQueryItems: &queryItems)
 		}
 		
@@ -107,7 +107,7 @@ public class JSONAPIRouter: Router {
 		
 		// Fields
 		for (resourceType, fields) in query.fields {
-			let item = NSURLQueryItem(name: "fields[\(resourceType)]", value: fields.joinWithSeparator(","))
+			let item = URLQueryItem(name: "fields[\(resourceType)]", value: fields.joined(separator: ","))
 			setQueryItem(item, forQueryItems: &queryItems)
 		}
 		
@@ -121,7 +121,7 @@ public class JSONAPIRouter: Router {
 				}
 			}
 			
-			let item = NSURLQueryItem(name: "sort", value: descriptorStrings.joinWithSeparator(","))
+			let item = URLQueryItem(name: "sort", value: descriptorStrings.joined(separator: ","))
 			setQueryItem(item, forQueryItems: &queryItems)
 		}
 		
@@ -137,7 +137,7 @@ public class JSONAPIRouter: Router {
 			URLComponents.queryItems = queryItems
 		}
 		
-		return URLComponents.URL!
+		return URLComponents.url!
 	}
 	
 	/**
@@ -149,8 +149,8 @@ public class JSONAPIRouter: Router {
 	
 	- returns: The NSURLQueryItem.
 	*/
-	public func queryItemForFilter(filter: NSComparisonPredicate) -> NSURLQueryItem {
-		assert(filter.predicateOperatorType == .EqualToPredicateOperatorType, "The built in router only supports Query filter expressions of type 'equalTo'")
+	open func queryItemForFilter(_ filter: NSComparisonPredicate) -> URLQueryItem {
+		assert(filter.predicateOperatorType == .equalTo, "The built in router only supports Query filter expressions of type 'equalTo'")
         
         var format = "filter[\(filter.leftExpression.keyPath)]"
         if let optionals = filter.optionals {
@@ -160,7 +160,7 @@ public class JSONAPIRouter: Router {
         }
         
         if let value = filter.rightExpression.constantValue {
-            return NSURLQueryItem(name: format, value: "\(value)")
+            return URLQueryItem(name: format, value: "\(value)")
         } else {
             fatalError("The built in router only supports Query filter expressions of type 'equalTo' with both values")
         }
@@ -175,17 +175,17 @@ public class JSONAPIRouter: Router {
 	
 	- returns: Array of NSURLQueryItems.
 	*/
-	public func queryItemsForPagination(pagination: Pagination) -> [NSURLQueryItem] {
-		var queryItems = [NSURLQueryItem]()
+	open func queryItemsForPagination(_ pagination: Pagination) -> [URLQueryItem] {
+		var queryItems = [URLQueryItem]()
 		
 		switch pagination {
 		case let pagination as PageBasedPagination:
-			queryItems.append(NSURLQueryItem(name: "page[number]", value: String(pagination.pageNumber)))
-			queryItems.append(NSURLQueryItem(name: "page[size]", value: String(pagination.pageSize)))
+			queryItems.append(URLQueryItem(name: "page[number]", value: String(pagination.pageNumber)))
+			queryItems.append(URLQueryItem(name: "page[size]", value: String(pagination.pageSize)))
 			
 		case let pagination as OffsetBasedPagination:
-			queryItems.append(NSURLQueryItem(name: "page[offset]", value: String(pagination.offset)))
-			queryItems.append(NSURLQueryItem(name: "page[limit]", value: String(pagination.limit)))
+			queryItems.append(URLQueryItem(name: "page[offset]", value: String(pagination.offset)))
+			queryItems.append(URLQueryItem(name: "page[limit]", value: String(pagination.limit)))
 			
 			
 		default:
@@ -195,7 +195,7 @@ public class JSONAPIRouter: Router {
 		return queryItems
 	}
 	
-	private func setQueryItem(queryItem: NSURLQueryItem, inout forQueryItems queryItems: [NSURLQueryItem]) {
+	fileprivate func setQueryItem(_ queryItem: URLQueryItem, forQueryItems queryItems: inout [URLQueryItem]) {
 		queryItems = queryItems.filter { return $0.name != queryItem.name }
 		queryItems.append(queryItem)
 	}
@@ -204,7 +204,7 @@ public class JSONAPIRouter: Router {
 
 public extension NSComparisonPredicate {
     
-    private struct AssociatedKeys {
+    fileprivate struct AssociatedKeys {
         static var OptionalsName = "OptionalsName"
     }
     
@@ -218,7 +218,7 @@ public extension NSComparisonPredicate {
     }
     
     convenience init(format: String, optionals: [AnyObject]?=nil) {
-        self.init(format: format, UnsafePointer<Void>(nil))
+        self.init(format: format, UnsafeRawPointer(nil))
         self.optionals = optionals
     }
     

@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class UpdateInfoGateway: NSObject {
+open class UpdateInfoGateway: NSObject {
     
     weak var contextProvider : ManagedObjectContextProvider!
 
@@ -17,15 +17,15 @@ public class UpdateInfoGateway: NSObject {
         contextProvider = provider
     }
     
-    public func allObjects() throws -> [CDUpdateInfo] {
+    open func allObjects() throws -> [CDUpdateInfo] {
         return try contextProvider?.fetchEntities(nil, ofType: CDUpdateInfo.self, sortDescriptors: nil) as! [CDUpdateInfo]
     }
     
-    public func objectsCount() throws -> Int {
+    open func objectsCount() throws -> Int {
         return contextProvider?.countEntities(CDUpdateInfo.self) ?? 0
     }
     
-    public func updateInfoForKey(entityKey: String, filterID: String?=nil, createIfNeed: Bool=false) throws -> CDUpdateInfo? {
+    open func updateInfoForKey(_ entityKey: String, filterID: String?=nil, createIfNeed: Bool=false) throws -> CDUpdateInfo? {
         
         var predicateString = "entityType == %@"
         var params = [entityKey]
@@ -42,7 +42,7 @@ public class UpdateInfoGateway: NSObject {
             updateInfo = contextProvider?.createEntity(CDUpdateInfo.self, temp: false) as? CDUpdateInfo
             updateInfo?.entityType = entityKey
             updateInfo?.filterID = filterID
-            updateInfo?.updateDate = NSDate(timeIntervalSince1970: 0)
+            updateInfo?.updateDate = Date(timeIntervalSince1970: 0)
         }
         
         return updateInfo

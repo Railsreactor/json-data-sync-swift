@@ -8,22 +8,22 @@
 
 import Foundation
 
-public class MulticastDelegate<T: AnyObject> {
-    public let delegates = NSHashTable(options: NSHashTableWeakMemory, capacity: 3)
+open class MulticastDelegate<T: AnyObject> {
+    open let delegates = NSHashTable<AnyObject>(options: NSHashTableWeakMemory, capacity: 3)
     
-    public func add(object: T) {
-        delegates.addObject(object)
+    open func add(_ object: T) {
+        delegates.add(object)
     }
     
-    public func remove(object: T) {
-        delegates.removeObject(object)
+    open func remove(_ object: T) {
+        delegates.remove(object)
     }
     
-    public func removeAll() {
+    open func removeAll() {
         delegates.removeAllObjects()
     }
     
-    public func call(block: (T) -> Void) {
+    open func call(_ block: (T) -> Void) {
         for object in delegates.objectEnumerator().allObjects {
             let delegate = object as! T
             block(delegate)

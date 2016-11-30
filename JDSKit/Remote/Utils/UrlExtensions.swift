@@ -11,10 +11,10 @@ import Foundation
 public extension String {
     
     public func stringByAddingPercentEncodingForURLQueryValue() -> String? {
-        let characterSet = NSMutableCharacterSet.alphanumericCharacterSet()
-        characterSet.addCharactersInString("-._~")
+        let characterSet = NSMutableCharacterSet.alphanumeric()
+        characterSet.addCharacters(in: "-._~")
         
-        return self.stringByAddingPercentEncodingWithAllowedCharacters(characterSet)
+        return self.addingPercentEncoding(withAllowedCharacters: characterSet as CharacterSet)
     }
     
 }
@@ -28,14 +28,14 @@ public extension Dictionary {
             var percentEscapedValue: String? = nil
             
             if let value = value as? [AnyObject] {
-                percentEscapedValue = value.map { "\($0)" }.joinWithSeparator(",").stringByAddingPercentEncodingForURLQueryValue()!
+                percentEscapedValue = value.map { "\($0)" }.joined(separator: ",").stringByAddingPercentEncodingForURLQueryValue()!
             } else {
-                percentEscapedValue = (String(value)).stringByAddingPercentEncodingForURLQueryValue()!
+                percentEscapedValue = (String(describing: value)).stringByAddingPercentEncodingForURLQueryValue()!
             }
             
-            return "\(percentEscapedKey)=\(percentEscapedValue ?? NSNull())"
+            return "\(percentEscapedKey)=\(percentEscapedValue ?? NSNull().description)"
         }
-        return parameterArray.joinWithSeparator("&")
+        return parameterArray.joined(separator: "&")
     }
 }
 

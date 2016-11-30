@@ -15,7 +15,7 @@ The serialized data is converted into Resource instances using a layered process
 
 This process is the inverse of that of the SerializeOperation.
 */
-class DeserializeOperation: NSOperation {
+class DeserializeOperation: Operation {
 	
 	// Input
 	let data: JSON
@@ -26,19 +26,19 @@ class DeserializeOperation: NSOperation {
 	var result: Failable<JSONAPIDocument>?
 	
 	// Extracted objects
-	private var extractedPrimaryResources: [Resource] = []
-	private var extractedIncludedResources: [Resource] = []
-	private var extractedErrors: [NSError]?
-	private var extractedMeta: [String: AnyObject]?
-	private var extractedLinks: [String: NSURL]?
-	private var extractedJSONAPI: [String: AnyObject]?
+	fileprivate var extractedPrimaryResources: [Resource] = []
+	fileprivate var extractedIncludedResources: [Resource] = []
+	fileprivate var extractedErrors: [NSError]?
+	fileprivate var extractedMeta: [String: AnyObject]?
+	fileprivate var extractedLinks: [String: URL]?
+	fileprivate var extractedJSONAPI: [String: AnyObject]?
 	
-    private var resourcePool: [String: Resource] = [:]
+    fileprivate var resourcePool: [String: Resource] = [:]
 	
 	
 	// MARK: Initializers
 	
-	init(data: NSData, resourceFactory: ResourceFactory) {
+	init(data: Data, resourceFactory: ResourceFactory) {
 		self.data = JSON(data: data)
 		self.resourceFactory = resourceFactory
 	}
@@ -46,7 +46,7 @@ class DeserializeOperation: NSOperation {
 	
 	// MARK: Mapping targets
 	
-	func addMappingTargets(targets: [Resource]) {
+	func addMappingTargets(_ targets: [Resource]) {
 		// We can only map onto resources that are not loaded yet
 		for resource in targets {
 			assert(resource.isLoaded == false, "Cannot map onto loaded resource \(resource)")
@@ -61,19 +61,19 @@ class DeserializeOperation: NSOperation {
 		// Validate document
 		guard data.dictionary != nil else {
 			let errorMessage = "The given JSON is not a dictionary (hash).";
-			Spine.logError(.Serializing, errorMessage)
+			Spine.logError(.serializing, errorMessage)
 			result = Failable(NSError(domain: SpineSerializingErrorDomain, code: SpineErrorCodes.InvalidDocumentStructure, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
 			return
 		}
 		guard data["errors"] != nil || data["data"] != nil || data["meta"] != nil else {
 			let errorMessage = "Either 'data', 'errors', or 'meta' must be present in the top level.";
-			Spine.logError(.Serializing, errorMessage)
+			Spine.logError(.serializing, errorMessage)
 			result = Failable(NSError(domain: SpineSerializingErrorDomain, code: SpineErrorCodes.InvalidDocumentStructure, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
 			return
 		}
 		guard (data["errors"] == nil && data["data"] != nil) || (data["errors"] != nil && data["data"] == nil) else {
 			let errorMessage = "Top level 'data' and 'errors' must not coexist in the same document.";
-			Spine.logError(.Serializing, errorMessage)
+			Spine.logError(.serializing, errorMessage)
 			result = Failable(NSError(domain: SpineSerializingErrorDomain, code: SpineErrorCodes.InvalidDocumentStructure, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
 			return
 		}
@@ -81,7 +81,7 @@ class DeserializeOperation: NSOperation {
 		// Extract resources
 		do {
 			if let data = self.data["data"].array {
-				for (_, representation) in data.enumerate() {
+				for (_, representation) in data.enumerated() {
                     try extractedPrimaryResources.append(deserializeSingleRepresentation(representation))
 				}
 			} else if let _ = self.data["data"].dictionary {
@@ -105,44 +105,44 @@ class DeserializeOperation: NSOperation {
             var userInfo = [String: AnyObject]()
             
 			if let details = error["detail"].string {
-                userInfo[NSLocalizedDescriptionKey] = details
+                userInfo[NSLocalizedDescriptionKey] = details as AnyObject?
 			}
             
             if let source = error["source"].dictionaryObject {
-                userInfo[SNAPIErrorSourceKey] = source
+                userInfo[SNAPIErrorSourceKey] = source as AnyObject?
             }
 			
             if let title = error["title"].string {
-                userInfo[SNLocalizedTitleKey] = title
+                userInfo[SNLocalizedTitleKey] = title as AnyObject?
             }
             
             if userInfo.isEmpty {
-                userInfo = error.dictionaryObject!
+                userInfo = error.dictionaryObject! as [String : AnyObject]
             }
             
 			return NSError(domain: SpineServerErrorDomain, code: code, userInfo: userInfo)
 		}
 		
 		// Extract meta
-		extractedMeta = self.data["meta"].dictionaryObject
+		extractedMeta = self.data["meta"].dictionaryObject as [String : AnyObject]?
 		
 		// Extract links
 		if let links = self.data["links"].dictionary {
 			extractedLinks = [:]
 			
 			for (key, value) in links {
-				extractedLinks![key] = NSURL(string: value.stringValue)!
+				extractedLinks![key] = NSURL(string: value.stringValue)! as URL
 			}
 		}
 		
 		// Extract jsonapi
-		extractedJSONAPI = self.data["jsonapi"].dictionaryObject
+		extractedJSONAPI = self.data["jsonapi"].dictionaryObject as [String : AnyObject]?
 		
 		// Resolve relations in the store
 		resolveRelations()
 		
 		// Create a result
-		var responseDocument = JSONAPIDocument(data: nil, included: nil, errors: extractedErrors, meta: extractedMeta, links: extractedLinks, jsonapi: extractedJSONAPI)
+		var responseDocument = JSONAPIDocument(data: nil, included: nil, errors: extractedErrors, meta: extractedMeta, links: extractedLinks as [String : URL]?, jsonapi: extractedJSONAPI)
 		if !extractedPrimaryResources.isEmpty {
 			responseDocument.data = extractedPrimaryResources
 		}
@@ -163,7 +163,7 @@ class DeserializeOperation: NSOperation {
 	
 	:returns: A Resource object with values mapped from the representation.
 	*/
-	private func deserializeSingleRepresentation(representation: JSON) throws -> Resource {
+	fileprivate func deserializeSingleRepresentation(_ representation: JSON) throws -> Resource {
 		guard representation.dictionary != nil else {
 			throw NSError(domain: SpineSerializingErrorDomain, code: SpineErrorCodes.InvalidResourceStructure, userInfo: nil)
 		}
@@ -182,7 +182,7 @@ class DeserializeOperation: NSOperation {
 		// Extract data
 		resource.id = id
 		resource.URL = representation["links"]["self"].URL
-		resource.meta = representation["meta"].dictionaryObject
+		resource.meta = representation["meta"].dictionaryObject as [String : AnyObject]?
 		extractAttributes(representation, intoResource: resource)
 		extractRelationships(representation, intoResource: resource)
 		
@@ -204,7 +204,7 @@ class DeserializeOperation: NSOperation {
 	:param: serializedData The data from which to extract the attributes.
 	:param: resource       The resource into which to extract the attributes.
 	*/
-	private func extractAttributes(serializedData: JSON, intoResource resource: Resource) {
+	fileprivate func extractAttributes(_ serializedData: JSON, intoResource resource: Resource) {
 		for case let field as Attribute in resource.fields() {
 			if let extractedValue: AnyObject = self.extractAttribute(serializedData, key: field.serializedName) {
 				let formattedValue: AnyObject = self.transformers.deserialize(extractedValue, forAttribute: field)
@@ -221,29 +221,29 @@ class DeserializeOperation: NSOperation {
 	
 	:returns: The extracted value or nil if no attribute with the given key was found in the data.
 	*/
-	private func extractAttribute(serializedData: JSON, key: String) -> AnyObject? {
+	fileprivate func extractAttribute(_ serializedData: JSON, key: String) -> AnyObject? {
         
         let value = extractKeyPath(serializedData["attributes"], keyPath: key)
 		
 		if let _ = value.null {
 			return nil
 		} else {
-			return value.rawValue
+			return value.rawValue as AnyObject?
 		}
 	}
     
-    private func extractKeyPath(serializedData: JSON, keyPath: String) -> JSON {
-        var keys = keyPath.componentsSeparatedByString(".")
+    fileprivate func extractKeyPath(_ serializedData: JSON, keyPath: String) -> JSON {
+        var keys = keyPath.components(separatedBy:".")
         
         
         guard let first = keys.first else { print("Key not found"); return nil }
         
-        guard let value: JSON = serializedData[first] where value.null == nil else { return nil }
+        guard let value: JSON = serializedData[first], value.null == nil else { return nil }
         
-        keys.removeAtIndex(0)
+        keys.remove(at: 0)
         
         if !keys.isEmpty {
-            let rejoined = keys.joinWithSeparator(".")
+            let rejoined = keys.joined(separator: ".")
             return extractKeyPath(value, keyPath: rejoined)
         }
         
@@ -263,7 +263,7 @@ class DeserializeOperation: NSOperation {
 	:param: serializedData The data from which to extract the relationships.
 	:param: resource       The resource into which to extract the relationships.
 	*/
-	private func extractRelationships(serializedData: JSON, intoResource resource: Resource) {
+	fileprivate func extractRelationships(_ serializedData: JSON, intoResource resource: Resource) {
 		for field in resource.fields() {
 			switch field {
 			case let toOne as ToOneRelationship:
@@ -289,12 +289,12 @@ class DeserializeOperation: NSOperation {
 	
 	:returns: The extracted relationship or nil if no relationship with the given key was found in the data.
 	*/
-	private func extractToOneRelationship(serializedData: JSON, key: String, linkedType: ResourceType, resource: Resource) -> Resource? {
+	fileprivate func extractToOneRelationship(_ serializedData: JSON, key: String, linkedType: ResourceType, resource: Resource) -> Resource? {
 		var resource: Resource? = nil
 		
 		if let linkData = serializedData["relationships"][key].dictionary {
             
-            if let data = linkData["data"] where data.null != NSNull() {
+            if let data = linkData["data"], data.null != NSNull() {
                 
                 let type = linkData["data"]?["type"].string ?? linkedType
                 
@@ -323,12 +323,12 @@ class DeserializeOperation: NSOperation {
 	
 	:returns: The extracted relationship or nil if no relationship with the given key was found in the data.
 	*/
-	private func extractToManyRelationship(serializedData: JSON, key: String, resource: Resource) -> LinkedResourceCollection? {
+	fileprivate func extractToManyRelationship(_ serializedData: JSON, key: String, resource: Resource) -> LinkedResourceCollection? {
 		var resourceCollection: LinkedResourceCollection? = nil
 
 		if let linkData = serializedData["relationships"][key].dictionary {
-			let resourcesURL: NSURL? = linkData["links"]?["related"].URL
-			let linkURL: NSURL? = linkData["links"]?["self"].URL
+			let resourcesURL: URL? = linkData["links"]?["related"].URL
+			let linkURL: URL? = linkData["links"]?["self"].URL
 			
 			if let linkage = linkData["data"]?.array {
 				let mappedLinkage = linkage.map { ResourceIdentifier(type: $0["type"].stringValue, id: $0["id"].stringValue) }
@@ -344,7 +344,7 @@ class DeserializeOperation: NSOperation {
 	/**
 	Resolves the relations of the primary resources.
 	*/
-	private func resolveRelations() {
+	fileprivate func resolveRelations() {
         for (_,resource) in resourcePool {
 			for case let field as ToManyRelationship in resource.fields() {
 				if let linkedResource = resource.valueForField(field.name) as? LinkedResourceCollection {
@@ -374,10 +374,10 @@ class DeserializeOperation: NSOperation {
                             linkedResource.isLoaded = !usedFaults
                         }
 					} else {
-						Spine.logInfo(.Serializing, "Cannot resolve to-many link \(resource.resourceType()):\(resource.id ?? "nil") - \(field.name) because the foreign IDs are not known.")
+						Spine.logInfo(.serializing, "Cannot resolve to-many link \(resource.resourceType()):\(resource.id ?? "nil") - \(field.name) because the foreign IDs are not known.")
 					}
 				} else {
-					Spine.logInfo(.Serializing, "Cannot resolve to-many link \(resource.resourceType()):\(resource.id ?? "nil") - \(field.name) because the link data is not fetched.")
+					Spine.logInfo(.serializing, "Cannot resolve to-many link \(resource.resourceType()):\(resource.id ?? "nil") - \(field.name) because the link data is not fetched.")
 				}
 			}
 		}

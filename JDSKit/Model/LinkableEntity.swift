@@ -17,10 +17,10 @@ import UIKit
 }
 
 
-public class DummyLinkableEntity : DummyManagedEntity, LinkableEntity {
+open class DummyLinkableEntity : DummyManagedEntity, LinkableEntity {
     
-    public var parentId: String?
-    public var parentType: String?
+    open var parentId: String?
+    open var parentType: String?
     
-    public var parent: ManagedEntity?
+    open var parent: ManagedEntity?
 }

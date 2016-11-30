@@ -12,18 +12,18 @@ import PromiseKit
 import CoreData
 import CocoaLumberjack
 
-enum CoreDataError: ErrorType {
-    case StoreOutdated
+enum CoreDataError: Error {
+    case storeOutdated
 }
 
-public class BaseDBService: NSObject, ManagedObjectContextProvider {
+open class BaseDBService: NSObject, ManagedObjectContextProvider {
     
-    public static var sharedInstance: BaseDBService!
+    open static var sharedInstance: BaseDBService!
     
-    var modelURL: NSURL
-    var storeURL: NSURL
+    var modelURL: URL
+    var storeURL: URL
     
-    public init(modelURL aModelURL: NSURL, storeURL aStoreURL: NSURL) {
+    public init(modelURL aModelURL: URL, storeURL aStoreURL: URL) {
         modelURL = aModelURL
         storeURL = aStoreURL
         super.init()
@@ -34,22 +34,22 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         
         initilizePredefinedGateways()
         
-        let nc = NSNotificationCenter.defaultCenter()
-        nc.addObserver(self, selector: #selector(BaseDBService.mergeChangesOnMainThread(_:)), name: NSManagedObjectContextDidSaveNotification, object: backgroundManagedObjectContext)
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(BaseDBService.mergeChangesOnMainThread(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: backgroundManagedObjectContext)
     }
     
     // ******************************************************
 
-    private lazy var applicationDocumentsDirectory: NSURL = {
-        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
+    fileprivate lazy var applicationDocumentsDirectory: URL = {
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return urls[urls.count-1]
     }()
     
-    private lazy var managedObjectModel: NSManagedObjectModel = {
-        return NSManagedObjectModel(contentsOfURL: self.modelURL)!
+    fileprivate lazy var managedObjectModel: NSManagedObjectModel = {
+        return NSManagedObjectModel(contentsOf: self.modelURL)!
     }()
     
-    private lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
+    fileprivate lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
         DDLogDebug("Initializing store...")
         
         let url = self.storeURL
@@ -64,20 +64,20 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         do {
             // Cleanup local cache if store going to migrate. Hack to avoid bug when newly added properties not set during sync, because existed entities wasn't updated since last sync.
             // Options to use with any delta-sync mechanism: [NSMigratePersistentStoresAutomaticallyOption:true, NSInferMappingModelAutomaticallyOption:true]
-            let meta = try NSPersistentStoreCoordinator.metadataForPersistentStoreOfType(NSSQLiteStoreType, URL: url, options: nil)
-            if !self.managedObjectModel.isConfiguration(nil, compatibleWithStoreMetadata: meta) {
-                throw CoreDataError.StoreOutdated
+            let meta = try NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: NSSQLiteStoreType, at: url, options: nil)
+            if !self.managedObjectModel.isConfiguration(withName: nil, compatibleWithStoreMetadata: meta) {
+                throw CoreDataError.storeOutdated
             }
             DDLogDebug("Store meta is compatible.")
         } catch {
             DDLogError("Failed to init store coordinator with existing database. Trying to reinitialize store...")
             do {
-                try NSFileManager.defaultManager().removeItemAtURL(url);
+                try FileManager.default.removeItem(at: url);
             } catch {}
         }
         
         do {
-            try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil)
+            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
             DDLogDebug("Store Initialized.")
         } catch {
             DDLogError("Failed to initialize sore: \(error)")
@@ -89,7 +89,7 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
     
     
     lazy var backgroundManagedObjectContext: NSManagedObjectContext = {
-        var backgroundManagedObjectContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+        var backgroundManagedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         backgroundManagedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
         backgroundManagedObjectContext.mergePolicy = NSOverwriteMergePolicy
         return backgroundManagedObjectContext
@@ -98,15 +98,15 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
     lazy var mainUIManagedObjectContext: NSManagedObjectContext = {
         var mainUIManagedObjectContext : NSManagedObjectContext?
         let initBlock = {() -> Void in
-            mainUIManagedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+            mainUIManagedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
             mainUIManagedObjectContext!.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
             mainUIManagedObjectContext!.persistentStoreCoordinator = self.persistentStoreCoordinator
         }
         
-        if NSThread.isMainThread() {
+        if Thread.isMainThread {
             initBlock()
         } else {
-            dispatch_sync(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.sync(execute: { () -> Void in
                 initBlock()
             })
         }
@@ -116,8 +116,8 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
     
     //MARK: - Entity Gateways
 
-    private var syncObject = NSObject()
-    private var entityGatewaysByType: [String : GenericEntityGateway] =  [:]
+    fileprivate var syncObject = NSObject()
+    fileprivate var entityGatewaysByType: [String : GenericEntityGateway] =  [:]
 
     func initilizePredefinedGateways () {
         synchronized(syncObject) { () -> () in
@@ -127,7 +127,7 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         }
     }
     
-    public func entityGatewayByEntityTypeKey(typeKey: String) -> GenericEntityGateway? {
+    open func entityGatewayByEntityTypeKey(_ typeKey: String) -> GenericEntityGateway? {
         var gateway = entityGatewaysByType[typeKey]
         if gateway == nil {
             synchronized(syncObject) { () -> () in
@@ -143,32 +143,32 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         return gateway
     }
 
-    public func entityGatewayByEntityType(type: ManagedEntity.Type) -> GenericEntityGateway? {
-        return entityGatewayByEntityTypeKey(String(type))
+    open func entityGatewayByEntityType(_ type: ManagedEntity.Type) -> GenericEntityGateway? {
+        return entityGatewayByEntityTypeKey(String(describing: type))
     }
     
-    public func entityGatewayByMOType(type: CDManagedEntity.Type) -> GenericEntityGateway? {
-        return entityGatewayByEntityTypeKey(String(type.entityType))
+    open func entityGatewayByMOType(_ type: CDManagedEntity.Type) -> GenericEntityGateway? {
+        return entityGatewayByEntityTypeKey(String(describing: type.entityType))
     }
     
     //MARK: - Merge
-    @objc internal func mergeChangesOnMainThread(didSaveNotification: NSNotification) {
+    @objc internal func mergeChangesOnMainThread(_ didSaveNotification: Notification) {
         let context = self.mainUIManagedObjectContext
         
-        context.performBlock { () -> Void in
-            let timestamp = NSDate()
+        context.perform { () -> Void in
+            let timestamp = Date()
             
             let inserted = didSaveNotification.userInfo?[NSInsertedObjectsKey] as? NSSet
             let updated  = didSaveNotification.userInfo?[NSUpdatedObjectsKey] as? NSSet
             let deleted  = didSaveNotification.userInfo?[NSDeletedObjectsKey] as? NSSet
             
-            context.mergeChangesFromContextDidSaveNotification(didSaveNotification)
+            context.mergeChanges(fromContextDidSave: didSaveNotification)
             if let updated = didSaveNotification.userInfo?["updated"] as? NSSet {
                 for unasafeMO in updated {
                     if let unasafeMO = unasafeMO as? NSManagedObject {
                         do {
-                            let safeMO = try context.existingObjectWithID(unasafeMO.objectID)
-                            context.refreshObject(safeMO, mergeChanges: true)
+                            let safeMO = try context.existingObject(with: unasafeMO.objectID)
+                            context.refresh(safeMO, mergeChanges: true)
                         } catch {
                             DDLogError("Managed Object not found: \(unasafeMO.objectID)")
                         }
@@ -181,7 +181,7 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
     }
     
     //MARK: - Save
-    internal func saveUnsafe(context: NSManagedObjectContext) {
+    internal func saveUnsafe(_ context: NSManagedObjectContext) {
         do {
             try context.save()
         } catch let error as NSError {
@@ -195,31 +195,31 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         }
     }
     
-    public func saveContextSyncSafe(context: NSManagedObjectContext) {
-        context.performBlockAndWait { () -> Void in
+    open func saveContextSyncSafe(_ context: NSManagedObjectContext) {
+        context.performAndWait { () -> Void in
             self.saveUnsafe(context)
         }
     }
     
-    public func saveContextSafe(context: NSManagedObjectContext) {
-        context.performBlock { () -> Void in
+    open func saveContextSafe(_ context: NSManagedObjectContext) {
+        context.perform { () -> Void in
             self.saveUnsafe(context)
         }
     }
     
-    public func saveSyncSafe() {
+    open func saveSyncSafe() {
         self.saveContextSyncSafe(self.backgroundManagedObjectContext)
     }
     
-    public func saveBackgroundUnsafe() {
+    open func saveBackgroundUnsafe() {
         self.saveUnsafe(self.backgroundManagedObjectContext)
     }
     
-    public func performBlockOnBackgroundContext(block: () -> Void) {
-        backgroundManagedObjectContext.performBlock(block)
+    open func performBlockOnBackgroundContext(_ block: @escaping () -> Void) {
+        backgroundManagedObjectContext.perform(block)
     }
     
-    public func performPromiseOnBackgroundContext<T>(block: () throws -> T) -> Promise<T> {
+    open func performPromiseOnBackgroundContext<T>(_ block: @escaping () throws -> T) -> Promise<T> {
         return Promise<T> { fulfill, reject in
             self.performBlockOnBackgroundContext({ () -> () in
                 do {
@@ -233,52 +233,52 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
     
     //MARK: -
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     //MARK: - Entities
-    public func contextForCurrentThread() -> NSManagedObjectContext {
-        let context: NSManagedObjectContext = NSThread.isMainThread() ? mainUIManagedObjectContext : backgroundManagedObjectContext
+    open func contextForCurrentThread() -> NSManagedObjectContext {
+        let context: NSManagedObjectContext = Thread.isMainThread ? mainUIManagedObjectContext : backgroundManagedObjectContext
         return context
     }
     
-    public func fetchEntity(managedObjectID: NSManagedObjectID) throws -> NSManagedObject? {
+    open func fetchEntity(_ managedObjectID: NSManagedObjectID) throws -> NSManagedObject? {
         let context = contextForCurrentThread()
-        return try context.existingObjectWithID(managedObjectID)
+        return try context.existingObject(with: managedObjectID)
     }
     
-    public func fetchEntities(managedObjectIDs: [NSManagedObjectID]) -> [NSManagedObject] {
+    open func fetchEntities(_ managedObjectIDs: [NSManagedObjectID]) -> [NSManagedObject] {
         let context = contextForCurrentThread()
         var array = [NSManagedObject]()
         for managedObjectID in managedObjectIDs {
-            array.append(context.objectWithID(managedObjectID))
+            array.append(context.object(with: managedObjectID))
         }
         return array
     }
     
     //MARK: - Entities
     
-    public func createEntity(type: NSManagedObject.Type, temp: Bool = false) -> NSManagedObject {
+    open func createEntity(_ type: NSManagedObject.Type, temp: Bool = false) -> NSManagedObject {
         let context = contextForCurrentThread()
-        let name = String(type)
+        let name = String(describing: type)
         if !temp {
-            return NSEntityDescription.insertNewObjectForEntityForName(name, inManagedObjectContext: context)
+            return NSEntityDescription.insertNewObject(forEntityName: name, into: context)
         } else {
-            let entityDesc = NSEntityDescription.entityForName(name, inManagedObjectContext: context)
-            return NSManagedObject(entity: entityDesc!, insertIntoManagedObjectContext: nil)
+            let entityDesc = NSEntityDescription.entity(forEntityName: name, in: context)
+            return NSManagedObject(entity: entityDesc!, insertInto: nil)
         }
     }
     
-    public func generateFetchRequestForEntity(enitityType : NSManagedObject.Type, context: NSManagedObjectContext) -> NSFetchRequest {
+    open func generateFetchRequestForEntity(_ enitityType : NSManagedObject.Type, context: NSManagedObjectContext) -> NSFetchRequest<NSFetchRequestResult> {
         
-        let fetchRequest = NSFetchRequest()
-        let name = String(enitityType)
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+        let name = String(describing: enitityType)
         
-        fetchRequest.entity = NSEntityDescription.entityForName(name, inManagedObjectContext: context)
+        fetchRequest.entity = NSEntityDescription.entity(forEntityName: name, in: context)
         return fetchRequest
     }
     
-    public func fetchEntity(predicate: NSPredicate?, ofType: NSManagedObject.Type) throws -> NSManagedObject? {
+    open func fetchEntity(_ predicate: NSPredicate?, ofType: NSManagedObject.Type) throws -> NSManagedObject? {
         let context = contextForCurrentThread()
         let fetchRequest = generateFetchRequestForEntity(ofType, context: context)
         
@@ -286,13 +286,13 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         fetchRequest.predicate = predicate
         
         var entity: NSManagedObject? = nil
-        if try context.countForFetchRequest(fetchRequest) > 0 {
-            entity = try context.executeFetchRequest(fetchRequest).last as? NSManagedObject
+        if try context.count(for: fetchRequest) > 0 {
+            entity = try context.fetch(fetchRequest).last as? NSManagedObject
         }
         return entity
     }
     
-    public func fetchEntities(predicate: NSPredicate?, ofType: NSManagedObject.Type, sortDescriptors: [NSSortDescriptor]?) throws -> [NSManagedObject] {
+    open func fetchEntities(_ predicate: NSPredicate?, ofType: NSManagedObject.Type, sortDescriptors: [NSSortDescriptor]?) throws -> [NSManagedObject] {
         
         let context = contextForCurrentThread()
         let fetchRequest = generateFetchRequestForEntity(ofType, context: context)
@@ -301,17 +301,17 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         fetchRequest.sortDescriptors = sortDescriptors
         
         var entities: [CDManagedEntity] = []
-        if try context.countForFetchRequest(fetchRequest) > 0 {
-            entities = try context.executeFetchRequest(fetchRequest) as! [CDManagedEntity]
+        if try context.count(for: fetchRequest) > 0 {
+            entities = try context.fetch(fetchRequest) as! [CDManagedEntity]
         }
         return entities
     }
     
-    public func countEntities(ofType: NSManagedObject.Type) -> Int {
+    open func countEntities(_ ofType: NSManagedObject.Type) -> Int {
         let context = contextForCurrentThread()
         let fetchRequest = generateFetchRequestForEntity(ofType, context: context)
     
-        let count = (try? context.countForFetchRequest(fetchRequest)) ?? 0
+        let count = (try? context.count(for: fetchRequest)) ?? 0
         
         if(count == NSNotFound) {
             return 0
@@ -321,7 +321,7 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
     }
     
     //MARK: - Delete
-    public func deleteEntities(predicate: NSPredicate?, ofType: NSManagedObject.Type) throws -> Void {
+    open func deleteEntities(_ predicate: NSPredicate?, ofType: NSManagedObject.Type) throws -> Void {
         
         let entities = try fetchEntities(predicate, ofType:ofType, sortDescriptors: nil)
         
@@ -330,17 +330,17 @@ public class BaseDBService: NSObject, ManagedObjectContextProvider {
         }
     }
     
-    public func deleteEntity(object: NSManagedObject) throws -> Void {
+    open func deleteEntity(_ object: NSManagedObject) throws -> Void {
         let context = contextForCurrentThread()
-        context.deleteObject(object)
+        context.delete(object)
     }
 }
 
 
 
 public extension Promise {
-    public func thenInBGContext<U>(body: (T) throws -> U) -> Promise<U> {
-        return firstly { return self }.thenInBackground { value in
+    public func thenInBGContext<U>(_ body: @escaping (T) throws -> U) -> Promise<U> {
+        return firstly { return self }.then(on: .global()) { value in
             return BaseDBService.sharedInstance.performPromiseOnBackgroundContext{ () -> U in
                 return try body(value)
             }

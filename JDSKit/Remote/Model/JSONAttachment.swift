@@ -9,17 +9,17 @@
 import Foundation
 
 
-public class JSONAttachment : JSONLinkableEntity, Attachment {
+open class JSONAttachment : JSONLinkableEntity, Attachment {
     
-    public var name: String?
-    public var fileUrl: String?
-    public var thumbUrl: String?
+    open var name: String?
+    open var fileUrl: String?
+    open var thumbUrl: String?
     
-    public var data: NSData?
+    open var data: Data?
     
-    public var tempImage: UIImage?
+    open var tempImage: UIImage?
     
-    public override class func fields() -> [Field] {
+    open override class func fields() -> [Field] {
         return super.fields() + fieldsFromDictionary([
             "name":                 Attribute(),
             "fileUrl":              Attribute().serializeAs("file_url"),
