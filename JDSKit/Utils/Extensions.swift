@@ -8,7 +8,6 @@
 
 import UIKit
 import PromiseKit
-import When
 
 
 public func asBool(_ value: Any?) -> Bool {
@@ -51,16 +50,4 @@ public extension Date {
     }
 }
 
-//public extension Promise {
-//    public func rawError() -> Promise {
-//        return self.recover { (error) throws -> Promise in
-//            switch error {
-//            case PromiseKit.PKError .When(_, let err):
-//                throw err
-//            default:
-//                throw error
-//            }
-//        }
-//    }
-//}
 
