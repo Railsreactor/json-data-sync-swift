@@ -151,11 +151,9 @@ open class AbstractSyncService: CoreService {
             
             self.lastSuccessSyncDate = self.lastSyncDate
             eventSyncInfo?.updateDate = self.lastSyncDate
+        }.always(on: .global()) {
+            self.localManager.saveSyncSafe()
         }
-        
-//        }.always (on: dispatch_get_global_queue(Int(QOS_CLASS_DEFAULT.rawValue), 0)) {
-//            self.localManager.saveSyncSafe()
-//        }
     }
     
     open func sync() -> Promise<Void> {

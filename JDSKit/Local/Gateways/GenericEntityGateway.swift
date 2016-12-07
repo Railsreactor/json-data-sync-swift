@@ -72,7 +72,7 @@ open class GenericEntityGateway: NSObject {
         return try contextProvider.fetchEntities(predicate, ofType: managedObjectType, sortDescriptors: sortDescriptors).map { $0 as! T }
     }
     
-    open func fetchEntities<T: ManagedEntity>(_ predicateString: String, arguments: [AnyObject]? = nil, sortDescriptors: [NSSortDescriptor]? = nil) throws -> [T] {
+    open func fetchEntities<T: ManagedEntity>(_ predicateString: String, arguments: [Any]? = nil, sortDescriptors: [NSSortDescriptor]? = nil) throws -> [T] {
         return try fetchEntities(NSPredicate(format: predicateString, argumentArray: arguments), sortDescriptors: sortDescriptors)
     }
     
@@ -80,7 +80,7 @@ open class GenericEntityGateway: NSObject {
         return try (contextProvider.fetchEntity(predicate, ofType: managedObjectType) as? T)
     }
     
-    open func fetchEntity<T: ManagedEntity>(_ predicateString: String, arguments: [AnyObject]? = nil) throws -> T? {
+    open func fetchEntity<T: ManagedEntity>(_ predicateString: String, arguments: [Any]? = nil) throws -> T? {
         return try fetchEntity(NSPredicate(format: predicateString, argumentArray: arguments))
     }
     
@@ -151,7 +151,7 @@ open class GenericEntityGateway: NSObject {
         return managedObject as! T
     }
     
-    open func insertEnities( _ entities : [ManagedEntity], isFirstInsert: Bool = false, userInfo inputUserInfo:[String : AnyObject] = [:]) throws -> [ManagedEntity]? {
+    open func insertEnities( _ entities : [ManagedEntity], isFirstInsert: Bool = false, userInfo inputUserInfo:[String : Any] = [:]) throws -> [ManagedEntity]? {
         
         var insertedItems: [ManagedEntity] = []
         
@@ -160,7 +160,7 @@ open class GenericEntityGateway: NSObject {
             // Lets try to prefetch all existing entities to speed-up mapping
             let ids: [String] = entities.flatMap { $0.id }
             if ids.count > 0 {
-                let prefetchedEntites = try fetchEntities("id in %@", arguments: [ids as AnyObject]) as [CDManagedEntity]
+                let prefetchedEntites = try fetchEntities("id in %@", arguments: [ids as Any]) as [CDManagedEntity]
                 if prefetchedEntites.count > 0 {
                     var prefetchedByKey = [String: CDManagedEntity]()
                     prefetchedEntites.forEach( { entity in
@@ -168,12 +168,12 @@ open class GenericEntityGateway: NSObject {
                             prefetchedByKey[id] = entity
                         }
                     })
-                    userInfo[MappingConstans.PrefetchedEntities] = prefetchedByKey as AnyObject?
+                    userInfo[MappingConstans.PrefetchedEntities] = prefetchedByKey as Any?
                 }
             }
             
             for entity in entities {
-                let mapped: ManagedEntity = try insertEntity(entity, mergeWith: nil, isFirstInsert: isFirstInsert, userInfo: userInfo)
+                let mapped: ManagedEntity = try insertEntity(entity, mergeWith: nil, isFirstInsert: isFirstInsert, userInfo: userInfo as [String : AnyObject])
                 insertedItems.append(mapped)
             }
         } catch (CoreError.entityMisstype(let input, let target)) {
@@ -183,13 +183,13 @@ open class GenericEntityGateway: NSObject {
         return insertedItems
     }
     
-    open func mapEntity (_ entity: ManagedEntity, managedObject: CDManagedEntity, userInfo:[String : AnyObject] = [:]) throws {
+    open func mapEntity (_ entity: ManagedEntity, managedObject: CDManagedEntity, userInfo:[String : Any] = [:]) throws {
         mapEntityProperties(entity, managedObject: managedObject)
         try mapEntityRelations(entity, managedObject: managedObject, exceptRelationship:nil, userInfo: userInfo)
     }
     
     
-    open func mapEntityProperties(_ entity: ManagedEntity, managedObject: CDManagedEntity, userInfo:[String : AnyObject] = [:]) {
+    open func mapEntityProperties(_ entity: ManagedEntity, managedObject: CDManagedEntity, userInfo:[String : Any] = [:]) {
         
         //Skip not loaded objects
         guard let newDate = entity.updateDate else {
@@ -211,12 +211,12 @@ open class GenericEntityGateway: NSObject {
                     continue;
                 }
                 
-                var value:AnyObject? = entity.value(forKey: attribute.name) as AnyObject?
+                var value:Any? = entity.value(forKey: attribute.name) as Any?
                 
                 if !isLoaded && value == nil {
-                    value = object.value(forKey: attribute.name) as AnyObject?? ?? attribute.defaultValue as AnyObject?
+                    value = object.value(forKey: attribute.name) as Any?? ?? attribute.defaultValue as Any?
                 } else if value == nil {
-                    value = attribute.defaultValue as AnyObject?
+                    value = attribute.defaultValue as Any?
                 }
                 
                 if asBool(attribute.userInfo?[MappingConstans.SyncOR]) {
@@ -240,7 +240,7 @@ open class GenericEntityGateway: NSObject {
         return fromRelationship.destinationEntity?.gateway()
     }
     
-    open func mapEntityRelations(_ inputEntity: ManagedEntity, managedObject: CDManagedEntity, exceptRelationship inExceptRelationship: NSRelationshipDescription?, userInfo:[String : AnyObject] = [:] ) throws {
+    open func mapEntityRelations(_ inputEntity: ManagedEntity, managedObject: CDManagedEntity, exceptRelationship inExceptRelationship: NSRelationshipDescription?, userInfo:[String : Any] = [:] ) throws {
         
         if let isLoaded = inputEntity.isLoaded?.boolValue, !isLoaded {
             return
@@ -265,12 +265,12 @@ open class GenericEntityGateway: NSObject {
                 }
                 
                 
-                var value : AnyObject?
-                var nativeValue: AnyObject?
+                var value : Any?
+                var nativeValue: Any?
                 
                 do {
                     try SNExceptionWrapper.try({ () -> Void in
-                        value = inputEntityObj.value(forKey: key!) as AnyObject?
+                        value = inputEntityObj.value(forKey: key!) as Any?
                     })
                 } catch {
                     //DDLogDebug("Not found: \(key) error: \(error)")

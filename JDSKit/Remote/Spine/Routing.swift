@@ -208,16 +208,16 @@ public extension NSComparisonPredicate {
         static var OptionalsName = "OptionalsName"
     }
     
-    var optionals : [AnyObject]? {
+    var optionals : [Any]? {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.OptionalsName) as? [AnyObject]
+            return objc_getAssociatedObject(self, &AssociatedKeys.OptionalsName) as? [Any]
         }
         set(value) {
             objc_setAssociatedObject(self,&AssociatedKeys.OptionalsName, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
-    convenience init(format: String, optionals: [AnyObject]?=nil) {
+    convenience init(format: String, optionals: [Any]?=nil) {
         self.init(format: format, [Any]())
         self.optionals = optionals
     }

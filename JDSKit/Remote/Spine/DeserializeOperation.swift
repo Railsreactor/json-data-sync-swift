@@ -29,9 +29,9 @@ class DeserializeOperation: Operation {
 	fileprivate var extractedPrimaryResources: [Resource] = []
 	fileprivate var extractedIncludedResources: [Resource] = []
 	fileprivate var extractedErrors: [NSError]?
-	fileprivate var extractedMeta: [String: AnyObject]?
+	fileprivate var extractedMeta: [String: Any]?
 	fileprivate var extractedLinks: [String: URL]?
-	fileprivate var extractedJSONAPI: [String: AnyObject]?
+	fileprivate var extractedJSONAPI: [String: Any]?
 	
     fileprivate var resourcePool: [String: Resource] = [:]
 	
@@ -102,29 +102,29 @@ class DeserializeOperation: Operation {
 		extractedErrors = self.data["errors"].array?.map { error -> NSError in
 			let code = error["code"].intValue
 			
-            var userInfo = [String: AnyObject]()
+            var userInfo = [String: Any]()
             
 			if let details = error["detail"].string {
-                userInfo[NSLocalizedDescriptionKey] = details as AnyObject?
+                userInfo[NSLocalizedDescriptionKey] = details as Any?
 			}
             
             if let source = error["source"].dictionaryObject {
-                userInfo[SNAPIErrorSourceKey] = source as AnyObject?
+                userInfo[SNAPIErrorSourceKey] = source as Any?
             }
 			
             if let title = error["title"].string {
-                userInfo[SNLocalizedTitleKey] = title as AnyObject?
+                userInfo[SNLocalizedTitleKey] = title as Any?
             }
             
             if userInfo.isEmpty {
-                userInfo = error.dictionaryObject! as [String : AnyObject]
+                userInfo = error.dictionaryObject! as [String : Any]
             }
             
 			return NSError(domain: SpineServerErrorDomain, code: code, userInfo: userInfo)
 		}
 		
 		// Extract meta
-		extractedMeta = self.data["meta"].dictionaryObject as [String : AnyObject]?
+		extractedMeta = self.data["meta"].dictionaryObject as [String : Any]?
 		
 		// Extract links
 		if let links = self.data["links"].dictionary {
@@ -136,7 +136,7 @@ class DeserializeOperation: Operation {
 		}
 		
 		// Extract jsonapi
-		extractedJSONAPI = self.data["jsonapi"].dictionaryObject as [String : AnyObject]?
+		extractedJSONAPI = self.data["jsonapi"].dictionaryObject as [String : Any]?
 		
 		// Resolve relations in the store
 		resolveRelations()
@@ -182,7 +182,7 @@ class DeserializeOperation: Operation {
 		// Extract data
 		resource.id = id
 		resource.URL = representation["links"]["self"].URL
-		resource.meta = representation["meta"].dictionaryObject as [String : AnyObject]?
+		resource.meta = representation["meta"].dictionaryObject as [String : Any]?
 		extractAttributes(representation, intoResource: resource)
 		extractRelationships(representation, intoResource: resource)
 		
@@ -206,8 +206,8 @@ class DeserializeOperation: Operation {
 	*/
 	fileprivate func extractAttributes(_ serializedData: JSON, intoResource resource: Resource) {
 		for case let field as Attribute in resource.fields() {
-			if let extractedValue: AnyObject = self.extractAttribute(serializedData, key: field.serializedName) {
-				let formattedValue: AnyObject = self.transformers.deserialize(extractedValue, forAttribute: field)
+			if let extractedValue: Any = self.extractAttribute(serializedData, key: field.serializedName) {
+				let formattedValue: Any = self.transformers.deserialize(extractedValue, forAttribute: field)
 				resource.setValue(formattedValue, forField: field.name)
 			}
 		}
@@ -221,14 +221,14 @@ class DeserializeOperation: Operation {
 	
 	:returns: The extracted value or nil if no attribute with the given key was found in the data.
 	*/
-	fileprivate func extractAttribute(_ serializedData: JSON, key: String) -> AnyObject? {
+	fileprivate func extractAttribute(_ serializedData: JSON, key: String) -> Any? {
         
         let value = extractKeyPath(serializedData["attributes"], keyPath: key)
 		
 		if let _ = value.null {
 			return nil
 		} else {
-			return value.rawValue as AnyObject?
+			return value.rawValue as Any?
 		}
 	}
     

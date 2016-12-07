@@ -13,9 +13,9 @@ import UIKit
 }
 
 open class Container: NSObject {
-    open var content: AnyObject
+    open var content: Any
     
-    public init(contained: AnyObject) {
+    public init(contained: Any) {
         content = contained
     }
     

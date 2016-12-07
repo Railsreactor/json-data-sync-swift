@@ -27,7 +27,7 @@ open class EntityService: CoreService {
         return self.localManager.entityGatewayByEntityType(self.entityType)
     }
     
-    fileprivate func cachedEntity(_ inputQuery: String = "", arguments: [AnyObject]? = nil, sortKeys: [String]? = nil) -> [ManagedEntity] {
+    fileprivate func cachedEntity(_ inputQuery: String = "", arguments: [Any]? = nil, sortKeys: [String]? = nil) -> [ManagedEntity] {
         
         let descriptors: [NSSortDescriptor] = sortKeys?.sortDescriptors() ?? [NSSortDescriptor(key: "createDate", ascending: false)]
         
@@ -41,7 +41,7 @@ open class EntityService: CoreService {
         
         do {
             if let entitiyGateway = self.entityGatway() {
-                let entities = try entitiyGateway.fetchEntities(query, arguments: (arguments ?? [AnyObject]()), sortDescriptors: descriptors) as [ManagedEntity]
+                let entities = try entitiyGateway.fetchEntities(query, arguments: (arguments ?? [Any]()), sortDescriptors: descriptors) as [ManagedEntity]
                 return entities
             }
         } catch {
@@ -51,7 +51,7 @@ open class EntityService: CoreService {
         return [ManagedEntity]()
     }
 
-    open func syncEntityInternal(_ query: String = "", arguments: [AnyObject]? = nil, remoteFilters: [NSComparisonPredicate]?=nil, includeRelations: [String]?=nil) -> Promise<Void> {
+    open func syncEntityInternal(_ query: String = "", arguments: [Any]? = nil, remoteFilters: [NSComparisonPredicate]?=nil, includeRelations: [String]?=nil) -> Promise<Void> {
         return self.remoteManager.loadEntities(self.entityType, filters: remoteFilters, include: includeRelations).then(on: .global()) { (input) -> Promise<Void> in
             
             return self.runOnBackgroundContext { () -> Void in
@@ -88,7 +88,7 @@ open class EntityService: CoreService {
     }
     
     
-    open func syncEntity(_ query: String = "", arguments: [AnyObject]? = nil, remoteFilters: [NSComparisonPredicate]?=nil, includeRelations: [String]?=nil, includeEntities: [ManagedEntity.Type]?=nil, skipSave: Bool = false) -> Promise<Void> {
+    open func syncEntity(_ query: String = "", arguments: [Any]? = nil, remoteFilters: [NSComparisonPredicate]?=nil, includeRelations: [String]?=nil, includeEntities: [ManagedEntity.Type]?=nil, skipSave: Bool = false) -> Promise<Void> {
         
         var promiseChain = Promise<Void>(value:())
         
@@ -217,7 +217,7 @@ open class GenericService<T: ManagedEntity>: EntityService {
         return AbstractRegistryService.mainRegistryService.entityService()
     }
     
-    open func cachedEntity(_ query: String = "", arguments: [AnyObject]? = nil, sortKeys: [String]?=nil) -> [T] {
+    open func cachedEntity(_ query: String = "", arguments: [Any]? = nil, sortKeys: [String]?=nil) -> [T] {
         return super.cachedEntity(query, arguments: arguments, sortKeys: sortKeys) as! [T]
     }
 

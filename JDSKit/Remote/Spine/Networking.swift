@@ -18,7 +18,7 @@ public protocol NetworkClient {
      Performs a network request to the given URL with the given method.
      
      - parameter method:   The method to use, expressed as a HTTP verb.
-     - parameter url:      The URL to which to make the request.
+     - parameter URL:      The URL to which to make the request.
      - parameter callback: The callback to execute when the request finishes.
      */
     func request(method: String, url: URL, callback: @escaping NetworkClientCallback)
@@ -27,7 +27,7 @@ public protocol NetworkClient {
      Performs a network request to the given URL with the given method.
      
      - parameter method:   The method to use, expressed as a HTTP verb.
-     - parameter url:      The URL to which to make the request.
+     - parameter URL:      The URL to which to make the request.
      - parameter payload:  The payload the send as part of the request.
      - parameter callback: The callback to execute when the request finishes.
      */
@@ -43,27 +43,34 @@ extension NetworkClient {
 /**
  The HTTPClient implements the NetworkClient protocol to work over an HTTP connection.
  */
-open class HTTPClient: NetworkClient {
-    open var delegate: HTTPClientDelegate?
-    let urlSession: URLSession
-    var headers: [String: String] = ["Content-Type": "application/vnd.api+json"]
-    
+public class HTTPClient: NetworkClient {
     /**
-     Initializes an HTTPClient with the given URLSession.
+     Performs a network request to the given URL with the given method.
      
-     - parameter session: The URLSession to use.
+     - parameter method:   The method to use, expressed as a HTTP verb.
+     - parameter URL:      The URL to which to make the request.
+     - parameter payload:  The payload the send as part of the request.
+     - parameter callback: The callback to execute when the request finishes.
      */
-    public init(session: URLSession) {
-        urlSession = session
+    public func request(method: String, URL: NSURL, payload: NSData?, callback: (Int?, NSData?, NSError?) -> Void) {
+        
     }
+
+
+    var urlSession: URLSession
+    var headers: [String: String] = [:]
     
-    /**
-     Initializes a HTTPClient with an URLSession that uses the
-     `URLSessionConfiguration.defaultSessionConfiguration()` configuration.
-     */
-    public convenience init() {
-        let sessionConfiguration = URLSessionConfiguration.default
-        self.init(session: URLSession(configuration: sessionConfiguration))
+    public init() {
+        let configuration = URLSessionConfiguration.default
+        //configuration.HTTPAdditionalHeaders = ["Content-Type": "application/vnd.api+json"]
+        configuration.httpAdditionalHeaders = [ "Content-Type": "application/json",
+                                                "Accept": "application/json"]
+        
+        configuration.requestCachePolicy = URLRequest.CachePolicy.reloadIgnoringCacheData
+        configuration.urlCache = nil
+        
+        
+        urlSession = URLSession(configuration: configuration)
     }
     
     /**
@@ -72,7 +79,7 @@ open class HTTPClient: NetworkClient {
      - parameter header: The name of header to set the value for.
      - parameter value:  The value to set the header tp.
      */
-    open func setHeader(_ header: String, to value: String) {
+    public func setHeader(header: String, to value: String) {
         headers[header] = value
     }
     
@@ -81,12 +88,12 @@ open class HTTPClient: NetworkClient {
      
      - parameter header: The name of header to remove.
      */
-    open func removeHeader(_ header: String) {
+    public func removeHeader(header: String) {
         headers.removeValue(forKey: header)
     }
     
-    open func buildRequest(_ method: String, url: URL, payload: Data?) -> URLRequest {
-        var request = URLRequest(url: url)
+    public func buildRequest(method: String, url: URL, payload: Data?) -> NSMutableURLRequest {
+        let request = MutableURLRequest(url: url)
         request.httpMethod = method
         
         for (key, value) in headers {
@@ -100,37 +107,46 @@ open class HTTPClient: NetworkClient {
         return request
     }
     
-    open func request(method: String, url: URL, payload: Data?, callback: @escaping NetworkClientCallback) {
-        delegate?.httpClient(self, willPerformRequestWithMethod: method, url: url, payload: payload)
+    public func request(method: String, url: URL, payload: Data?, callback: @escaping NetworkClientCallback) {
+        var request = buildRequest(method: method, url: url, payload: payload) as URLRequest
         
-        let request = buildRequest(method, url: url, payload: payload)
+        NetworkSpinner.sharedInstance.startActiveConnection()
         
         Spine.logInfo(.networking, "\(method): \(url)")
         
         if Spine.shouldLog(.debug, domain: .networking) {
+            
+            if let headers = request.allHTTPHeaderFields {
+                Spine.logDebug(.networking, "Headers: \(headers) + \(urlSession.configuration.httpAdditionalHeaders)")
+            }
+            
             if let httpBody = request.httpBody, let stringRepresentation = NSString(data: httpBody, encoding: String.Encoding.utf8.rawValue) {
                 Spine.logDebug(.networking, stringRepresentation)
             }
         }
-        
+
         let task = urlSession.dataTask(with: request, completionHandler: { data, response, networkError in
             let response = (response as? HTTPURLResponse)
-            let success: Bool
+            
+            NetworkSpinner.sharedInstance.stopActiveConnection()
+            
+            if networkError == nil && response?.url != request.url {
+                Spine.logError(.networking, "Request URL: \(request.url) - Doesn't corresponds to response URL: \(response?.url). Fallback with error 400")
+                callback(400, nil, NSError(domain: NSURLErrorDomain, code: 400, userInfo: nil))
+                return
+            }
             
             if let error = networkError {
                 // Network error
-                Spine.logError(.networking, "\(request.url!) - \(error.localizedDescription)")
-                success = false
+                Spine.logError(.networking, "\(request.url) - \(error.localizedDescription)")
                 
-            } else if let statusCode = response?.statusCode , 200 ... 299 ~= statusCode {
+            } else if let statusCode = response?.statusCode, 200 ... 299 ~= statusCode {
                 // Success
-                Spine.logInfo(.networking, "\(statusCode): \(request.url!) – (\(data!.count) bytes)")
-                success = true
+                Spine.logInfo(.networking, "\(statusCode): \(request.url)")
                 
             } else {
                 // API Error
-                Spine.logWarning(.networking, "\(response!.statusCode): \(request.url!) – (\(data!.count) bytes)")
-                success = false
+                Spine.logWarning(.networking, "\(response?.statusCode): \(request.url)")
             }
             
             if Spine.shouldLog(.debug, domain: .networking) {
@@ -139,33 +155,9 @@ open class HTTPClient: NetworkClient {
                 }
             }
             
-            self.delegate?.httpClient(self, didPerformRequestWithMethod: method, url: url, success: success)
             callback(response?.statusCode, data, networkError as NSError?)
         })
         
         task.resume()
     }
-}
-
-public protocol HTTPClientDelegate {
-    /**
-     Called before the HTTPClient will perform an HTTP request.
-     
-     - parameter client:  The client that will perform the request.
-     - parameter method:  The HTTP method of the request.
-     - parameter url:     The URL of the request.
-     - parameter payload: The optional payload of the request.
-     */
-    func httpClient(_ client: HTTPClient, willPerformRequestWithMethod method: String, url: URL, payload: Data?)
-    
-    /**
-     Called after the HTTPClient performed an HTTP request. This method is called after the request finished,
-     but before the request has been processed by the NetworkClientCallback that was initially passed.
-     
-     - parameter client:  The client that performed the request.
-     - parameter method:  The HTTP method of the request.
-     - parameter url:     The URL of the request.
-     - parameter success: Whether the reques was successful. Network and error responses are consided unsuccessful.
-     */
-    func httpClient(_ client: HTTPClient, didPerformRequestWithMethod method: String, url: URL, success: Bool)
 }

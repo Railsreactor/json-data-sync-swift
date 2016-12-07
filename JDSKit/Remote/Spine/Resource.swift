@@ -64,7 +64,7 @@ open class Resource: NSObject, NSCoding {
 	
 	open var isLoaded: NSNumber? = 0
 	
-	open var meta: [String: AnyObject]?
+	open var meta: [String: Any]?
 	
 	public required override init() {}
 	
@@ -81,11 +81,11 @@ open class Resource: NSObject, NSCoding {
 		coder.encode(self.isLoaded!.boolValue, forKey: "isLoaded")
 	}
 	
-	open func valueForField(_ field: String) -> AnyObject? {
-		return value(forKey: field) as AnyObject?
+	open func valueForField(_ field: String) -> Any? {
+		return value(forKey: field) as Any?
 	}
 	
-	open func setValue(_ value: AnyObject?, forField field: String) {
+	open func setValue(_ value: Any?, forField field: String) {
 		setValue(value, forKey: field)
 	}
 	

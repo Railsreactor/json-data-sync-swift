@@ -27,7 +27,7 @@ public extension Dictionary {
             
             var percentEscapedValue: String? = nil
             
-            if let value = value as? [AnyObject] {
+            if let value = value as? [Any] {
                 percentEscapedValue = value.map { "\($0)" }.joined(separator: ",").stringByAddingPercentEncodingForURLQueryValue()!
             } else {
                 percentEscapedValue = (String(describing: value)).stringByAddingPercentEncodingForURLQueryValue()!

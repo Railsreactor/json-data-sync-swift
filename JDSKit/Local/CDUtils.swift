@@ -31,7 +31,7 @@ public extension Array {
 }
 
 open class ObjectIDContainer: Container {
-    public override init(contained: AnyObject) {
+    public override init(contained: Any) {
         super.init(contained: contained)
     }
     

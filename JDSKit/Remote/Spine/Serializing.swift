@@ -20,13 +20,13 @@ struct JSONAPIDocument {
 	var errors: [NSError]?
 	
 	/// Metadata extracted from the reponse
-	var meta: [String: AnyObject]?
+	var meta: [String: Any]?
 	
 	/// Links extracted from the response
 	var links: [String: URL]?
 	
 	/// JSONAPI information extracted from the response
-	var jsonapi: [String: AnyObject]?
+	var jsonapi: [String: Any]?
 }
 
 /**

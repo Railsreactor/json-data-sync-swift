@@ -88,11 +88,11 @@ open class BaseJSONAPIManager: NSObject {
         
         let entityObj = entity as! NSObject
         
-        result.setValue(entityObj.value(forKey: "id") as AnyObject?, forField: "id")
+        result.setValue(entityObj.value(forKey: "id") as Any?, forField: "id")
         for field in type(of: result).fields() {
             if !field.skip {
                 let name = field.mappedName
-                result.setValue(entityObj.value(forKey: name) as AnyObject?, forField: name)
+                result.setValue(entityObj.value(forKey: name) as Any?, forField: name)
             }
         }
         
@@ -105,9 +105,9 @@ open class BaseJSONAPIManager: NSObject {
     fileprivate func didRefreshSessionInfo() {
         let networkClient = spine.networkClient as! HTTPClient
         if let session = sessionInfo?.sessionToken {
-            networkClient.setHeader("Authorization", to: "Bearer \(session)")
+            networkClient.setHeader(header: "Authorization", to: "Bearer \(session)")
         } else {
-            networkClient.removeHeader("Authorization")
+            networkClient.removeHeader(header: "Authorization")
         }
     }
     
@@ -140,7 +140,7 @@ open class BaseJSONAPIManager: NSObject {
     
     open func findAndExtractErrors(_ userInfo: [AnyHashable: Any]) -> [NSError]? {
         var apiErrors = [NSError]()
-        if let errors = userInfo["errors"] as? [String: AnyObject] {
+        if let errors = userInfo["errors"] as? [String: Any] {
             for case let (errorTitle, errorMsg as [String]) in errors {
                 apiErrors.append(NSError(domain: BaseJSONAPIManagerErrorDomain, code: 422, userInfo: [SNAPIErrorSourceKey : ["pointer": errorTitle], NSLocalizedDescriptionKey: errorMsg.first ?? ""]))
             }
@@ -158,7 +158,7 @@ open class BaseJSONAPIManager: NSObject {
         return self.generateError(error.code, cause: error)
     }
     
-    open func call(_ method: String, path: String, request: [String: AnyObject], rawCompletion: @escaping NetworkClientCallback) {
+    open func call(_ method: String, path: String, request: [String: Any], rawCompletion: @escaping NetworkClientCallback) {
         var urlString = baseURLString + path
         var data: Data?
         
@@ -176,12 +176,11 @@ open class BaseJSONAPIManager: NSObject {
             }
         }
         
-        spine.networkClient.request(method: method, url: URL(string: urlString)!, payload: data, callback: rawCompletion)
+        spine.networkClient.request(method: method, url: URL(string: urlString)!, payload: data!, callback: rawCompletion)
     }
     
-    open func call(_ method: String, path: String, request: [String: AnyObject], completion: @escaping RemoteResultBlock) {
-        
-        call(method, path: path, request: request) { (statusCode, data, error) -> Void in
+    open func call(_ method: String, path: String, request: [String: Any], completion: @escaping RemoteResultBlock) {
+        call(method, path: path, request: request, rawCompletion: { (statusCode, data, error) -> Void in
             
             var result: Any? = nil
             var serrializeError: Error?
@@ -196,7 +195,7 @@ open class BaseJSONAPIManager: NSObject {
             }
             
             if let code = statusCode, !(200 ... 203 ~= code)  {
-                if let userInfo = result as? [String: AnyObject], userInfo["errors"] != nil {
+                if let userInfo = result as? [String: Any], userInfo["errors"] != nil {
                     if let apiErrors = self.findAndExtractErrors(userInfo) {
                         if finalError == nil {
                             finalError = NSError(domain: "shine.service.error", code: 422, userInfo: [SNAPIErrorsKey: apiErrors])
@@ -211,7 +210,7 @@ open class BaseJSONAPIManager: NSObject {
             }
             
             completion(result, serrializeError)
-        }
+        })
     }
     
     
@@ -231,8 +230,8 @@ open class BaseJSONAPIManager: NSObject {
                 let fd_sema = DispatchSemaphore(value: 0)
                 
                 
-                self.call("POST", path: BaseAPI.Auth, request: request as [String : AnyObject], completion: { (result: AnyObject?, error: Error?) -> Void in
-                    if let dictionary = result as? [String : AnyObject], error == nil {
+                self.call("POST", path: BaseAPI.Auth, request: request as [String : Any], completion: { (result: Any?, error: Error?) -> Void in
+                    if let dictionary = result as? [String : Any], error == nil {
                         if let token = dictionary["access_token"] {
                             self.sessionInfo = JSONAPISession(sessionToken: token as! String, refreshToken: dictionary["refresh_token"] as? String)
                         }

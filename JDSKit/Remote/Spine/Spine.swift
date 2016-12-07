@@ -10,8 +10,8 @@ import Foundation
 import PromiseKit
 //import BrightFutures
 
-public typealias Metadata = [String: AnyObject]
-public typealias JSONAPIData = [String: AnyObject]
+public typealias Metadata = [String: Any]
+public typealias JSONAPIData = [String: Any]
 
 
 /// The main class

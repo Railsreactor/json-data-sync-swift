@@ -10,12 +10,12 @@ import Foundation
 
 public struct Base64Transformer: Transformer {
 
-    public func deserialize(_ value: String, attribute: DataAttribute) -> AnyObject {
-        return Data(base64Encoded: value, options:NSData.Base64DecodingOptions(rawValue: 0))! as AnyObject
+    public func deserialize(_ value: String, attribute: DataAttribute) -> Any {
+        return Data(base64Encoded: value, options:NSData.Base64DecodingOptions(rawValue: 0))! as Any
     }
     
-    public func serialize(_ value: Data, attribute: DataAttribute) -> AnyObject {
-        return value.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0)) as AnyObject
+    public func serialize(_ value: Data, attribute: DataAttribute) -> Any {
+        return value.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0)) as Any
     }
 }
 
@@ -33,11 +33,11 @@ public struct NumberTransformer: Transformer {
         formatter.numberStyle = NumberFormatter.Style.decimal
     }
     
-    public func deserialize(_ value: String, attribute: NumberAttribute) -> AnyObject {
+    public func deserialize(_ value: String, attribute: NumberAttribute) -> Any {
         return formatter.number(from: value) ?? 0
     }
     
-    public func serialize(_ value: NSNumber, attribute: NumberAttribute) -> AnyObject {
+    public func serialize(_ value: NSNumber, attribute: NumberAttribute) -> Any {
         return value
     }
 }
