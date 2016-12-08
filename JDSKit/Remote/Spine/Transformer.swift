@@ -25,7 +25,7 @@ public protocol Transformer {
 	
 	- returns: The deserialized form of `value`.
 	*/
-	func deserialize(value: SerializedType, attribute: AttributeType) -> AnyObject
+	func deserialize(_ value: SerializedType, attribute: AttributeType) -> Any
 	
 	/**
 	Returns the serialized form of the given value for the given attribute.
@@ -35,7 +35,7 @@ public protocol Transformer {
 	
 	- returns: The serialized form of `value`.
 	*/
-	func serialize(value: DeserializedType, attribute: AttributeType) -> AnyObject
+	func serialize(_ value: DeserializedType, attribute: AttributeType) -> Any
 }
 
 /**
@@ -44,10 +44,10 @@ to transform values between the serialized and deserialized form.
 */
 struct TransformerDirectory {
 	/// Registered serializer functions.
-	private var serializers: [(AnyObject, Attribute) -> AnyObject?] = []
+	fileprivate var serializers: [(Any, Attribute) -> Any?] = []
 	
 	/// Registered deserializer functions.
-	private var deserializers: [(AnyObject, Attribute) -> AnyObject?] = []
+	fileprivate var deserializers: [(Any, Attribute) -> Any?] = []
 	
 	/**
 	Returns a new transformer directory configured with the build in default transformers.
@@ -66,8 +66,8 @@ struct TransformerDirectory {
 	
 	- parameter transformer: The transformer to register.
 	*/
-	mutating func registerTransformer<T: Transformer>(transformer: T) {
-		serializers.append { (value: AnyObject, attribute: Attribute) -> AnyObject? in
+	mutating func registerTransformer<T: Transformer>(_ transformer: T) {
+		serializers.append { (value: Any, attribute: Attribute) -> Any? in
 			if let typedAttribute = attribute as? T.AttributeType {
 				if let typedValue = value as? T.DeserializedType {
 					return transformer.serialize(typedValue, attribute: typedAttribute)
@@ -77,7 +77,7 @@ struct TransformerDirectory {
 			return nil
 		}
 		
-		deserializers.append { (value: AnyObject, attribute: Attribute) -> AnyObject? in
+		deserializers.append { (value: Any, attribute: Attribute) -> Any? in
 			if let typedAttribute = attribute as? T.AttributeType {
 				if let typedValue = value as? T.SerializedType {
 					return transformer.deserialize(typedValue, attribute: typedAttribute)
@@ -99,9 +99,9 @@ struct TransformerDirectory {
 	
 	- returns: The deserialized form of `value`.
 	*/
-	func deserialize(value: AnyObject, forAttribute attribute: Attribute) -> AnyObject {
+	func deserialize(_ value: Any, forAttribute attribute: Attribute) -> Any {
 		for deserializer in deserializers {
-			if let deserialized: AnyObject = deserializer(value, attribute) {
+			if let deserialized: Any = deserializer(value, attribute) {
 				return deserialized
 			}
 		}
@@ -120,9 +120,9 @@ struct TransformerDirectory {
 	
 	- returns: The serialized form of `value`.
 	*/
-	func serialize(value: AnyObject, forAttribute attribute: Attribute) -> AnyObject {
+	func serialize(_ value: Any, forAttribute attribute: Attribute) -> Any {
 		for serializer in serializers {
-			if let serialized: AnyObject = serializer(value, attribute) {
+			if let serialized: Any = serializer(value, attribute) {
 				return serialized
 			}
 		}
@@ -140,12 +140,12 @@ If a baseURL has been configured in the URLAttribute, and the given String is no
 it will return an absolute NSURL, relative to the baseURL.
 */
 private struct URLTransformer: Transformer {
-	func deserialize(value: String, attribute: URLAttribute) -> AnyObject {
-		return NSURL(string: value, relativeToURL: attribute.baseURL)!
+	func deserialize(_ value: String, attribute: URLAttribute) -> Any {
+		return URL(string: value, relativeTo: attribute.baseURL as URL?)! as Any
 	}
 	
-	func serialize(value: NSURL, attribute: URLAttribute) -> AnyObject {
-		return value.absoluteString!
+	func serialize(_ value: URL, attribute: URLAttribute) -> Any {
+		return value.absoluteString as Any
 	}
 }
 
@@ -154,19 +154,19 @@ URLTransformer is a transformer that transforms between NSDate and String, and v
 It uses the date format configured in the DateAttribute.
 */
 private struct DateTransformer: Transformer {
-	func formatter(attribute: DateAttribute) -> NSDateFormatter {
-		let formatter = NSDateFormatter()
+	func formatter(_ attribute: DateAttribute) -> DateFormatter {
+		let formatter = DateFormatter()
 		formatter.dateFormat = attribute.format
-        formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
-        formatter.timeZone = NSTimeZone(abbreviation: "GMT")
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(abbreviation: "GMT")
 		return formatter
 	}
 	
-	func deserialize(value: String, attribute: DateAttribute) -> AnyObject {
-		return formatter(attribute).dateFromString(value)!
+	func deserialize(_ value: String, attribute: DateAttribute) -> Any {
+		return formatter(attribute).date(from: value)! as Any
 	}
 	
-	func serialize(value: NSDate, attribute: DateAttribute) -> AnyObject {
-		return formatter(attribute).stringFromDate(value)
+	func serialize(_ value: Date, attribute: DateAttribute) -> Any {
+		return formatter(attribute).string(from: value) as Any
 	}
 }

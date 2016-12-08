@@ -9,12 +9,12 @@
 import Foundation
 import CoreData
 
-@objc public class CDUpdateInfo: NSManagedObject, Containerable {
-    @NSManaged public var filterID:    String?
-    @NSManaged public var entityType:  String?
-    @NSManaged public var updateDate:  NSDate?
+@objc open class CDUpdateInfo: NSManagedObject, Containerable {
+    @NSManaged open var filterID:    String?
+    @NSManaged open var entityType:  String?
+    @NSManaged open var updateDate:  Date?
     
-    public func objectContainer() -> Container {
+    open func objectContainer() -> Container {
         return ObjectIDContainer(contained: self.objectID)
     }
 }

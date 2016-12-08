@@ -12,48 +12,48 @@ import CocoaLumberjack
 
 public protocol ManagedObjectContextProvider: class {
     
-    func entityGatewayByEntityTypeKey(typeKey: String) -> GenericEntityGateway?
+    func entityGatewayByEntityTypeKey(_ typeKey: String) -> GenericEntityGateway?
     
     func contextForCurrentThread() -> NSManagedObjectContext
     
-    func generateFetchRequestForEntity(enitityType : NSManagedObject.Type, context: NSManagedObjectContext) -> NSFetchRequest
+    func generateFetchRequestForEntity(_ enitityType : NSManagedObject.Type, context: NSManagedObjectContext) -> NSFetchRequest<NSFetchRequestResult>
     
-    func createEntity(type: NSManagedObject.Type, temp: Bool) -> NSManagedObject
+    func createEntity(_ type: NSManagedObject.Type, temp: Bool) -> NSManagedObject
     
-    func fetchEntities(predicate: NSPredicate?, ofType: NSManagedObject.Type, sortDescriptors: [NSSortDescriptor]?) throws -> [NSManagedObject]
+    func fetchEntities(_ predicate: NSPredicate?, ofType: NSManagedObject.Type, sortDescriptors: [NSSortDescriptor]?) throws -> [NSManagedObject]
     
-    func fetchEntity(predicate: NSPredicate?, ofType: NSManagedObject.Type) throws -> NSManagedObject?
+    func fetchEntity(_ predicate: NSPredicate?, ofType: NSManagedObject.Type) throws -> NSManagedObject?
     
-    func deleteEntities(predicate: NSPredicate?, ofType: NSManagedObject.Type) throws -> Void
+    func deleteEntities(_ predicate: NSPredicate?, ofType: NSManagedObject.Type) throws -> Void
     
-    func deleteEntity(object: NSManagedObject) throws -> Void
+    func deleteEntity(_ object: NSManagedObject) throws -> Void
     
-    func countEntities(ofType: NSManagedObject.Type) -> Int
+    func countEntities(_ ofType: NSManagedObject.Type) -> Int
 }
 
 
-public class MappingConstans {
-    public static let SyncOR = "syncOR"
-    public static let SkipAttribute = "skip"
-    public static let ReverceRelation: String = "reverse"
-    public static let PrefetchedEntities: String = "prefetched"
+open class MappingConstans {
+    open static let SyncOR = "syncOR"
+    open static let SkipAttribute = "skip"
+    open static let ReverceRelation: String = "reverse"
+    open static let PrefetchedEntities: String = "prefetched"
 }
 
 
-public class GenericEntityGateway: NSObject {
+open class GenericEntityGateway: NSObject {
 
-    public var contextProvider : ManagedObjectContextProvider {
+    open var contextProvider : ManagedObjectContextProvider {
         return BaseDBService.sharedInstance
     }
     
-    public var managedObjectType: CDManagedEntity.Type
+    open var managedObjectType: CDManagedEntity.Type
 
     public init(_ managedObjectType: CDManagedEntity.Type) {
         self.managedObjectType = managedObjectType
         super.init()
     }
     
-    public func entityWithID<T: ManagedEntity>(id: String, createNewIfNeeded: Bool = false) throws -> T? {
+    open func entityWithID<T: ManagedEntity>(_ id: String, createNewIfNeeded: Bool = false) throws -> T? {
         
         guard let entity = try contextProvider.fetchEntity(NSPredicate(format: "id == %@", id), ofType:managedObjectType) as? T else {
             let newEntity = contextProvider.createEntity(managedObjectType, temp: false) as? T
@@ -64,27 +64,27 @@ public class GenericEntityGateway: NSObject {
         return entity
     }
     
-    public func createEntity(isTemp: Bool = false) -> ManagedEntity  {
+    open func createEntity(_ isTemp: Bool = false) -> ManagedEntity  {
         return contextProvider.createEntity(managedObjectType, temp: isTemp) as! ManagedEntity
     }
     
-    public func fetchEntities<T: ManagedEntity>(predicate: NSPredicate?, sortDescriptors: [NSSortDescriptor]?) throws -> [T] {
+    open func fetchEntities<T: ManagedEntity>(_ predicate: NSPredicate?, sortDescriptors: [NSSortDescriptor]?) throws -> [T] {
         return try contextProvider.fetchEntities(predicate, ofType: managedObjectType, sortDescriptors: sortDescriptors).map { $0 as! T }
     }
     
-    public func fetchEntities<T: ManagedEntity>(predicateString: String, arguments: [AnyObject]? = nil, sortDescriptors: [NSSortDescriptor]? = nil) throws -> [T] {
+    open func fetchEntities<T: ManagedEntity>(_ predicateString: String, arguments: [Any]? = nil, sortDescriptors: [NSSortDescriptor]? = nil) throws -> [T] {
         return try fetchEntities(NSPredicate(format: predicateString, argumentArray: arguments), sortDescriptors: sortDescriptors)
     }
     
-    public func fetchEntity<T: ManagedEntity>(predicate: NSPredicate?) throws -> T? {
+    open func fetchEntity<T: ManagedEntity>(_ predicate: NSPredicate?) throws -> T? {
         return try (contextProvider.fetchEntity(predicate, ofType: managedObjectType) as? T)
     }
     
-    public func fetchEntity<T: ManagedEntity>(predicateString: String, arguments: [AnyObject]? = nil) throws -> T? {
+    open func fetchEntity<T: ManagedEntity>(_ predicateString: String, arguments: [Any]? = nil) throws -> T? {
         return try fetchEntity(NSPredicate(format: predicateString, argumentArray: arguments))
     }
     
-    public func fetchedResultsProvider(predicate: NSPredicate, sortBy:[String], groupBy: String?=nil) -> NSFetchedResultsController {
+    open func fetchedResultsProvider(_ predicate: NSPredicate, sortBy:[String], groupBy: String?=nil) -> NSFetchedResultsController<NSFetchRequestResult> {
         let ctx = self.contextProvider.contextForCurrentThread()
         let request = self.contextProvider.generateFetchRequestForEntity(self.managedObjectType, context: ctx)
         
@@ -95,22 +95,22 @@ public class GenericEntityGateway: NSObject {
     }
     
     //MARK: - Count
-    public func countEntities(predicate: NSPredicate?) -> Int {
+    open func countEntities(_ predicate: NSPredicate?) -> Int {
         let context = contextProvider.contextForCurrentThread()
         let fetchRequest = contextProvider.generateFetchRequestForEntity(managedObjectType, context: context)
         
         fetchRequest.fetchLimit = 0
         fetchRequest.predicate = predicate
         
-        return (try? context.countForFetchRequest(fetchRequest)) ?? 0
+        return (try? context.count(for: fetchRequest)) ?? 0
     }
     
     //MARK: - Delete
-    public func deleteEntities(predicate: NSPredicate?) throws {
+    open func deleteEntities(_ predicate: NSPredicate?) throws {
         try contextProvider.deleteEntities(predicate, ofType: managedObjectType)
     }
     
-    public func deleteEntity(object: ManagedEntity) throws -> Void {
+    open func deleteEntity(_ object: ManagedEntity) throws -> Void {
         if let object = object as? CDManagedEntity {
             try contextProvider.deleteEntity(object)
         } else {
@@ -120,20 +120,21 @@ public class GenericEntityGateway: NSObject {
         }
     }
     
-    public func deleteEntityWithID(id: String) throws -> Void {
+    open func deleteEntityWithID(_ id: String) throws -> Void {
         if let entity: CDManagedEntity = try entityWithID(id) {
             try contextProvider.deleteEntity(entity)
         }
     }
     
-    public func insertEntity<T: ManagedEntity>(entity: T, mergeWith: T?=nil, isFirstInsert: Bool = false, userInfo:[String : AnyObject] = [:]) throws -> T {
+    @discardableResult
+    open func insertEntity<T: ManagedEntity>(_ entity: T, mergeWith: T?=nil, isFirstInsert: Bool = false, userInfo:[String : AnyObject] = [:]) throws -> T {
         
-        if entity.dynamicType.entityName != self.managedObjectType.entityName {
-            throw CoreError.EntityMisstype(input: entity.dynamicType.entityName, target: self.managedObjectType.entityName)
+        if type(of: entity).entityName != self.managedObjectType.entityName {
+            throw CoreError.entityMisstype(input: type(of: entity).entityName, target: self.managedObjectType.entityName)
         }
         
         guard let id = entity.id else {
-            throw CoreError.RuntimeError(description: "Entity must have an ID", cause: nil)
+            throw CoreError.runtimeError(description: "Entity must have an ID", cause: nil)
         }
         
         var managedObject : CDManagedEntity? = nil
@@ -150,7 +151,7 @@ public class GenericEntityGateway: NSObject {
         return managedObject as! T
     }
     
-    public func insertEnities( entities : [ManagedEntity], isFirstInsert: Bool = false, userInfo inputUserInfo:[String : AnyObject] = [:]) throws -> [ManagedEntity]? {
+    open func insertEnities( _ entities : [ManagedEntity], isFirstInsert: Bool = false, userInfo inputUserInfo:[String : Any] = [:]) throws -> [ManagedEntity]? {
         
         var insertedItems: [ManagedEntity] = []
         
@@ -159,7 +160,7 @@ public class GenericEntityGateway: NSObject {
             // Lets try to prefetch all existing entities to speed-up mapping
             let ids: [String] = entities.flatMap { $0.id }
             if ids.count > 0 {
-                let prefetchedEntites = try fetchEntities("id in %@", arguments: [ids]) as [CDManagedEntity]
+                let prefetchedEntites = try fetchEntities("id in %@", arguments: [ids as Any]) as [CDManagedEntity]
                 if prefetchedEntites.count > 0 {
                     var prefetchedByKey = [String: CDManagedEntity]()
                     prefetchedEntites.forEach( { entity in
@@ -167,28 +168,28 @@ public class GenericEntityGateway: NSObject {
                             prefetchedByKey[id] = entity
                         }
                     })
-                    userInfo[MappingConstans.PrefetchedEntities] = prefetchedByKey
+                    userInfo[MappingConstans.PrefetchedEntities] = prefetchedByKey as Any?
                 }
             }
             
             for entity in entities {
-                let mapped: ManagedEntity = try insertEntity(entity, mergeWith: nil, isFirstInsert: isFirstInsert, userInfo: userInfo)
+                let mapped: ManagedEntity = try insertEntity(entity, mergeWith: nil, isFirstInsert: isFirstInsert, userInfo: userInfo as [String : AnyObject])
                 insertedItems.append(mapped)
             }
-        } catch (CoreError.EntityMisstype(let input, let target)) {
+        } catch (CoreError.entityMisstype(let input, let target)) {
             let msg = "Insert Error - Input object: \(input) Target was: \(target)"
             DDLogError(msg)
         }
         return insertedItems
     }
     
-    public func mapEntity (entity: ManagedEntity, managedObject: CDManagedEntity, userInfo:[String : AnyObject] = [:]) throws {
+    open func mapEntity (_ entity: ManagedEntity, managedObject: CDManagedEntity, userInfo:[String : Any] = [:]) throws {
         mapEntityProperties(entity, managedObject: managedObject)
         try mapEntityRelations(entity, managedObject: managedObject, exceptRelationship:nil, userInfo: userInfo)
     }
     
     
-    public func mapEntityProperties(entity: ManagedEntity, managedObject: CDManagedEntity, userInfo:[String : AnyObject] = [:]) {
+    open func mapEntityProperties(_ entity: ManagedEntity, managedObject: CDManagedEntity, userInfo:[String : Any] = [:]) {
         
         //Skip not loaded objects
         guard let newDate = entity.updateDate else {
@@ -196,7 +197,7 @@ public class GenericEntityGateway: NSObject {
         }
         let oldDate = managedObject.updateDate
         // Skip not updated objects
-        if oldDate != nil && oldDate!.compare(newDate) == .OrderedSame {
+        if oldDate != nil && oldDate!.compare(newDate as Date) == .orderedSame {
             return
         }
         
@@ -210,17 +211,23 @@ public class GenericEntityGateway: NSObject {
                     continue;
                 }
                 
-                var value:AnyObject? = entity.valueForKey(attribute.name)
+                var value:Any? = entity.value(forKey: attribute.name) as Any?
                 
                 if !isLoaded && value == nil {
-                    value = object.valueForKey(attribute.name) ?? attribute.defaultValue
+                    value = object.value(forKey: attribute.name) as Any?? ?? attribute.defaultValue as Any?
                 } else if value == nil {
-                    value = attribute.defaultValue
+                    value = attribute.defaultValue as Any?
                 }
                 
                 if asBool(attribute.userInfo?[MappingConstans.SyncOR]) {
-                    if let value = object.valueForKey(attribute.name) as? NSNumber where value.boolValue {
-                        continue;
+                    let storedValue = object.value(forKey: attribute.name)
+                    if storedValue != nil {
+                        
+                        if let boolValue = storedValue as? NSNumber, boolValue.boolValue {
+                            continue
+                        } else if value == nil {
+                            continue
+                        }
                     }
                 }
                 
@@ -229,13 +236,13 @@ public class GenericEntityGateway: NSObject {
         }
     }
     
-    public func gatewayForEntity(inputEntity: ManagedEntity, fromRelationship: NSRelationshipDescription) -> GenericEntityGateway? {
+    open func gatewayForEntity(_ inputEntity: ManagedEntity, fromRelationship: NSRelationshipDescription) -> GenericEntityGateway? {
         return fromRelationship.destinationEntity?.gateway()
     }
     
-    public func mapEntityRelations(inputEntity: ManagedEntity, managedObject: CDManagedEntity, exceptRelationship inExceptRelationship: NSRelationshipDescription?, userInfo:[String : AnyObject] = [:] ) throws {
+    open func mapEntityRelations(_ inputEntity: ManagedEntity, managedObject: CDManagedEntity, exceptRelationship inExceptRelationship: NSRelationshipDescription?, userInfo:[String : Any] = [:] ) throws {
         
-        if let isLoaded = inputEntity.isLoaded?.boolValue where !isLoaded {
+        if let isLoaded = inputEntity.isLoaded?.boolValue, !isLoaded {
             return
         }
         
@@ -253,17 +260,17 @@ public class GenericEntityGateway: NSObject {
                 
                 key = relationship.name;
                 
-                if let value = relationship.userInfo?[MappingConstans.SkipAttribute] as? String where NSString(string: value).boolValue {
+                if let value = relationship.userInfo?[MappingConstans.SkipAttribute] as? String, NSString(string: value).boolValue {
                     continue;
                 }
                 
                 
-                var value : AnyObject?
-                var nativeValue: AnyObject?
+                var value : Any?
+                var nativeValue: Any?
                 
                 do {
-                    try SNExceptionWrapper.tryBlock({ () -> Void in
-                        value = inputEntityObj.valueForKey(key!)
+                    try SNExceptionWrapper.try({ () -> Void in
+                        value = inputEntityObj.value(forKey: key!) as Any?
                     })
                 } catch {
                     //DDLogDebug("Not found: \(key) error: \(error)")
@@ -271,26 +278,26 @@ public class GenericEntityGateway: NSObject {
                 
                 if value != nil && !(value is NSNull) {
                     
-                    let existingValue = managedNSObject.valueForKey(key!)
+                    let existingValue = managedNSObject.value(forKey: key!)
                     
                     if let gateway: GenericEntityGateway = gatewayForEntity(inputEntity, fromRelationship: relationship) {
                         
-                        if let value = value as? NSSet where relationship.toMany {
+                        if let value = value as? NSSet, relationship.isToMany {
                             
                             let mapped = try gateway.insertEnities(value.allObjects as! [ManagedEntity], isFirstInsert: false, userInfo: [MappingConstans.ReverceRelation : relationship.inverseRelationship!])
                             
-                            if (relationship.ordered) {
+                            if (relationship.isOrdered) {
                                 fatalError("Ordered sets in unsupported. LoL")
                             }
                             else {
                                 nativeValue = NSSet(array: mapped!)
                                 
-                                if let set = managedNSObject.valueForKey(key!) as? NSSet where set.count == 0 {
+                                if let set = managedNSObject.value(forKey: key!) as? NSSet, set.count == 0 {
                                     nativeValue = NSSet(array: mapped!)
                                 }
-                                else if let set = managedNSObject.valueForKey(key!) as? NSSet {
+                                else if let set = managedNSObject.value(forKey: key!) as? NSSet {
                                     let mutableSet = set.mutableCopy() as? NSMutableSet
-                                    mutableSet?.addObjectsFromArray(mapped!)
+                                    mutableSet?.addObjects(from: mapped!)
                                     nativeValue = mutableSet
                                 }
                             }
@@ -300,7 +307,7 @@ public class GenericEntityGateway: NSObject {
                         }
                     }
     
-                    if nativeValue != nil && ( existingValue == nil || !existingValue!.isEqual(nativeValue!)) {
+                    if nativeValue != nil && ( existingValue == nil || !(existingValue! as AnyObject).isEqual(nativeValue!)) {
                         managedNSObject.setValue(nativeValue!, forKey: key!)
                     }
                 }

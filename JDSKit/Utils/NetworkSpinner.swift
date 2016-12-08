@@ -9,25 +9,25 @@
 import UIKit
 
 
-public class NetworkSpinner: NSObject {
-    public static let sharedInstance = NetworkSpinner()
+open class NetworkSpinner: NSObject {
+    open static let sharedInstance = NetworkSpinner()
     
-    private var activeConnectionsCounter: Int = 0
+    fileprivate var activeConnectionsCounter: Int = 0
     
-    public func startActiveConnection() {
+    open func startActiveConnection() {
         activeConnectionsCounter += 1
         updateNetworkIndicator()
     }
     
-    public func stopActiveConnection() {
+    open func stopActiveConnection() {
         if activeConnectionsCounter == 0 { return }
         activeConnectionsCounter -= 1
         
         updateNetworkIndicator()
     }
     
-    private func updateNetworkIndicator() {
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = activeConnectionsCounter > 0
+    fileprivate func updateNetworkIndicator() {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = activeConnectionsCounter > 0
     }
     
 }

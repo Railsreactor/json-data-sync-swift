@@ -11,23 +11,23 @@ import PromiseKit
 import CocoaLumberjack
 
 
-public class EntityService: CoreService {
+open class EntityService: CoreService {
     
-    public var entityType: ManagedEntity.Type
+    open var entityType: ManagedEntity.Type
 
     public required init (entityType: ManagedEntity.Type) {
         self.entityType = entityType
     }
     
-    public class func sharedService<T: ManagedEntity>(entityType: T.Type = T.self) -> EntityService {
+    open class func sharedService<T: ManagedEntity>(_ entityType: T.Type = T.self) -> EntityService {
         return AbstractRegistryService.mainRegistryService.entityService(entityType)
     }
     
-    public func entityGatway() -> GenericEntityGateway? {
+    open func entityGateway() -> GenericEntityGateway? {
         return self.localManager.entityGatewayByEntityType(self.entityType)
     }
     
-    private func cachedEntity(inputQuery: String = "", arguments: [AnyObject]? = nil, sortKeys: [String]? = nil) -> [ManagedEntity] {
+    fileprivate func cachedEntity(_ inputQuery: String = "", arguments: [Any]? = nil, sortKeys: [String]? = nil) -> [ManagedEntity] {
         
         let descriptors: [NSSortDescriptor] = sortKeys?.sortDescriptors() ?? [NSSortDescriptor(key: "createDate", ascending: false)]
         
@@ -37,11 +37,11 @@ public class EntityService: CoreService {
             query += " && "
         }
         
-        query += "isLoaded == %@ && pendingDelete != %@"
+        query += "isLoaded == true && pendingDelete != true"
         
         do {
-            if let entitiyGateway = self.entityGatway() {
-                let entities = try entitiyGateway.fetchEntities(query, arguments: (arguments ?? [AnyObject]()) + [true, true], sortDescriptors: descriptors) as [ManagedEntity]
+            if let entitiyGateway = self.entityGateway() {
+                let entities = try entitiyGateway.fetchEntities(query, arguments: (arguments ?? [Any]()), sortDescriptors: descriptors) as [ManagedEntity]
                 return entities
             }
         } catch {
@@ -51,24 +51,24 @@ public class EntityService: CoreService {
         return [ManagedEntity]()
     }
 
-    public func syncEntityInternal(query: String = "", arguments: [AnyObject]? = nil, remoteFilters: [NSComparisonPredicate]?=nil, includeRelations: [String]?=nil) -> Promise<Void> {
-        return self.remoteManager.loadEntities(self.entityType, filters: remoteFilters, include: includeRelations).thenInBackground { (input) -> Promise<Void> in
+    open func syncEntityInternal(_ query: String = "", arguments: [Any]? = nil, remoteFilters: [NSComparisonPredicate]?=nil, includeRelations: [String]?=nil) -> Promise<Void> {
+        return self.remoteManager.loadEntities(self.entityType, filters: remoteFilters, include: includeRelations).then(on: .global()) { (input) -> Promise<Void> in
             
             return self.runOnBackgroundContext { () -> Void in
                 let start = NSDate()
-                DDLogDebug("Will Insert \(input.count) Entities of type: \(String(self.entityType))" )
-                if let entityGateway = self.entityGatway() {
+                DDLogDebug("Will Insert \(input.count) Entities of type: \(String(describing: self.entityType))" )
+                if let entityGateway = self.entityGateway() {
                     let newItems: [ManagedEntity] = try entityGateway.insertEnities(input, isFirstInsert: false) ?? []
-                    DDLogDebug("Did Insert \(newItems.count ?? 0) Entities of type: \(String(self.entityType)) Time Spent: \(abs(start.timeIntervalSinceNow))" )
+                    DDLogDebug("Did Insert \(newItems.count) Entities of type: \(String(describing: self.entityType)) Time Spent: \(abs(start.timeIntervalSinceNow))" )
                 } else {
-                    DDLogDebug("No gateway for Entities of type: \(String(self.entityType)). Skipped. Time Spent: \(abs(start.timeIntervalSinceNow))" )
+                    DDLogDebug("No gateway for Entities of type: \(String(describing: self.entityType)). Skipped. Time Spent: \(abs(start.timeIntervalSinceNow))" )
                 }
             }
         }
     }
     
-    public func syncEntityDelta(updateDate: NSDate?) -> Promise<Void> {
-        return Promise<Void>().thenInBackground { _ -> Promise<Void> in
+    open func syncEntityDelta(_ updateDate: Date?) -> Promise<Void> {
+        return Promise<Void>(value:()).then(on: .global()) { _ -> Promise<Void> in
             
             if self.trySync() {
                 
@@ -76,35 +76,35 @@ public class EntityService: CoreService {
                 if updateDate != nil {
                     predicates = [NSComparisonPredicate(format: "updated_at_gt == %@", updateDate!.toSystemString())]
                 }
-                DDLogDebug("Will download \(self.entityType) Delta From: \(updateDate ?? "nil")")                
+                DDLogDebug("Will download \(self.entityType) Delta From: \(updateDate)")
                 return self.syncEntityInternal("", arguments: nil, remoteFilters: predicates, includeRelations: nil).always {
                     self.endSync()
                 }
             } else {
                 self.waitForSync()
-                return Promise<Void>()
+                return Promise<Void>(value:())
             }
         }
     }
     
     
-    public func syncEntity(query: String = "", arguments: [AnyObject]? = nil, remoteFilters: [NSComparisonPredicate]?=nil, includeRelations: [String]?=nil, includeEntities: [ManagedEntity.Type]?=nil, skipSave: Bool = false) -> Promise<Void> {
+    open func syncEntity(_ query: String = "", arguments: [Any]? = nil, remoteFilters: [NSComparisonPredicate]?=nil, includeRelations: [String]?=nil, includeEntities: [ManagedEntity.Type]?=nil, skipSave: Bool = false) -> Promise<Void> {
         
-        let promiseChain = Promise<Void>(Void())
+        var promiseChain = Promise<Void>(value:())
         
         if includeEntities != nil {
             for type in includeEntities! {
                 let includeService = AbstractRegistryService.mainRegistryService.entityService(type)
-                promiseChain.thenInBackground {
+                promiseChain = promiseChain.then(on: .global()) {
                     return includeService.syncEntity("", arguments: nil, remoteFilters: nil, includeRelations: nil, includeEntities: nil, skipSave: true)
                 }
             }
         }
         
-        return promiseChain.thenInBackground { _ -> Promise<Void> in
+        return promiseChain.then(on: .global()) { _ -> Promise<Void> in
             
             if self.trySync() {
-                return self.syncEntityInternal(query, arguments: arguments, remoteFilters: remoteFilters, includeRelations: includeRelations).thenInBackground { () -> Void in
+                return self.syncEntityInternal(query, arguments: arguments, remoteFilters: remoteFilters, includeRelations: includeRelations).then(on: .global()) { () -> Void in
                     if !skipSave {
                         self.localManager.saveSyncSafe()
                     }
@@ -113,20 +113,20 @@ public class EntityService: CoreService {
                 }
             } else {
                 self.waitForSync()
-                return Promise<Void>()
+                return Promise<Void>(value:())
             }
         }
     }
     
-    private func refreshEntity(entity: ManagedEntity, includeRelations: [String]?=nil) -> Promise<Void> {
+    fileprivate func refreshEntity(_ entity: ManagedEntity, includeRelations: [String]?=nil) -> Promise<Void> {
         guard let id = entity.id else {
-            return Promise(error: CoreError.RuntimeError(description: "Entity must have an id", cause: nil))
+            return Promise(error: CoreError.runtimeError(description: "Entity must have an id", cause: nil))
         }
         let predicate = NSComparisonPredicate(format: "id_eq == \(id)", optionals: nil)
-        return self.remoteManager.loadEntities(self.entityType, filters: [predicate],  include: includeRelations).thenInBackground { entities -> Promise<Void> in
+        return self.remoteManager.loadEntities(self.entityType, filters: [predicate],  include: includeRelations).then(on: .global()) { entities -> Promise<Void> in
             return self.runOnBackgroundContext {
                 if let entity = entities.first {
-                    try self.entityGatway()?.insertEntity(entity)
+                    try self.entityGateway()?.insertEntity(entity)
                 }
                 self.localManager.saveSyncSafe()
             }
@@ -134,10 +134,10 @@ public class EntityService: CoreService {
     }
     
     //MARK: - Other
-    private func saveEntity(entity: ManagedEntity) -> Promise<ManagedEntity> {
-        return self.remoteManager.saveEntity(entity).thenInBackground { (remoteEntity) -> Promise<Container> in
+    fileprivate func saveEntity(_ entity: ManagedEntity) -> Promise<ManagedEntity> {
+        return self.remoteManager.saveEntity(entity).then(on: .global()) { (remoteEntity) -> Promise<Container> in
             return self.runOnBackgroundContext { () -> Container in
-                let result = try self.entityGatway()?.insertEntity(remoteEntity) ?? remoteEntity
+                let result = try self.entityGateway()?.insertEntity(remoteEntity) ?? remoteEntity
                 self.localManager.saveBackgroundUnsafe()
                 return result.objectContainer()
             }
@@ -148,44 +148,40 @@ public class EntityService: CoreService {
         }
     }
     
-    private func deleteEntity(entity: ManagedEntity) -> Promise<Void> {
+    fileprivate func deleteEntity(_ entity: ManagedEntity) -> Promise<Void> {
         entity.pendingDelete = true
         let countainer = entity.objectContainer()
         
-        return self.remoteManager.deleteEntity(entity).recover({ (error) -> Void in
+        return self.remoteManager.deleteEntity(entity).recover { (error) -> Void in
             switch error {
-            case CoreError.ServiceError(_, _):
+            case CoreError.serviceError(_, _):
                 return
             default:
                 entity.pendingDelete = nil
                 throw error
             }
-        }).thenInBackground({ () -> Void in
-            return self.runOnBackgroundContext { () -> Void in
-                try self.entityGatway()?.deleteEntity(countainer.containedObject()!)
-                self.localManager.saveBackgroundUnsafe()
-            }
-        })
+        }.thenInBGContext { () -> Void in
+            try self.entityGateway()?.deleteEntity(countainer.containedObject()!)
+            self.localManager.saveBackgroundUnsafe()
+        }
     }
     
-    private func createBlankEntity() -> ManagedEntity {
+    fileprivate func createBlankEntity() -> ManagedEntity {
         let dummyClass: DummyManagedEntity.Type = ModelRegistry.sharedRegistry.extractRep(entityType, subclassOf: DummyManagedEntity.self) as! DummyManagedEntity.Type
         return dummyClass.init()
     }
     
-    private func patchEntity(entity: ManagedEntity, applyPatch: (entity: ManagedEntity) -> Void ) -> Promise<ManagedEntity> {
+    fileprivate func patchEntity(_ entity: ManagedEntity, applyPatch: (_ entity: ManagedEntity) -> Void ) -> Promise<ManagedEntity> {
         let patch: ManagedEntity = self.createBlankEntity()
         
         patch.id = entity.id!
 
-        applyPatch(entity: patch)
+        applyPatch(patch)
         
-        return self.remoteManager.saveEntity(patch).thenInBackground { (remoteEntity) -> Promise<Container> in
-            return self.runOnBackgroundContext { () -> Container in
-                let result = try self.entityGatway()?.insertEntity(remoteEntity) ?? remoteEntity
-                self.localManager.saveBackgroundUnsafe()
-                return result.objectContainer()
-            }
+        return self.remoteManager.saveEntity(patch).thenInBGContext { (remoteEntity) -> Container in
+            let result = try self.entityGateway()?.insertEntity(remoteEntity) ?? remoteEntity
+            self.localManager.saveBackgroundUnsafe()
+            return result.objectContainer()
         }.then { (container) -> ManagedEntity in
             let entity = try (container.containedObject()! as ManagedEntity)
             entity.refresh()
@@ -193,10 +189,10 @@ public class EntityService: CoreService {
         }
     }
     
-    private func createOrUpdate(entity: ManagedEntity, updateClosure: ((entity: ManagedEntity) -> Void)? = nil) -> Promise<ManagedEntity> {
+    fileprivate func createOrUpdate(_ entity: ManagedEntity, updateClosure: ((_ entity: ManagedEntity) -> Void)? = nil) -> Promise<ManagedEntity> {
         if entity.isTemp() {
             if updateClosure != nil {
-                updateClosure!(entity: entity)
+                updateClosure!(entity)
             }
             return saveEntity(entity)
         } else {
@@ -207,33 +203,37 @@ public class EntityService: CoreService {
 
 
 
-public class GenericService<T: ManagedEntity>: EntityService {
+open class GenericService<T: ManagedEntity>: EntityService {
     
     public required init() {
         super.init(entityType: T.self)
     }
+
+    public required init(entityType: ManagedEntity.Type) {
+        fatalError("init(entityType:) has not been implemented")
+    }
     
-    public class func sharedService() -> GenericService<T> {
+    open class func sharedService() -> GenericService<T> {
         return AbstractRegistryService.mainRegistryService.entityService()
     }
     
-    public func cachedEntity(let query: String = "", arguments: [AnyObject]? = nil, sortKeys: [String]?=nil) -> [T] {
+    open func cachedEntity(_ query: String = "", arguments: [Any]? = nil, sortKeys: [String]?=nil) -> [T] {
         return super.cachedEntity(query, arguments: arguments, sortKeys: sortKeys) as! [T]
     }
 
-    public func createOrUpdate(entity: T, updateClosure: ((entity: T) -> Void)? = nil) -> Promise<T> {
-        return super.createOrUpdate(entity, updateClosure: updateClosure != nil ? { updateClosure!(entity: $0 as! T) } : nil).then { $0 as! T }
+    open func createOrUpdate(_ entity: T, updateClosure: ((_ entity: T) -> Void)? = nil) -> Promise<T> {
+        return super.createOrUpdate(entity, updateClosure: updateClosure != nil ? { updateClosure!($0 as! T) } : nil).then { $0 as! T }
     }
     
-    public func refreshEntity(entity: T, includeRelations: [String]?=nil) -> Promise<Void> {
+    open func refreshEntity(_ entity: T, includeRelations: [String]?=nil) -> Promise<Void> {
         return super.refreshEntity(entity, includeRelations: includeRelations)
     }
     
-    public func deleteEntity(entity: T) -> Promise<Void> {
+    open func deleteEntity(_ entity: T) -> Promise<Void> {
         return super.deleteEntity(entity)
     }
     
-    public func createBlankEntity() -> T {
+    open func createBlankEntity() -> T {
         return super.createBlankEntity() as! T
     }
 }

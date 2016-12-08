@@ -8,12 +8,12 @@
 
 import Foundation
 
-public class JSONAPISession {
-    public var sessionToken : String?
-    public var refreshToken : String?
+open class JSONAPISession {
+    open var sessionToken : String?
+    open var refreshToken : String?
     
-    public var userName: String?
-    public var password: String?
+    open var userName: String?
+    open var password: String?
     
     public init(sessionToken: String, refreshToken: String?) {
         self.sessionToken = sessionToken
@@ -25,7 +25,7 @@ public class JSONAPISession {
         self.password = password
     }
     
-    public func isPending() -> Bool {
+    open func isPending() -> Bool {
         return self.sessionToken == nil
     }
 }

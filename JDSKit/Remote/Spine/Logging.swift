@@ -8,21 +8,45 @@
 
 import Foundation
 import CocoaLumberjack
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func >= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l >= r
+  default:
+    return !(lhs < rhs)
+  }
+}
+
 
 public enum LogLevel: Int {
-	case Debug = 0
-	case Info = 1
-	case Warning = 2
-	case Error = 3
-	case None = 4
+	case debug = 0
+	case info = 1
+	case warning = 2
+	case error = 3
+	case none = 4
 	
 	var description: String {
 		switch self {
-		case .Debug:   return "❔ Debug  "
-		case .Info:    return "❕ Info   "
-		case .Warning: return "❗️ Warning"
-		case .Error:   return "❌ Error  "
-		case .None:    return "None      "
+		case .debug:   return "❔ Debug  "
+		case .info:    return "❕ Info   "
+		case .warning: return "❗️ Warning"
+		case .error:   return "❌ Error  "
+		case .none:    return "None      "
 		}
 	}
 }
@@ -35,47 +59,47 @@ Logging domains
 - Serializing: The (de)serializing component
 */
 public enum LogDomain {
-	case Spine, Networking, Serializing
+	case spine, networking, serializing
 }
 
 /// Configured log levels
 internal var logLevels: [LogDomain: LogLevel] = [
-	.Spine: .None,
-	.Networking: .None,
-	.Serializing: .None
+	.spine: .none,
+	.networking: .none,
+	.serializing: .none
 ]
 
 /**
 Extension regarding logging.
 */
 extension Spine {
-	public class func setLogLevel(level: LogLevel, forDomain domain: LogDomain) {
+	public class func setLogLevel(_ level: LogLevel, forDomain domain: LogDomain) {
 		logLevels[domain] = level
 	}
 	
-	class func shouldLog(level: LogLevel, domain: LogDomain) -> Bool {
+	class func shouldLog(_ level: LogLevel, domain: LogDomain) -> Bool {
 		return (level.rawValue >= logLevels[domain]?.rawValue)
 	}
 	
-	class func log<T>(object: T, level: LogLevel, domain: LogDomain) {
+	class func log<T>(_ object: T, level: LogLevel, domain: LogDomain) {
 		if shouldLog(level, domain: domain) {
 			DDLogDebug("\(level.description) - \(object)")
 		}
 	}
 	
-	class func logDebug<T>(domain: LogDomain, _ object: T) {
-		log(object, level: .Debug, domain: domain)
+	class func logDebug<T>(_ domain: LogDomain, _ object: T) {
+		log(object, level: .debug, domain: domain)
 	}
 	
-	class func logInfo<T>(domain: LogDomain, _ object: T) {
-		log(object, level: .Info, domain: domain)
+	class func logInfo<T>(_ domain: LogDomain, _ object: T) {
+		log(object, level: .info, domain: domain)
 	}
 	
-	class func logWarning<T>(domain: LogDomain, _ object: T) {
-		log(object, level: .Warning, domain: domain)
+	class func logWarning<T>(_ domain: LogDomain, _ object: T) {
+		log(object, level: .warning, domain: domain)
 	}
 	
-	class func logError<T>(domain: LogDomain, _ object: T) {
-		log(object, level: .Error, domain: domain)
+	class func logError<T>(_ domain: LogDomain, _ object: T) {
+		log(object, level: .error, domain: domain)
 	}
 }

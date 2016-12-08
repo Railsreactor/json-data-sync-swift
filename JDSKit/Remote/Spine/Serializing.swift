@@ -20,13 +20,13 @@ struct JSONAPIDocument {
 	var errors: [NSError]?
 	
 	/// Metadata extracted from the reponse
-	var meta: [String: AnyObject]?
+	var meta: [String: Any]?
 	
 	/// Links extracted from the response
-	var links: [String: NSURL]?
+	var links: [String: URL]?
 	
 	/// JSONAPI information extracted from the response
-	var jsonapi: [String: AnyObject]?
+	var jsonapi: [String: Any]?
 }
 
 /**
@@ -79,7 +79,7 @@ protocol SerializerProtocol {
 	
 	- returns: A DeserializationResult that contains either a Store or an error.
 	*/
-	func deserializeData(data: NSData, mappingTargets: [Resource]?) throws -> JSONAPIDocument
+	func deserializeData(_ data: Data, mappingTargets: [Resource]?) throws -> JSONAPIDocument
 	
 	/**
 	Serializes the given Resources into a multidimensional dictionary/array structure
@@ -91,7 +91,7 @@ protocol SerializerProtocol {
 	- returns: A multidimensional dictionary/array structure.
 	*/
 
-	func serializeResources(resources: [Resource], options: SerializationOptions) -> NSData
+	func serializeResources(_ resources: [Resource], options: SerializationOptions) -> Data
 }
 
 /**
@@ -102,7 +102,7 @@ class JSONSerializer: SerializerProtocol {
 	var transformers = TransformerDirectory.defaultTransformerDirectory()
 	
 	
-	func deserializeData(data: NSData, mappingTargets: [Resource]? = nil) throws -> JSONAPIDocument {
+	func deserializeData(_ data: Data, mappingTargets: [Resource]? = nil) throws -> JSONAPIDocument {
 		let deserializeOperation = DeserializeOperation(data: data, resourceFactory: resourceFactory)
 		deserializeOperation.transformers = transformers
 		
@@ -113,20 +113,20 @@ class JSONSerializer: SerializerProtocol {
 		deserializeOperation.start()
 		
 		switch deserializeOperation.result! {
-		case .Failure(let error):
+		case .failure(let error):
 			throw error
-		case .Success(let document):
+		case .success(let document):
 			return document
 		}
 	}
 	
-	func serializeResources(resources: [Resource], options: SerializationOptions = SerializationOptions()) -> NSData {
+	func serializeResources(_ resources: [Resource], options: SerializationOptions = SerializationOptions()) -> Data {
 		let serializeOperation = SerializeOperation(resources: resources)
 		serializeOperation.options = options
 		serializeOperation.transformers = transformers
 		
 		serializeOperation.start()
-		return serializeOperation.result!
+		return serializeOperation.result! as Data
 	}
 }
 
@@ -135,7 +135,7 @@ A ResourceFactory creates resources from given factory funtions.
 */
 struct ResourceFactory {
 	
-	private var factoryFunctions: [ResourceType: () -> Resource] = [:]
+	fileprivate var factoryFunctions: [ResourceType: () -> Resource] = [:]
 
 	/**
 	Registers a given factory function that creates resource with a given type.
@@ -144,7 +144,7 @@ struct ResourceFactory {
 	- parameter type:    The resource type for which to register a factory function.
 	- parameter factory: The factory function that returns a resource.
 	*/
-	mutating func registerResource(type: ResourceType, factory: () -> Resource) {
+	mutating func registerResource(_ type: ResourceType, factory: @escaping () -> Resource) {
 		factoryFunctions[type] = factory
 	}
 
@@ -155,7 +155,7 @@ struct ResourceFactory {
 	
 	- returns: An instantiated resource.
 	*/
-	func instantiate(type: ResourceType) -> Resource {
+	func instantiate(_ type: ResourceType) -> Resource {
 		assert(factoryFunctions[type] != nil, "Cannot instantiate resource of type \(type). You must register this type with Spine first.")
 		return factoryFunctions[type]!()
 	}
@@ -174,7 +174,7 @@ struct ResourceFactory {
 	
 	- returns: A resource with the given type and id.
 	*/
-    func dispense(type: ResourceType, id: String, inout pool: [String: Resource]) -> Resource {
+    func dispense(_ type: ResourceType, id: String, pool: inout [String: Resource]) -> Resource {
 		var resource: Resource! = findResource(pool, type: type, id: id)
 		
 		if resource == nil {

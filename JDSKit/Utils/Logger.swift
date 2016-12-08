@@ -8,18 +8,18 @@
 
 import CocoaLumberjack
 
-public class Logger {
+open class Logger {
     
-    public static func initialize(logLevel: DDLogLevel = DDLogLevel.All) {
+    open static func initialize(_ logLevel: DDLogLevel = DDLogLevel.all) {
         let level = logLevel
         
-        DDLog.addLogger(DDTTYLogger.sharedInstance(), withLevel: level) // TTY = Xcode console
-        DDLog.addLogger(DDASLLogger.sharedInstance(), withLevel: level) // ASL = Apple System Logs
+        DDLog.add(DDTTYLogger.sharedInstance(), with: level) // TTY = Xcode console
+        DDLog.add(DDASLLogger.sharedInstance(), with: level) // ASL = Apple System Logs
         
         let fileLogger: DDFileLogger = DDFileLogger() // File Logger
-        fileLogger.rollingFrequency = 60*60*24  // 24 hours
+        fileLogger.rollingFrequency = TimeInterval(60*60*24)  // 24 hours
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
-        DDLog.addLogger(fileLogger)
+        DDLog.add(fileLogger)
         
         DDLogInfo("Logger initialized...")
     }

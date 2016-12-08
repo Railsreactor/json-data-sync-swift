@@ -8,42 +8,42 @@
 
 import UIKit
 
-public class AbstractRegistryService: NSObject {
+open class AbstractRegistryService: NSObject {
     
     // Setup here your implementation of RegistryService
-    public static var mainRegistryService: AbstractRegistryService!
+    open static var mainRegistryService: AbstractRegistryService!
     
     
     // JSON-API url string
-    public var apiURLString: String {
+    open var apiURLString: String {
         fatalError("Var 'apiURLString' should be overriden")
     }
     
-    public var apiToken: String {
+    open var apiToken: String {
         fatalError("Var 'apiToken' should be overriden")
     }
     
-    public var apiSecret: String {
+    open var apiSecret: String {
         fatalError("Var 'apiSecret' should be overriden")
     }
 
     // Path to Core Data store file
-    public var storeModelURL: NSURL {
+    open var storeModelURL: URL {
         fatalError("Var 'storeModelURL' should be overriden")
     }
     
     // Path to Core Data Managed Object Model
-    public var storeURL: NSURL {
+    open var storeURL: URL {
         fatalError("Var 'storeURL' should be overriden")
     }
 
     //
     
-    public func createRemoteManager() -> BaseJSONAPIManager {
+    open func createRemoteManager() -> BaseJSONAPIManager {
         return BaseJSONAPIManager(urlString: "http://\(apiURLString)/", clientToken: apiToken, clientSecret: apiSecret)
     }
     
-    public func createLocalManager() -> BaseDBService {
+    open func createLocalManager() -> BaseDBService {
         return BaseDBService(modelURL: AbstractRegistryService.mainRegistryService.storeModelURL, storeURL: AbstractRegistryService.mainRegistryService.storeURL)
     }
     
@@ -51,7 +51,7 @@ public class AbstractRegistryService: NSObject {
     // Registered representations for models. WARNING! Model Protocol should be always the first one!
     // In most cases you only need to register your models and reps here. Other stuff like DB Gateways or JSON Manager will handle if out of the box.
     
-    public var _modelRepresentations: [[ManagedEntity.Type]] {
+    open var _modelRepresentations: [[ManagedEntity.Type]] {
         return [
             [ManagedEntity.self,    DummyManagedEntity.self,        JSONManagedEntity.self,     CDManagedEntity.self],
             [Attachment.self,       DummyAttachment.self,           JSONAttachment.self,        CDAttachment.self],
@@ -62,15 +62,15 @@ public class AbstractRegistryService: NSObject {
     // ********************************************* Services ********************************************* //
     // List of predefined enitity services.
     
-    public var _predefinedEntityServices: [String: EntityService] {
-        return [ String(Attachment.self) : AttachmentService() ]
+    open var _predefinedEntityServices: [String: EntityService] {
+        return [ String(describing: Attachment.self) : AttachmentService() ]
     }
     
     internal var _sharedEntityServices: [String: EntityService] = [:]
     
     // This function returns registered entity service or creates GenericService for requested entity type
-    public func entityService<T: ManagedEntity>() -> GenericService<T> {
-        let key = String(T)
+    open func entityService<T: ManagedEntity>() -> GenericService<T> {
+        let key = String(describing: T.self)
         var service = (_sharedEntityServices[key]) as? GenericService<T>
         if service == nil {
             service = GenericService<T>()
@@ -79,8 +79,8 @@ public class AbstractRegistryService: NSObject {
         return service!
     }
     
-    public func entityService(type: ManagedEntity.Type) -> EntityService {
-        let key = String(type)
+    open func entityService(_ type: ManagedEntity.Type) -> EntityService {
+        let key = String(describing: type)
         var service = _sharedEntityServices[key]
         if service == nil {
             service = EntityService(entityType: type)
@@ -89,7 +89,7 @@ public class AbstractRegistryService: NSObject {
         return service!
     }
     
-    public func entityServiceByKey(key: String) -> EntityService {
+    open func entityServiceByKey(_ key: String) -> EntityService {
         return entityService(ExtractModel(key))
     }
     
@@ -103,7 +103,7 @@ public class AbstractRegistryService: NSObject {
     // ****************************************** EntityGateways ************************************************** //
     // List of predefined entity gateways. Other gateways will be dynamycaly initialized when requested.
 
-    public var _predefinedEntityGateways: [GenericEntityGateway] {
+    open var _predefinedEntityGateways: [GenericEntityGateway] {
         return [ LinkableEntitiyGateway(CDAttachment.self) ]
     }
     
@@ -113,7 +113,7 @@ public class AbstractRegistryService: NSObject {
     internal func performRepresentationsIndexation() {
         for modelReps in _modelRepresentations {
             for i in 1 ... modelReps.count-1 {
-                RegisterRepresenation(modelReps.first!, repType: modelReps[i])
+                _ = RegisterRepresenation(modelReps.first!, repType: modelReps[i])
             }
         }
     }
@@ -139,9 +139,9 @@ class ModelRegistry: NSObject {
     var registeredModelByRep    = [String : ManagedEntity.Type]()
     var registeredRepsByModel   = [String : [ManagedEntity.Type]]()
     
-    func register(modelType: ManagedEntity.Type, key inKey: String? = nil) -> Bool {
-        let key = inKey ?? String(modelType)
-        let typeKey = String(modelType)
+    func register(_ modelType: ManagedEntity.Type, key inKey: String? = nil) -> Bool {
+        let key = inKey ?? String(describing: modelType)
+        let typeKey = String(describing: modelType)
         
         registeredModelByType[typeKey]  = modelType
         
@@ -151,14 +151,14 @@ class ModelRegistry: NSObject {
         return true
     }
     
-    func registerRep(modelType: ManagedEntity.Type, repType: ManagedEntity.Type, modelKey: String?=nil) -> Bool {
+    func registerRep(_ modelType: ManagedEntity.Type, repType: ManagedEntity.Type, modelKey: String?=nil) -> Bool {
         
-        let typeKey = String(modelType)
+        let typeKey = String(describing: modelType)
         if registeredModelByType[typeKey] == nil {
-            register(modelType, key: modelKey)
+           _ = register(modelType, key: modelKey)
         }
         
-        registeredModelByRep[String(repType)] = modelType
+        registeredModelByRep[String(describing: repType)] = modelType
         
         
         if registeredRepsByModel[typeKey] == nil {
@@ -168,20 +168,20 @@ class ModelRegistry: NSObject {
         return true
     }
     
-    func extractModel(repType: ManagedEntity.Type) -> ManagedEntity.Type {
-        let key = String(repType)
+    func extractModel(_ repType: ManagedEntity.Type) -> ManagedEntity.Type {
+        let key = String(describing: repType)
         if registeredRepsByModel[key] != nil {
             return repType
         }
         return registeredModelByRep[key]!
     }
     
-    func extractModelByKey(key: String) -> ManagedEntity.Type {
+    func extractModelByKey(_ key: String) -> ManagedEntity.Type {
         return registeredModelByKey[key]!
     }
     
-    func extractRep<R>(modelType: ManagedEntity.Type, subclassOf: R.Type?=nil) -> ManagedEntity.Type {
-        let key = String(modelType)
+    func extractRep<R>(_ modelType: ManagedEntity.Type, subclassOf: R.Type?=nil) -> ManagedEntity.Type {
+        let key = String(describing: modelType)
         let reps: [ManagedEntity.Type] = registeredRepsByModel[key]!
         
         if subclassOf != nil {
@@ -195,7 +195,7 @@ class ModelRegistry: NSObject {
         return reps.first!
     }
     
-    func extractAllReps<R>(subclassOf: R.Type) -> [ManagedEntity.Type] {
+    func extractAllReps<R>(_ subclassOf: R.Type) -> [ManagedEntity.Type] {
         var result = [ManagedEntity.Type]()
         
         for (_, reps) in registeredRepsByModel {
@@ -209,22 +209,22 @@ class ModelRegistry: NSObject {
     }
 }
 
-func RegisterRepresenation(modelType: ManagedEntity.Type, repType: ManagedEntity.Type) -> Bool {
+func RegisterRepresenation(_ modelType: ManagedEntity.Type, repType: ManagedEntity.Type) -> Bool {
     return ModelRegistry.sharedRegistry.registerRep(modelType, repType: repType)
 }
 
-func ExtractModel(repType: ManagedEntity.Type) -> ManagedEntity.Type {
+func ExtractModel(_ repType: ManagedEntity.Type) -> ManagedEntity.Type {
     return ModelRegistry.sharedRegistry.extractModel(repType)
 }
 
-func ExtractModel(key: String) -> ManagedEntity.Type {
+func ExtractModel(_ key: String) -> ManagedEntity.Type {
     return ModelRegistry.sharedRegistry.extractModelByKey(key)
 }
 
-func ExtractRep<R>(modelType: ManagedEntity.Type, subclassOf: R.Type?=nil) -> ManagedEntity.Type {
+func ExtractRep<R>(_ modelType: ManagedEntity.Type, subclassOf: R.Type?=nil) -> ManagedEntity.Type {
     return ModelRegistry.sharedRegistry.extractRep(modelType, subclassOf: subclassOf)
 }
 
-func ExtractAllReps<R>(subclassOf: R.Type) -> [ManagedEntity.Type] {
+func ExtractAllReps<R>(_ subclassOf: R.Type) -> [ManagedEntity.Type] {
     return ModelRegistry.sharedRegistry.extractAllReps(subclassOf)
 }

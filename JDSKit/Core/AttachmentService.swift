@@ -10,9 +10,9 @@ import PromiseKit
 import CoreData
 import CocoaLumberjack
 
-public class AttachmentService: GenericService<Attachment> {
+open class AttachmentService: GenericService<Attachment> {
 
-    public override class func sharedService() -> AttachmentService {
+    open override class func sharedService() -> AttachmentService {
         return super.sharedService() as! AttachmentService
     }
     
@@ -20,19 +20,23 @@ public class AttachmentService: GenericService<Attachment> {
         super.init()
     }
     
-    public func cachedEntityProvider(parent: ManagedEntity, sortBy: [String]?=nil, groupBy: String?=nil) -> NSFetchedResultsController {
-        let name = parent.entityName
-        let predicate = NSPredicate(format: "parentId == %@ && parentType == %@ && isLoaded == %@ && pendingDelete != %@", parent.id!, name, true, true )
-        return self.entityGatway()!.fetchedResultsProvider(predicate, sortBy: sortBy ?? ["-createDate"], groupBy: groupBy)
+    public required init(entityType: ManagedEntity.Type) {
+        fatalError("init(entityType:) has not been implemented")
     }
     
-    public func latestAttachment(parent: ManagedEntity) -> Attachment? {
+    open func cachedEntityProvider(_ parent: ManagedEntity, sortBy: [String]?=nil, groupBy: String?=nil) -> NSFetchedResultsController<NSFetchRequestResult> {
+        let name = parent.entityName
+        let predicate = NSPredicate(format: "parentId == %@ && parentType == %@ && isLoaded == %@ && pendingDelete != %@", parent.id!, name, true as CVarArg, true as CVarArg )
+        return self.entityGateway()!.fetchedResultsProvider(predicate, sortBy: sortBy ?? ["-createDate"], groupBy: groupBy)
+    }
+    
+    open func latestAttachment(_ parent: ManagedEntity) -> Attachment? {
         var result: Attachment? = nil
         let name = parent.entityName
-        let predicate = NSPredicate(format: "parentId == %@ && parentType == %@ && isLoaded == %@ && pendingDelete != %@", parent.id!, name, true, true )
+        let predicate = NSPredicate(format: "parentId == %@ && parentType == %@ && isLoaded == %@ && pendingDelete != %@", parent.id!, name, true as CVarArg, true as CVarArg )
         
         do {
-            result = try self.entityGatway()!.fetchEntities(predicate, sortDescriptors: ["-createDate"].sortDescriptors()).first
+            result = try self.entityGateway()!.fetchEntities(predicate, sortDescriptors: ["-createDate"].sortDescriptors()).first
         } catch {
             DDLogError("Failed to fetch image: \(error)")
         }

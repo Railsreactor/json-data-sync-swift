@@ -8,12 +8,12 @@
 
 import Foundation
 
-func statusCodeIsSuccess(statusCode: Int?) -> Bool {
+func statusCodeIsSuccess(_ statusCode: Int?) -> Bool {
 	return statusCode != nil && 200 ... 299 ~= statusCode!
 }
 
-func errorFromStatusCode(statusCode: Int, additionalErrors: [NSError]? = nil) -> NSError {
-	let userInfo: [NSObject: AnyObject]?
+func errorFromStatusCode(_ statusCode: Int, additionalErrors: [NSError]? = nil) -> NSError {
+	let userInfo: [AnyHashable: Any]?
 	
 	if let additionalErrors = additionalErrors {
 		userInfo = [SNAPIErrorsKey: additionalErrors]
@@ -24,7 +24,7 @@ func errorFromStatusCode(statusCode: Int, additionalErrors: [NSError]? = nil) ->
 	return NSError(domain: SpineServerErrorDomain, code: statusCode, userInfo: userInfo)
 }
 
-private func convertResourcesToLinkage(resources: [Resource]) -> [[String: String]] {
+private func convertResourcesToLinkage(_ resources: [Resource]) -> [[String: String]] {
 	if resources.isEmpty {
 		return []
 	} else {
@@ -56,7 +56,7 @@ Operating against a Spine
 =========================
 The `Spine` instance variable references the Spine against which to operate.
 */
-class ConcurrentOperation: NSOperation {
+class ConcurrentOperation: Operation {
 	enum State: String {
 		case Ready = "isReady"
 		case Executing = "isExecuting"
@@ -66,24 +66,24 @@ class ConcurrentOperation: NSOperation {
 	/// The current state of the operation
 	var state: State = .Ready {
 		willSet {
-			willChangeValueForKey(newValue.rawValue)
-			willChangeValueForKey(state.rawValue)
+			willChangeValue(forKey: newValue.rawValue)
+			willChangeValue(forKey: state.rawValue)
 		}
 		didSet {
-			didChangeValueForKey(oldValue.rawValue)
-			didChangeValueForKey(state.rawValue)
+			didChangeValue(forKey: oldValue.rawValue)
+			didChangeValue(forKey: state.rawValue)
 		}
 	}
-	override var ready: Bool {
-		return super.ready && state == .Ready
+	override var isReady: Bool {
+		return super.isReady && state == .Ready
 	}
-	override var executing: Bool {
+	override var isExecuting: Bool {
 		return state == .Executing
 	}
-	override var finished: Bool {
+	override var isFinished: Bool {
 		return state == .Finished
 	}
-	override var asynchronous: Bool {
+	override var isAsynchronous: Bool {
 		return true
 	}
 	
@@ -104,7 +104,7 @@ class ConcurrentOperation: NSOperation {
 	override init() {}
 	
 	final override func start() {
-		if self.cancelled {
+		if self.isCancelled {
 			state = .Finished
 		} else {
 			state = .Executing
@@ -144,30 +144,29 @@ class FetchOperation<T: Resource>: ConcurrentOperation {
 	override func execute() {
 		let URL = spine.router.URLForQuery(query)
 		
-		Spine.logInfo(.Spine, "Fetching document using URL: \(URL)")
-		
-		networkClient.request("GET", URL: URL) { statusCode, responseData, networkError in
+		Spine.logInfo(.spine, "Fetching document using URL: \(URL)")
+        networkClient.request(method: "GET", url: URL) { statusCode, responseData, networkError in
 			defer { self.state = .Finished }
 			
 			guard networkError == nil else {
-				self.result = Failable.Failure(networkError!)
+				self.result = Failable.failure(networkError!)
 				return
 			}
 			
-			if let data = responseData where data.length > 0 {
+			if let data = responseData, data.count > 0 {
 				do {
 					let document = try self.serializer.deserializeData(data, mappingTargets: self.mappingTargets)
 					if statusCodeIsSuccess(statusCode) {
 						self.result = Failable(document)
 					} else {
-						self.result = Failable.Failure(errorFromStatusCode(statusCode!, additionalErrors: document.errors))
+						self.result = Failable.failure(errorFromStatusCode(statusCode!, additionalErrors: document.errors))
 					}
 				} catch let error as NSError {
-					self.result = Failable.Failure(error)
+					self.result = Failable.failure(error)
 				}
 				
 			} else {
-				self.result = Failable.Failure(errorFromStatusCode(statusCode!))
+				self.result = Failable.failure(errorFromStatusCode(statusCode!))
 			}
 		}
 	}
@@ -192,27 +191,27 @@ class DeleteOperation: ConcurrentOperation {
 	override func execute() {
 		let URL = spine.router.URLForQuery(Query(resource: resource))
 		
-		Spine.logInfo(.Spine, "Deleting resource \(resource) using URL: \(URL)")
+		Spine.logInfo(.spine, "Deleting resource \(resource) using URL: \(URL)")
 		
-		networkClient.request("DELETE", URL: URL) { statusCode, responseData, networkError in
+        networkClient.request(method: "DELETE", url: URL) { statusCode, responseData, networkError in
 			defer { self.state = .Finished }
 		
 			guard networkError == nil else {
-				self.result = Failable.Failure(networkError!)
+				self.result = Failable.failure(networkError!)
 				return
 			}
 			
 			if statusCodeIsSuccess(statusCode) {
-				self.result = Failable.Success()
-			} else if let data = responseData where data.length > 0 {
+				self.result = Failable.success()
+			} else if let data = responseData, data.count > 0 {
 				do {
 					let document = try self.serializer.deserializeData(data, mappingTargets: nil)
-					self.result = .Failure(errorFromStatusCode(statusCode!, additionalErrors: document.errors))
+					self.result = .failure(errorFromStatusCode(statusCode!, additionalErrors: document.errors))
 				} catch let error as NSError {
-					self.result = .Failure(error)
+					self.result = .failure(error)
 				}
 			} else {
-				self.result = .Failure(errorFromStatusCode(statusCode!))
+				self.result = .failure(errorFromStatusCode(statusCode!))
 			}
 		}
 	}
@@ -230,9 +229,9 @@ class SaveOperation: ConcurrentOperation {
 	var result: Failable<Void>?
 	
 	/// Whether the resource is a new resource, or an existing resource.
-	private let isNewResource: Bool
+	fileprivate let isNewResource: Bool
 	
-	private let relationshipOperationQueue = NSOperationQueue()
+	fileprivate let relationshipOperationQueue = OperationQueue()
 	
 	init(resource: Resource, spine: Spine) {
 		self.resource = resource
@@ -243,57 +242,57 @@ class SaveOperation: ConcurrentOperation {
 	}
 	
 	override func execute() {
-		let URL: NSURL, method: String, payload: NSData
+		let URL: Foundation.URL, method: String, payload: Data
 
 		if isNewResource {
 			URL = router.URLForResourceType(resource.resourceType())
 			method = "POST"
-			payload = serializer.serializeResources([resource], options: SerializationOptions(includeID: false, dirtyFieldsOnly: false, includeToOne: true, includeToMany: true))
+			payload = serializer.serializeResources([resource], options: SerializationOptions(includeID: false, dirtyFieldsOnly: false, includeToMany: true, includeToOne: true))
 		} else {
 			URL = router.URLForQuery(Query(resource: resource))
 			method = "PATCH"
 			payload = serializer.serializeResources([resource])
 		}
 		
-		Spine.logInfo(.Spine, "Saving resource \(resource) using URL: \(URL)")
+		Spine.logInfo(.spine, "Saving resource \(resource) using URL: \(URL)")
 		
-		networkClient.request(method, URL: URL, payload: payload) { statusCode, responseData, networkError in
+		networkClient.request(method: method, url: URL, payload: payload) { statusCode, responseData, networkError in
 			defer { self.state = .Finished }
 			
 			guard networkError == nil else {
-				self.result = Failable.Failure(networkError!)
+				self.result = Failable.failure(networkError!)
 				return
 			}
 
 			if(!statusCodeIsSuccess(statusCode)) {
-				if let data = responseData where data.length > 0 {
+				if let data = responseData, data.count > 0 {
 					do {
 						let document = try self.serializer.deserializeData(data, mappingTargets: nil)
-						self.result = .Failure(errorFromStatusCode(statusCode!, additionalErrors: document.errors))
+						self.result = .failure(errorFromStatusCode(statusCode!, additionalErrors: document.errors))
 						return
 					} catch let error as NSError {
-						self.result = .Failure(error)
+						self.result = .failure(error)
 						return
 					}
 				} else {
-					self.result = .Failure(errorFromStatusCode(statusCode!))
+					self.result = .failure(errorFromStatusCode(statusCode!))
 					return
 				}
 				
 			} else {
-				if let data = responseData where data.length > 0 {
+				if let data = responseData, data.count > 0 {
 					do {
 						try self.serializer.deserializeData(data, mappingTargets: [self.resource])
 					} catch let error as NSError {
-						self.result = .Failure(error)
+						self.result = .failure(error)
 						return
 					}
 				} else {
-					self.result = .Failure(errorFromStatusCode(statusCode!))
+					self.result = .failure(errorFromStatusCode(statusCode!))
 					return
 				}
 			}
-			self.result = Failable.Success()
+			self.result = Failable.success()
             
 			// Separately update relationships if this is an existing resource
 //			if self.isNewResource {
@@ -310,7 +309,7 @@ class SaveOperation: ConcurrentOperation {
 	func updateRelationships() {
 		self.relationshipOperationQueue.addObserver(self, forKeyPath: "operations", options: NSKeyValueObservingOptions(), context: nil)
 		
-		let completionHandler: (result: Failable<Void>) -> Void = { result in
+		let completionHandler: (_ result: Failable<Void>) -> Void = { result in
 			if let error = result.error {
 				self.relationshipOperationQueue.cancelAllOperations()
 				self.result = Failable(error)
@@ -321,30 +320,30 @@ class SaveOperation: ConcurrentOperation {
 			switch field {
 			case let toOne as ToOneRelationship:
 				let operation = RelationshipReplaceOperation(resource: resource, relationship: toOne, spine: spine)
-				operation.completionBlock = { completionHandler(result: operation.result!) }
+				operation.completionBlock = { completionHandler(operation.result!) }
 				relationshipOperationQueue.addOperation(operation)
 				
 			case let toMany as ToManyRelationship:
 				let addOperation = RelationshipAddOperation(resource: resource, relationship: toMany, spine: spine)
-				addOperation.completionBlock = { completionHandler(result: addOperation.result!) }
+				addOperation.completionBlock = { completionHandler(addOperation.result!) }
 				relationshipOperationQueue.addOperation(addOperation)
 				
 				let removeOperation = RelationshipRemoveOperation(resource: resource, relationship: toMany, spine: spine)
-				removeOperation.completionBlock = { completionHandler(result: removeOperation.result!) }
+				removeOperation.completionBlock = { completionHandler(removeOperation.result!) }
 				relationshipOperationQueue.addOperation(removeOperation)
 			default: ()
 			}
 		}
 	}
 	
-	override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-		guard let path = keyPath, queue = object as? NSOperationQueue where path == "operations" && queue == relationshipOperationQueue else {
-			super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+	override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+		guard let path = keyPath, let queue = object as? OperationQueue, path == "operations" && queue == relationshipOperationQueue else {
+			super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
 			return
 		}
 		
 		if queue.operationCount == 0 {
-			self.result = Failable.Success()
+			self.result = Failable.success()
 		}
 	}
 }
@@ -356,25 +355,25 @@ private class RelationshipOperation: ConcurrentOperation {
 	/// The result of the operation. You can safely force unwrap this in the completionBlock.
 	var result: Failable<Void>?
 	
-	func handleNetworkResponse(statusCode: Int?, responseData: NSData?, networkError: NSError?) {
+	func handleNetworkResponse(_ statusCode: Int?, responseData: Data?, networkError: NSError?) {
 		defer { self.state = .Finished }
 		
 		guard networkError == nil else {
-			self.result = Failable.Failure(networkError!)
+			self.result = Failable.failure(networkError!)
 			return
 		}
 		
 		if statusCodeIsSuccess(statusCode) {
-			self.result = Failable.Success()
-		} else if let data = responseData where data.length > 0 {
+			self.result = Failable.success()
+		} else if let data = responseData, data.count > 0 {
 			do {
 				let document = try serializer.deserializeData(data, mappingTargets: nil)
-				self.result = .Failure(errorFromStatusCode(statusCode!, additionalErrors: document.errors))
+				self.result = .failure(errorFromStatusCode(statusCode!, additionalErrors: document.errors))
 			} catch let error as NSError {
-				self.result = .Failure(error)
+				self.result = .failure(error)
 			}
 		} else {
-			self.result = .Failure(errorFromStatusCode(statusCode!))
+			self.result = .failure(errorFromStatusCode(statusCode!))
 		}
 	}
 }
@@ -392,12 +391,12 @@ private class RelationshipReplaceOperation: RelationshipOperation {
 	
 	override func execute() {
         let key = relationship.name
-		let relatedResource = resource.valueForField(key) as! Resource
+		let relatedResource = resource.valueForField(key!) as! Resource
 		let linkage = convertResourcesToLinkage([relatedResource])
 		
-		if let jsonPayload = try? NSJSONSerialization.dataWithJSONObject(["data": linkage], options: NSJSONWritingOptions(rawValue: 0)) {
+		if let jsonPayload = try? JSONSerialization.data(withJSONObject: ["data": linkage], options: JSONSerialization.WritingOptions(rawValue: 0)) {
 			let URL = router.URLForRelationship(relationship, ofResource: resource)
-			networkClient.request("PATCH", URL: URL, payload: jsonPayload, callback: handleNetworkResponse)
+			networkClient.request(method: "PATCH", url: URL, payload: jsonPayload, callback: handleNetworkResponse)
 		}
     }
 }
@@ -425,9 +424,9 @@ private class RelationshipAddOperation: RelationshipOperation {
             
             let linkage = convertResourcesToLinkage(relatedResources)
             
-            if let jsonPayload = try? NSJSONSerialization.dataWithJSONObject(["data": linkage], options: NSJSONWritingOptions(rawValue: 0)) {
+            if let jsonPayload = try? JSONSerialization.data(withJSONObject: ["data": linkage], options: JSONSerialization.WritingOptions(rawValue: 0)) {
                 let URL = router.URLForRelationship(relationship, ofResource: self.resource)
-                networkClient.request("POST", URL: URL, payload: jsonPayload, callback: handleNetworkResponse)
+                networkClient.request(method: "POST", url: URL, payload: jsonPayload, callback: handleNetworkResponse)
             }
         }
 	}
@@ -455,7 +454,7 @@ private class RelationshipRemoveOperation: RelationshipOperation {
             }
             
             let URL = router.URLForRelationship(relationship, ofResource: self.resource)
-            networkClient.request("DELETE", URL: URL, callback: handleNetworkResponse)
+            networkClient.request(method: "DELETE", url: URL, callback: handleNetworkResponse)
         }
 	}
 }

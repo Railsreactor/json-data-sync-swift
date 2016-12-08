@@ -10,24 +10,24 @@ import Foundation
 import PromiseKit
 //import BrightFutures
 
-public typealias Metadata = [String: AnyObject]
-public typealias JSONAPIData = [String: AnyObject]
+public typealias Metadata = [String: Any]
+public typealias JSONAPIData = [String: Any]
 
 
 /// The main class
-public class Spine {
+open class Spine {
 	
 	/// The router that builds the URLs for requests.
 	let router: Router
 	
 	/// The HTTPClient that performs the HTTP requests.
-	public let networkClient: NetworkClient
+	open let networkClient: NetworkClient
 	
 	/// The serializer to use for serializing and deserializing of JSON representations.
 	let serializer: JSONSerializer = JSONSerializer()
 	
 	/// The operation queue on which all operations are queued.
-	let operationQueue = NSOperationQueue()
+	let operationQueue = OperationQueue()
 	
 	
 	// MARK: Initializers
@@ -44,7 +44,7 @@ public class Spine {
 	/**
 	Creates a new Spine instance using the default Router and HTTPClient classes.
 	*/
-	public convenience init(baseURL: NSURL) {
+	public convenience init(baseURL: URL) {
 		let router = JSONAPIRouter()
 		router.baseURL = baseURL
 		self.init(router: router, networkClient: HTTPClient())
@@ -62,7 +62,7 @@ public class Spine {
 	Creates a new Spine instance using a specific network client and the default Router class.
 	Use this initializer to specify a custom network client.
 	*/
-	public convenience init(baseURL: NSURL, networkClient: NetworkClient) {
+	public convenience init(baseURL: URL, networkClient: NetworkClient) {
 		let router = JSONAPIRouter()
 		router.baseURL = baseURL
 		self.init(router: router, networkClient: networkClient)
@@ -77,7 +77,7 @@ public class Spine {
 	
 	:param: operation The operation to enqueue.
 	*/
-	func addOperation(operation: ConcurrentOperation) {
+	func addOperation(_ operation: ConcurrentOperation) {
 		operation.spine = self
 		operationQueue.addOperation(operation)
 	}
@@ -92,7 +92,7 @@ public class Spine {
 	
 	:returns: A future that resolves to a ResourceCollection that contains the fetched resources.
 	*/
-	public func find<T: Resource>(query: Query<T>) -> Promise<(resources: ResourceCollection, meta: Metadata?, jsonapi: JSONAPIData?)> {
+	open func find<T: Resource>(_ query: Query<T>) -> Promise<(resources: ResourceCollection, meta: Metadata?, jsonapi: JSONAPIData?)> {
         
         return Promise { fulfill, reject in
             
@@ -100,10 +100,10 @@ public class Spine {
             operation.completionBlock = {
                 
                 switch operation.result! {
-                case .Success(let document):
+                case .success(let document):
                     let response = (ResourceCollection(document: document), document.meta, document.jsonapi)
                     fulfill(response)
-                case .Failure(let error):
+                case .failure(let error):
                     reject(error)
                 }
             }
@@ -119,7 +119,7 @@ public class Spine {
 	
 	:returns: A future that resolves to a ResourceCollection that contains the fetched resources.
 	*/
-	public func find<T: Resource>(IDs: [String], ofType type: T.Type) -> Promise<(resources: ResourceCollection, meta: Metadata?, jsonapi: JSONAPIData?)> {
+	open func find<T: Resource>(_ IDs: [String], ofType type: T.Type) -> Promise<(resources: ResourceCollection, meta: Metadata?, jsonapi: JSONAPIData?)> {
 		let query = Query(resourceType: type, resourceIDs: IDs)
 		return find(query)
 	}
@@ -131,20 +131,20 @@ public class Spine {
 	
 	:returns: A future that resolves to the fetched resource.
 	*/
-	public func findOne<T: Resource>(query: Query<T>) -> Promise<(resource: T, meta: Metadata?, jsonapi: JSONAPIData?)> {
+	open func findOne<T: Resource>(_ query: Query<T>) -> Promise<(resource: T, meta: Metadata?, jsonapi: JSONAPIData?)> {
         
         return Promise { fulfill, reject in
             
             let operation = FetchOperation(query: query, spine: self)
             operation.completionBlock = {
                 switch operation.result! {
-                case .Success(let document) where document.data?.count == 0:
+                case .success(let document) where document.data?.count == 0:
                     reject(NSError(domain: SpineClientErrorDomain, code: SpineErrorCodes.ResourceNotFound, userInfo: nil))
-                case .Success(let document):
+                case .success(let document):
                     let firstResource = document.data!.first as! T
                     let response = (resource: firstResource, meta: document.meta, jsonapi: document.jsonapi)
                     fulfill(response)
-                case .Failure(let error):
+                case .failure(let error):
                     reject(error)
                 }
             }
@@ -160,7 +160,7 @@ public class Spine {
 	
 	:returns: A future that resolves to the fetched resource.
 	*/
-	public func findOne<T: Resource>(ID: String, ofType type: T.Type) -> Promise<(resource: T, meta: Metadata?, jsonapi: JSONAPIData?)> {
+	open func findOne<T: Resource>(_ ID: String, ofType type: T.Type) -> Promise<(resource: T, meta: Metadata?, jsonapi: JSONAPIData?)> {
 		let query = Query(resourceType: type, resourceIDs: [ID])
 		return findOne(query)
 	}
@@ -173,7 +173,7 @@ public class Spine {
 	
 	:returns: A future that resolves to a ResourceCollection that contains the fetched resources.
 	*/
-    public func findAll<T: Resource>(type: T.Type, filters: [NSComparisonPredicate]?=nil, include: [String]?=nil, pagination: Pagination?=nil) -> Promise<(resources: ResourceCollection, meta: Metadata?, jsonapi: JSONAPIData?)> {
+    open func findAll<T: Resource>(_ type: T.Type, filters: [NSComparisonPredicate]?=nil, include: [String]?=nil, pagination: Pagination?=nil) -> Promise<(resources: ResourceCollection, meta: Metadata?, jsonapi: JSONAPIData?)> {
 		var query = Query(resourceType: type)
         query.filters = filters ?? [NSComparisonPredicate]()
         query.includes = include ?? [String]()
@@ -192,7 +192,7 @@ public class Spine {
 	
 	:returns: A future that resolves to the ResourceCollection including the newly loaded resources.
 	*/
-	public func loadNextPageOfCollection(collection: ResourceCollection) -> Promise<ResourceCollection> {
+	open func loadNextPageOfCollection(_ collection: ResourceCollection) -> Promise<ResourceCollection> {
         
         return Promise { fulfill, reject in
             
@@ -202,7 +202,7 @@ public class Spine {
                 
                 operation.completionBlock = {
                     switch operation.result! {
-                    case .Success(let document):
+                    case .success(let document):
                         let nextCollection = ResourceCollection(document: document)
                         collection.resources += nextCollection.resources
                         collection.resourcesURL = nextCollection.resourcesURL
@@ -210,7 +210,7 @@ public class Spine {
                         collection.previousURL = nextCollection.previousURL
                         
                         fulfill(collection)
-                    case .Failure(let error):
+                    case .failure(let error):
                         reject(error)
                     }
                 }
@@ -231,7 +231,7 @@ public class Spine {
 	
 	:returns: A future that resolves to the ResourceCollection including the newly loaded resources.
 	*/
-	public func loadPreviousPageOfCollection(collection: ResourceCollection) -> Promise<ResourceCollection> {
+	open func loadPreviousPageOfCollection(_ collection: ResourceCollection) -> Promise<ResourceCollection> {
         
         return Promise { fulfill, reject in
             
@@ -241,7 +241,7 @@ public class Spine {
                 
                 operation.completionBlock = {
                     switch operation.result! {
-                    case .Success(let document):
+                    case .success(let document):
                         let previousCollection = ResourceCollection(document: document)
                         collection.resources = previousCollection.resources + collection.resources
                         collection.resourcesURL = previousCollection.resourcesURL
@@ -249,7 +249,7 @@ public class Spine {
                         collection.previousURL = previousCollection.previousURL
                         
                         fulfill(collection)
-                    case .Failure(let error):
+                    case .failure(let error):
                         reject(error)
                     }
                 }
@@ -285,7 +285,7 @@ public class Spine {
             }
             self.addOperation(operation)
         }
-	}
+    }
 	
 	/**
 	Deletes the given resource.
@@ -294,7 +294,7 @@ public class Spine {
 	
 	:returns: A future
 	*/
-	public func delete(resource: Resource) -> Promise<Void> {
+	open func delete(_ resource: Resource) -> Promise<Void> {
         return Promise { fulfill, reject in
             let operation = DeleteOperation(resource: resource, spine: self)
             
@@ -320,7 +320,7 @@ public class Spine {
 	
 	:returns: return value description
 	*/
-	public func ensure<T: Resource>(resource: T) -> Promise<T> {
+	open func ensure<T: Resource>(_ resource: T) -> Promise<T> {
 		let query = Query(resource: resource)
 		return loadResourceByExecutingQuery(resource, query: query)
 	}
@@ -336,14 +336,14 @@ public class Spine {
 	
 	:returns: <#return value description#>
 	*/
-	public func ensure<T: Resource>(resource: T, queryCallback: (Query<T>) -> Query<T>) -> Promise<T> {
+	open func ensure<T: Resource>(_ resource: T, queryCallback: (Query<T>) -> Query<T>) -> Promise<T> {
 		let query = queryCallback(Query(resource: resource))
 		return loadResourceByExecutingQuery(resource, query: query)
 	}
 
-	func loadResourceByExecutingQuery<T: Resource>(resource: T, query: Query<T>) -> Promise<T> {
+	func loadResourceByExecutingQuery<T: Resource>(_ resource: T, query: Query<T>) -> Promise<T> {
         return Promise { fulfill, reject in
-            if let loaded = resource.isLoaded where loaded.boolValue {
+            if let loaded = resource.isLoaded, loaded.boolValue {
                 fulfill(resource)
                 return
             }
@@ -374,7 +374,7 @@ public extension Spine {
 	:param: type    The resource type to register the factory function for.
 	:param: factory The factory method that returns an instance of a resource.
 	*/
-	func registerResource(type: String, factory: () -> Resource) {
+	func registerResource(_ type: String, factory: @escaping () -> Resource) {
 		serializer.resourceFactory.registerResource(type, factory: factory)
 	}
 }
@@ -389,7 +389,7 @@ public extension Spine {
 	
 	:param: type The Transformer to register.
 	*/
-	func registerTransformer<T: Transformer>(transformer: T) {
+	func registerTransformer<T: Transformer>(_ transformer: T) {
 		serializer.transformers.registerTransformer(transformer)
 	}
 }
@@ -398,11 +398,11 @@ public extension Spine {
 // MARK: - Utilities
 
 /// Return the first resource of `domain`, that is of the resource type `type` and has id `id`.
-func findResource(keyValueCache: [String : Resource], type: ResourceType, id: String) -> Resource? {
+func findResource(_ keyValueCache: [String : Resource], type: ResourceType, id: String) -> Resource? {
     return keyValueCache[String(type) + ":$" + id]
 }
 
-func cacheResource(inout keyValueCache: [String : Resource], resource: Resource) {
+func cacheResource(_ keyValueCache: inout [String : Resource], resource: Resource) {
     if let id = resource.id {
         keyValueCache[String(resource.resourceType()) + ":$" + id] = resource
     }
@@ -418,20 +418,20 @@ Represents the result of a failable operation.
 - Failure: The operation failed with the given error.
 */
 enum Failable<T> {
-	case Success(T)
-	case Failure(NSError)
+	case success(T)
+	case failure(NSError)
 	
 	init(_ value: T) {
-		self = .Success(value)
+		self = .success(value)
 	}
 	
 	init(_ error: NSError) {
-		self = .Failure(error)
+		self = .failure(error)
 	}
 	
 	var error: NSError? {
 		switch self {
-		case .Failure(let error):
+		case .failure(let error):
 			return error
 		default:
 			return nil

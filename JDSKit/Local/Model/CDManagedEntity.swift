@@ -11,28 +11,28 @@ import CoreData
 
 
 @objc(CDManagedEntity)
-public class CDManagedEntity: NSManagedObject, ManagedEntity {
-    @NSManaged public var id: String?
+open class CDManagedEntity: NSManagedObject, ManagedEntity {
+    @NSManaged open var id: String?
     
-    @NSManaged public var createDate: NSDate?
-    @NSManaged public var updateDate: NSDate?
+    @NSManaged open var createDate: Date?
+    @NSManaged open var updateDate: Date?
     
-    @NSManaged public var locations: NSSet?
-    @NSManaged public var attachments: NSSet?
+    @NSManaged open var locations: NSSet?
+    @NSManaged open var attachments: NSSet?
     
-    @NSManaged public var pendingDelete: NSNumber?
-    @NSManaged public var isLoaded: NSNumber?
+    @NSManaged open var pendingDelete: NSNumber?
+    @NSManaged open var isLoaded: NSNumber?
     
     
-    public func objectContainer() -> Container {
+    open func objectContainer() -> Container {
         return ObjectIDContainer(contained: self.objectID)
     }
     
-    public func refresh()  {
-        BaseDBService.sharedInstance.contextForCurrentThread().refreshObject(self, mergeChanges: false)
+    open func refresh()  {
+        BaseDBService.sharedInstance.contextForCurrentThread().refresh(self, mergeChanges: false)
     }
     
-    public func isTemp() -> Bool {
+    open func isTemp() -> Bool {
         return self.managedObjectContext != nil && self.id == nil
     }
 }

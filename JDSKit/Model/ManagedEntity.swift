@@ -13,8 +13,8 @@ import Foundation
     
     var id: String?             { get set }
 
-    var createDate: NSDate?     { get set }
-    var updateDate: NSDate?     { get set }
+    var createDate: Date?     { get set }
+    var updateDate: Date?     { get set }
 
     var attachments: NSSet?     { get set }
     
@@ -34,7 +34,7 @@ public extension ManagedEntity {
     
     
     public static var entityName: String    {
-        return String(entityType)
+        return String(describing: entityType)
     }
     
     public var entityName: String           {
@@ -42,18 +42,18 @@ public extension ManagedEntity {
     }
     
     public static var resourceName: String  {
-        return entityName.pluralize().lowercaseString
+        return entityName.pluralize().lowercased()
     }
     
     public var resourceName: String        {
         return Self.resourceName
     }
     
-    static func extractRepresentation<T>(subclassOf: T.Type) -> T.Type {
+    static func extractRepresentation<T>(_ subclassOf: T.Type) -> T.Type {
         return ExtractRep(self, subclassOf: subclassOf) as! T.Type
     }
     
-    func extractRepresentation<T>(subclassOf: T.Type) -> T.Type {
+    func extractRepresentation<T>(_ subclassOf: T.Type) -> T.Type {
         return Self.extractRepresentation(subclassOf)
     }
     
@@ -63,24 +63,24 @@ public extension ManagedEntity {
 }
 
 
-public class DummyManagedEntity: NSObject, ManagedEntity  {
+open class DummyManagedEntity: NSObject, ManagedEntity  {
     
-    public var id: String?
-    public var createDate: NSDate?
-    public var updateDate: NSDate?
+    open var id: String?
+    open var createDate: Date?
+    open var updateDate: Date?
     
-    public var attachments: NSSet?
-    public var locations:  NSSet?
+    open var attachments: NSSet?
+    open var locations:  NSSet?
     
     
-    public var pendingDelete: NSNumber?
-    public var isLoaded: NSNumber? = false
+    open var pendingDelete: NSNumber?
+    open var isLoaded: NSNumber? = false
     
-    public func objectContainer() -> Container {
+    open func objectContainer() -> Container {
         return Container(contained: self)
     }
 
-    public func refresh() {
+    open func refresh() {
 
     }
     
@@ -88,7 +88,7 @@ public class DummyManagedEntity: NSObject, ManagedEntity  {
         super.init()
     }
     
-    public func isTemp() -> Bool {
+    open func isTemp() -> Bool {
         return true
     }
 }
