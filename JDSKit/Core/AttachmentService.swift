@@ -27,7 +27,7 @@ open class AttachmentService: GenericService<Attachment> {
     open func cachedEntityProvider(_ parent: ManagedEntity, sortBy: [String]?=nil, groupBy: String?=nil) -> NSFetchedResultsController<NSFetchRequestResult> {
         let name = parent.entityName
         let predicate = NSPredicate(format: "parentId == %@ && parentType == %@ && isLoaded == %@ && pendingDelete != %@", parent.id!, name, true as CVarArg, true as CVarArg )
-        return self.entityGatway()!.fetchedResultsProvider(predicate, sortBy: sortBy ?? ["-createDate"], groupBy: groupBy)
+        return self.entityGateway()!.fetchedResultsProvider(predicate, sortBy: sortBy ?? ["-createDate"], groupBy: groupBy)
     }
     
     open func latestAttachment(_ parent: ManagedEntity) -> Attachment? {
@@ -36,7 +36,7 @@ open class AttachmentService: GenericService<Attachment> {
         let predicate = NSPredicate(format: "parentId == %@ && parentType == %@ && isLoaded == %@ && pendingDelete != %@", parent.id!, name, true as CVarArg, true as CVarArg )
         
         do {
-            result = try self.entityGatway()!.fetchEntities(predicate, sortDescriptors: ["-createDate"].sortDescriptors()).first
+            result = try self.entityGateway()!.fetchEntities(predicate, sortDescriptors: ["-createDate"].sortDescriptors()).first
         } catch {
             DDLogError("Failed to fetch image: \(error)")
         }

@@ -57,10 +57,10 @@ open class BaseDBService: NSObject, ManagedObjectContextProvider {
         
 //        Clean up DB for debug purpose:
 //        do {
-//            try NSFileManager.defaultManager().removeItemAtURL(url);
+//            try FileManager.default.removeItem(at: url);
 //        } catch {
 //        }
-        
+//        
         do {
             // Cleanup local cache if store going to migrate. Hack to avoid bug when newly added properties not set during sync, because existed entities wasn't updated since last sync.
             // Options to use with any delta-sync mechanism: [NSMigratePersistentStoresAutomaticallyOption:true, NSInferMappingModelAutomaticallyOption:true]

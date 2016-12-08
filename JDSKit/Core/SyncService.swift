@@ -71,7 +71,7 @@ open class AbstractSyncService: CoreService {
                 
                 if let id = event.relatedEntityId, event.action == Action.Deleted {
                     do {
-                        try AbstractRegistryService.mainRegistryService.entityServiceByKey(entityName).entityGatway()?.deleteEntityWithID(id)
+                        try AbstractRegistryService.mainRegistryService.entityServiceByKey(entityName).entityGateway()?.deleteEntityWithID(id)
                         DDLogDebug("Deleted \(entityName) with id: \(id)")
                     } catch {
                     }
@@ -120,7 +120,7 @@ open class AbstractSyncService: CoreService {
                     
                     var finalSyncDate = ZeroDate
                     if self.lastSyncDate == ZeroDate {
-                        let topMostEntity: ManagedEntity? = try service.entityGatway()?.fetchEntities(nil, sortDescriptors: ["-updateDate"].sortDescriptors()).first
+                        let topMostEntity: ManagedEntity? = try service.entityGateway()?.fetchEntities(nil, sortDescriptors: ["-updateDate"].sortDescriptors()).first
                         finalSyncDate = topMostEntity?.updateDate ?? syncDate
                     } else {
                         finalSyncDate = self.lastSyncDate
@@ -151,9 +151,16 @@ open class AbstractSyncService: CoreService {
             
             self.lastSuccessSyncDate = self.lastSyncDate
             eventSyncInfo?.updateDate = self.lastSyncDate
-        }.always(on: .global()) {
+        }.recover(on: .global()) { error -> Void in
+            self.localManager.saveSyncSafe()
+            throw error
+        }.then(on: .global()) {
             self.localManager.saveSyncSafe()
         }
+            
+//            .always(on: .global()) {
+//            self.localManager.saveSyncSafe()
+//        }
     }
     
     open func sync() -> Promise<Void> {

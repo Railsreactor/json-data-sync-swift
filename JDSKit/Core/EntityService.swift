@@ -23,7 +23,7 @@ open class EntityService: CoreService {
         return AbstractRegistryService.mainRegistryService.entityService(entityType)
     }
     
-    open func entityGatway() -> GenericEntityGateway? {
+    open func entityGateway() -> GenericEntityGateway? {
         return self.localManager.entityGatewayByEntityType(self.entityType)
     }
     
@@ -40,7 +40,7 @@ open class EntityService: CoreService {
         query += "isLoaded == true && pendingDelete != true"
         
         do {
-            if let entitiyGateway = self.entityGatway() {
+            if let entitiyGateway = self.entityGateway() {
                 let entities = try entitiyGateway.fetchEntities(query, arguments: (arguments ?? [Any]()), sortDescriptors: descriptors) as [ManagedEntity]
                 return entities
             }
@@ -57,7 +57,7 @@ open class EntityService: CoreService {
             return self.runOnBackgroundContext { () -> Void in
                 let start = NSDate()
                 DDLogDebug("Will Insert \(input.count) Entities of type: \(String(describing: self.entityType))" )
-                if let entityGateway = self.entityGatway() {
+                if let entityGateway = self.entityGateway() {
                     let newItems: [ManagedEntity] = try entityGateway.insertEnities(input, isFirstInsert: false) ?? []
                     DDLogDebug("Did Insert \(newItems.count) Entities of type: \(String(describing: self.entityType)) Time Spent: \(abs(start.timeIntervalSinceNow))" )
                 } else {
@@ -126,7 +126,7 @@ open class EntityService: CoreService {
         return self.remoteManager.loadEntities(self.entityType, filters: [predicate],  include: includeRelations).then(on: .global()) { entities -> Promise<Void> in
             return self.runOnBackgroundContext {
                 if let entity = entities.first {
-                    try self.entityGatway()?.insertEntity(entity)
+                    try self.entityGateway()?.insertEntity(entity)
                 }
                 self.localManager.saveSyncSafe()
             }
@@ -137,7 +137,7 @@ open class EntityService: CoreService {
     fileprivate func saveEntity(_ entity: ManagedEntity) -> Promise<ManagedEntity> {
         return self.remoteManager.saveEntity(entity).then(on: .global()) { (remoteEntity) -> Promise<Container> in
             return self.runOnBackgroundContext { () -> Container in
-                let result = try self.entityGatway()?.insertEntity(remoteEntity) ?? remoteEntity
+                let result = try self.entityGateway()?.insertEntity(remoteEntity) ?? remoteEntity
                 self.localManager.saveBackgroundUnsafe()
                 return result.objectContainer()
             }
@@ -161,7 +161,7 @@ open class EntityService: CoreService {
                 throw error
             }
         }.thenInBGContext { () -> Void in
-            try self.entityGatway()?.deleteEntity(countainer.containedObject()!)
+            try self.entityGateway()?.deleteEntity(countainer.containedObject()!)
             self.localManager.saveBackgroundUnsafe()
         }
     }
@@ -179,7 +179,7 @@ open class EntityService: CoreService {
         applyPatch(patch)
         
         return self.remoteManager.saveEntity(patch).thenInBGContext { (remoteEntity) -> Container in
-            let result = try self.entityGatway()?.insertEntity(remoteEntity) ?? remoteEntity
+            let result = try self.entityGateway()?.insertEntity(remoteEntity) ?? remoteEntity
             self.localManager.saveBackgroundUnsafe()
             return result.objectContainer()
         }.then { (container) -> ManagedEntity in
