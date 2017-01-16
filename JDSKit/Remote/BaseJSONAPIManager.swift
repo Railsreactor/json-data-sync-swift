@@ -238,7 +238,7 @@ open class BaseJSONAPIManager: NSObject {
                     }
                     fd_sema.signal();
                     completion(self.sessionInfo?.sessionToken != nil, error)
-                } as! RemoteResultBlock)
+                })
                 
                 fd_sema.wait(timeout: DispatchTime.distantFuture);
                 self.authLock.unlock()

@@ -65,13 +65,13 @@ class DeserializeOperation: Operation {
 			result = Failable(NSError(domain: SpineSerializingErrorDomain, code: SpineErrorCodes.InvalidDocumentStructure, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
 			return
 		}
-		guard data["errors"] != nil || data["data"] != nil || data["meta"] != nil else {
+		guard data["errors"] != JSON.null || data["data"] != JSON.null || data["meta"] != JSON.null else {
 			let errorMessage = "Either 'data', 'errors', or 'meta' must be present in the top level.";
 			Spine.logError(.serializing, errorMessage)
 			result = Failable(NSError(domain: SpineSerializingErrorDomain, code: SpineErrorCodes.InvalidDocumentStructure, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
 			return
 		}
-		guard (data["errors"] == nil && data["data"] != nil) || (data["errors"] != nil && data["data"] == nil) else {
+		guard (data["errors"] == JSON.null && data["data"] != JSON.null) || (data["errors"] != JSON.null && data["data"] == JSON.null) else {
 			let errorMessage = "Top level 'data' and 'errors' must not coexist in the same document.";
 			Spine.logError(.serializing, errorMessage)
 			result = Failable(NSError(domain: SpineSerializingErrorDomain, code: SpineErrorCodes.InvalidDocumentStructure, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
@@ -232,13 +232,13 @@ class DeserializeOperation: Operation {
 		}
 	}
     
-    fileprivate func extractKeyPath(_ serializedData: JSON, keyPath: String) -> JSON {
+    fileprivate func extractKeyPath(_ serializedData: JSON?, keyPath: String) -> JSON {
         var keys = keyPath.components(separatedBy:".")
         
         
-        guard let first = keys.first else { print("Key not found"); return nil }
+        guard let first = keys.first else { print("Key not found"); return JSON.null }
         
-        guard let value: JSON = serializedData[first], value.null == nil else { return nil }
+        guard let value: JSON = serializedData?[first], value.null == nil else { return JSON.null }
         
         keys.remove(at: 0)
         

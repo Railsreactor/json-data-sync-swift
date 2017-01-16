@@ -92,8 +92,8 @@ public class HTTPClient: NetworkClient {
         headers.removeValue(forKey: header)
     }
     
-    public func buildRequest(method: String, url: URL, payload: Data?) -> NSMutableURLRequest {
-        let request = MutableURLRequest(url: url)
+    public func buildRequest(method: String, url: URL, payload: Data?) -> NSURLRequest {
+        var request = URLRequest(url: url)
         request.httpMethod = method
         
         for (key, value) in headers {
@@ -104,7 +104,7 @@ public class HTTPClient: NetworkClient {
             request.httpBody = payload
         }
         
-        return request
+        return request as NSURLRequest
     }
     
     public func request(method: String, url: URL, payload: Data?, callback: @escaping NetworkClientCallback) {
