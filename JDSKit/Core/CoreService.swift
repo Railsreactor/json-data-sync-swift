@@ -44,8 +44,8 @@ open class CoreService: NSObject {
     public override init() {
         super.init()
         // Initialize managers if need
-        self.remoteManager
-        self.localManager
+        _ = self.remoteManager
+        _ = self.localManager
     }
 
 
@@ -71,7 +71,7 @@ open class CoreService: NSObject {
                 if !self.syncLock {
                     self.syncLock = true
                     shouldSync = true
-                    self.syncSemaphore.wait(timeout: DispatchTime.distantFuture)
+                    _ = self.syncSemaphore.wait(timeout: DispatchTime.distantFuture)
                 }
             }
         }
@@ -88,7 +88,7 @@ open class CoreService: NSObject {
     }
     
     open func waitForSync() {
-        self.syncSemaphore.wait(timeout: DispatchTime.distantFuture)
+        _ = self.syncSemaphore.wait(timeout: DispatchTime.distantFuture)
         self.syncSemaphore.signal()
     }
     

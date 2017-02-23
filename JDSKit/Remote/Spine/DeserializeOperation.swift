@@ -65,13 +65,13 @@ class DeserializeOperation: Operation {
 			result = Failable(NSError(domain: SpineSerializingErrorDomain, code: SpineErrorCodes.InvalidDocumentStructure, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
 			return
 		}
-		guard data["errors"] != nil || data["data"] != nil || data["meta"] != nil else {
+		guard data["errors"] != JSON.null || data["data"] != JSON.null || data["meta"] != JSON.null else {
 			let errorMessage = "Either 'data', 'errors', or 'meta' must be present in the top level.";
 			Spine.logError(.serializing, errorMessage)
 			result = Failable(NSError(domain: SpineSerializingErrorDomain, code: SpineErrorCodes.InvalidDocumentStructure, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
 			return
 		}
-		guard (data["errors"] == nil && data["data"] != nil) || (data["errors"] != nil && data["data"] == nil) else {
+		guard (data["errors"] == JSON.null && data["data"] != JSON.null) || (data["errors"] != JSON.null && data["data"] == JSON.null) else {
 			let errorMessage = "Top level 'data' and 'errors' must not coexist in the same document.";
 			Spine.logError(.serializing, errorMessage)
 			result = Failable(NSError(domain: SpineSerializingErrorDomain, code: SpineErrorCodes.InvalidDocumentStructure, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
@@ -181,7 +181,7 @@ class DeserializeOperation: Operation {
 		
 		// Extract data
 		resource.id = id
-		resource.URL = representation["links"]["self"].URL
+		resource.URL = representation["links"]["self"].url
 		resource.meta = representation["meta"].dictionaryObject as [String : Any]?
 		extractAttributes(representation, intoResource: resource)
 		extractRelationships(representation, intoResource: resource)
@@ -236,9 +236,9 @@ class DeserializeOperation: Operation {
         var keys = keyPath.components(separatedBy:".")
         
         
-        guard let first = keys.first else { print("Key not found"); return nil }
+        guard let first = keys.first else { print("Key not found"); return JSON.null }
         
-        guard let value: JSON = serializedData[first], value.null == nil else { return nil }
+        guard let value: JSON = serializedData[first], value.null == nil else { return JSON.null }
         
         keys.remove(at: 0)
         
@@ -304,7 +304,7 @@ class DeserializeOperation: Operation {
                     resource = resourceFactory.instantiate(type)
                 }
                 
-                if let resourceURL = linkData["links"]?["related"].URL {
+                if let resourceURL = linkData["links"]?["related"].url {
                     resource!.URL = resourceURL
                 }
             }
@@ -327,8 +327,8 @@ class DeserializeOperation: Operation {
 		var resourceCollection: LinkedResourceCollection? = nil
 
 		if let linkData = serializedData["relationships"][key].dictionary {
-			let resourcesURL: URL? = linkData["links"]?["related"].URL
-			let linkURL: URL? = linkData["links"]?["self"].URL
+			let resourcesURL: URL? = linkData["links"]?["related"].url
+			let linkURL: URL? = linkData["links"]?["self"].url
 			
 			if let linkage = linkData["data"]?.array {
 				let mappedLinkage = linkage.map { ResourceIdentifier(type: $0["type"].stringValue, id: $0["id"].stringValue) }

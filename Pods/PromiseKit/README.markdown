@@ -2,6 +2,10 @@
 
 ![badge-pod] ![badge-languages] ![badge-pms] ![badge-platforms] ![badge-mit]
 
+[简体中文](README.zh_CN.md)
+
+---
+
 Modern development is highly asynchronous: isn’t it about time we had tools that
 made programming asynchronously powerful, easy and delightful?
 
@@ -117,6 +121,20 @@ func avatar() -> Promise<UIImage> {
 }
 ```
 
+You can easily create a new, pending promise.
+```swift
+func fetchAvatar(user: String) -> Promise<UIImage> {
+    return Promise { fulfill, reject in
+        MyWebHelper.GET("\(user)/avatar") { data, err in
+            guard let data = data else { return reject(err) }
+            guard let img = UIImage(data: data) else { return reject(MyError.InvalidImage) }
+            guard let img.size.width > 0 else { return reject(MyError.ImageTooSmall) }
+            fulfill(img)
+        }
+    }
+}
+```
+
 ## Continue Learning…
 
 Complete and progressive learning guide at [promisekit.org].
@@ -190,6 +208,12 @@ URLSession.GET("http://example.com").asDictionary().then { json in
 ```
 
 For [AFNetworking] we recommend [csotiriou/AFNetworking].
+
+
+# Need to convert your codebase to Promises?
+
+[Hire me](mailto:mxcl@me.com), I have years of experience with Promises in iOS codebases and 10 years of professional experience developing mobile apps.
+
 
 # Support
 

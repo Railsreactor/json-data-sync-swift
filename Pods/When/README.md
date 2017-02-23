@@ -69,7 +69,7 @@ let promise = Promise<String>()
 promise.resolve("String")
 
 // Or rejects the promise
-promise.reject(Error.NotFound)
+promise.reject(Error.notFound)
 ```
 
 ```swift
@@ -83,7 +83,7 @@ let promise = Promise({
 // Creates a new promise that is rejected with an ErrorType
 let promise = Promise({
   //...
-  throw Error.NotFound
+  throw Error.notFound
 })
 ```
 
@@ -125,7 +125,7 @@ promise.fail({ error in
 })
 
 // Reject the promise
-promise.reject(Error.NotFound)
+promise.reject(Error.notFound)
 ```
 
 ### Always
@@ -140,15 +140,15 @@ let promise = Promise<String>()
 // Add done callback
 promise.always({ result in
   switch result {
-  case let .Success(value):
+  case let .success(value):
     print(value)
-  case let .Failure(error):
+  case let .failure(error):
     print(error)
   }
 })
 
 // Resolve or reject the promise
-promise.resolve("String") // promise.reject(Error.NotFound)
+promise.resolve("String") // promise.reject(Error.notFound)
 ```
 
 ### Then
@@ -251,6 +251,12 @@ it, simply add the following line to your Podfile:
 
 ```ruby
 pod 'When'
+```
+
+For `RxSwift` extensions you can use CocoaPods subspecs:
+
+```ruby
+pod 'When/RxSwift'
 ```
 
 **When** is also available through [Carthage](https://github.com/Carthage/Carthage).
