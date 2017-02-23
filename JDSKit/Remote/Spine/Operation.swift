@@ -282,7 +282,7 @@ class SaveOperation: ConcurrentOperation {
 			} else {
 				if let data = responseData, data.count > 0 {
 					do {
-						try self.serializer.deserializeData(data, mappingTargets: [self.resource])
+						_ = try self.serializer.deserializeData(data, mappingTargets: [self.resource])
 					} catch let error as NSError {
 						self.result = .failure(error)
 						return
