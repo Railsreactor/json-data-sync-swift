@@ -21,7 +21,7 @@ func errorFromStatusCode(_ statusCode: Int, additionalErrors: [NSError]? = nil) 
 		userInfo = nil
 	}
 	
-	return NSError(domain: SpineServerErrorDomain, code: statusCode, userInfo: userInfo)
+	return NSError(domain: SpineServerErrorDomain, code: statusCode, userInfo: userInfo as! [String : Any])
 }
 
 private func convertResourcesToLinkage(_ resources: [Resource]) -> [[String: String]] {
@@ -202,7 +202,7 @@ class DeleteOperation: ConcurrentOperation {
 			}
 			
 			if statusCodeIsSuccess(statusCode) {
-				self.result = Failable.success()
+				self.result = Failable.success(())
 			} else if let data = responseData, data.count > 0 {
 				do {
 					let document = try self.serializer.deserializeData(data, mappingTargets: nil)
@@ -292,7 +292,7 @@ class SaveOperation: ConcurrentOperation {
 					return
 				}
 			}
-			self.result = Failable.success()
+			self.result = Failable.success(())
             
 			// Separately update relationships if this is an existing resource
 //			if self.isNewResource {
@@ -343,7 +343,7 @@ class SaveOperation: ConcurrentOperation {
 		}
 		
 		if queue.operationCount == 0 {
-			self.result = Failable.success()
+			self.result = Failable.success(())
 		}
 	}
 }
@@ -364,7 +364,7 @@ private class RelationshipOperation: ConcurrentOperation {
 		}
 		
 		if statusCodeIsSuccess(statusCode) {
-			self.result = Failable.success()
+			self.result = Failable.success(())
 		} else if let data = responseData, data.count > 0 {
 			do {
 				let document = try serializer.deserializeData(data, mappingTargets: nil)
@@ -417,7 +417,7 @@ private class RelationshipAddOperation: RelationshipOperation {
             let relatedResources = resourceCollection.addedResources
             
             guard !relatedResources.isEmpty else {
-                self.result = Failable()
+                self.result = Failable(())
                 self.state = .Finished
                 return
             }
@@ -448,7 +448,7 @@ private class RelationshipRemoveOperation: RelationshipOperation {
             let relatedResources = resourceCollection.addedResources
             
             guard !relatedResources.isEmpty else {
-                self.result = Failable()
+                self.result = Failable(())
                 self.state = .Finished
                 return
             }

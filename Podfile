@@ -1,5 +1,5 @@
 platform :ios, '8.0'
-swift_version = "2.3"
+swift_version = "4.0"
 use_frameworks!
 
 target 'JDSKit' do

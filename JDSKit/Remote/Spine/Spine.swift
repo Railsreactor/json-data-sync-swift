@@ -302,7 +302,7 @@ open class Spine {
                 if let error = operation.result?.error {
                     reject(error)
                 } else {
-                    fulfill()
+                    fulfill(())
                 }
             }
             self.addOperation(operation)
@@ -332,9 +332,9 @@ open class Spine {
 	:param: resource The resource to ensure.
 	
 	:param: resource      The resource to ensure.
-	:param: queryCallback <#queryCallback description#>
+	:param: queryCallback 
 	
-	:returns: <#return value description#>
+	:returns:
 	*/
 	open func ensure<T: Resource>(_ resource: T, queryCallback: (Query<T>) -> Query<T>) -> Promise<T> {
 		let query = queryCallback(Query(resource: resource))

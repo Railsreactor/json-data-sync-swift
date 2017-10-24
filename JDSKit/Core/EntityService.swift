@@ -74,7 +74,7 @@ open class EntityService: CoreService {
                 
                 var predicates: [NSComparisonPredicate]? = nil
                 if updateDate != nil {
-                    predicates = [NSComparisonPredicate(format: "updated_at_gt == %@", updateDate!.toSystemString())]
+                    predicates = [NSComparisonPredicate(format: "updated_at_gt == %@", optionals: [updateDate!.toSystemString()])]
                 }
                 DDLogDebug("Will download \(self.entityType) Delta From: \(updateDate)")
                 return self.syncEntityInternal("", arguments: nil, remoteFilters: predicates, includeRelations: nil).always {
