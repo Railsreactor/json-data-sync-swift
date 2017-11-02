@@ -28,6 +28,7 @@ asynchronous code up to the next level.
   * [Fail](#fail)
   * [Always](#always)
   * [Then](#then)
+  * [Recover](#recover)
   * [When](#when)
 * [Installation](#installation)
 * [Author](#author)
@@ -64,10 +65,8 @@ state and then could be resolved with a value or rejected with an error.
 ```swift
 // Creates a new promise that could be resolved with a String value
 let promise = Promise<String>()
-
 // Resolves the promise
 promise.resolve("String")
-
 // Or rejects the promise
 promise.reject(Error.notFound)
 ```
@@ -80,7 +79,7 @@ let promise = Promise({
 ```
 
 ```swift
-// Creates a new promise that is rejected with an ErrorType
+// Creates a new promise that is rejected with an Error
 let promise = Promise({
   //...
   throw Error.notFound
@@ -96,48 +95,62 @@ let promise = Promise<String>(queue: dispatch_get_main_queue())
 ```
 
 ### Done
-Add a handler to be called when the ***promise*** object is resolved with a value:
+Adds a handler to be called when the ***promise*** object is resolved with a value:
 
 ```swift
 // Create a new promise in a pending state
 let promise = Promise<String>()
-
 // Add done callback
 promise.done({ value in
   print(value)
 })
-
 // Resolve the promise
 promise.resolve("String")
 ```
 
 ### Fail
-Add a handler to be called when the ***promise*** object is rejected with
-an `ErrorType`:
+Adds a handler to be called when the ***promise*** object is rejected with
+an `Error`:
 
 ```swift
 // Create a new promise in a pending state
 let promise = Promise<String>()
-
-// Add done callback
+// Add fail callback
 promise.fail({ error in
   print(error)
 })
-
 // Reject the promise
 promise.reject(Error.notFound)
 ```
 
+It's also possible to cancel a promise, which means it will be rejected with
+`PromiseError.cancelled` error. `FailurePolicy` can be used if you want to
+ignore this error in your `fail` handler:
+
+```swift
+// Create a new promise in a pending state
+let promise = Promise<String>()
+// This callback will not be called when a promise is cancelled
+promise.fail({ error in
+  print(error)
+})
+// This callback will be called when a promise is cancelled
+promise.fail(policy: .allErrors, { error in
+  print(error)
+})
+// Cancel the promise
+promise.cancel()
+```
+
 ### Always
-Add a handler to be called when the ***promise*** object is either resolved or
+Adds a handler to be called when the ***promise*** object is either resolved or
 rejected. This callback will be called after [done](#done) or [fail](#fail)
 handlers.
 
 ```swift
 // Create a new promise in a pending state
 let promise = Promise<String>()
-
-// Add done callback
+// Add always callback
 promise.always({ result in
   switch result {
   case let .success(value):
@@ -146,7 +159,6 @@ promise.always({ result in
     print(error)
   }
 })
-
 // Resolve or reject the promise
 promise.resolve("String") // promise.reject(Error.notFound)
 ```
@@ -216,6 +228,26 @@ promise1.thenInBackground({ data -> Int in
 promise2.thenInBackground({ data -> Promise<NSData> in
   //...
 })
+```
+
+### Recover
+Returns a new ***promise*** that can be used to continue the chain when an
+error was thrown.
+
+```swift
+let promise = Promise<String>()
+// Recover the chain
+promise
+  .recover({ error -> Promise<String> in
+    return Promise({
+      return "Recovered"
+    })
+  })
+  .done({ string in
+    print(string) // Recovered
+  })
+// Reject the promise
+promise.reject(Error.notFound)
 ```
 
 ### When

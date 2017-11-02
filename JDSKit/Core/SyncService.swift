@@ -57,7 +57,8 @@ open class AbstractSyncService: CoreService {
 
     internal func checkForUpdates(_ eventSyncDate: Date) -> Promise<SyncInfo> {
         DDLogDebug("Checking for updates... \(eventSyncDate)")
-        let predicate = NSComparisonPredicate(format: "created_at_gt == %@", eventSyncDate.toSystemString());
+        let systemDate = eventSyncDate.toSystemString()
+        let predicate = NSComparisonPredicate(format: "created_at_gt == %@", optionals: [systemDate]);
         return self.remoteManager.loadEntities(Event.self, filters: [predicate], include: nil, fields: liteSyncEnabled ? ["relatedEntityName", "relatedEntityId", "action"] : nil).thenInBGContext { (events: [Event]) -> SyncInfo in
             var itemsToSync = Set<String>()
             let requiredItems = Set(self.entitiesToSync())
@@ -166,7 +167,7 @@ open class AbstractSyncService: CoreService {
     open func sync() -> Promise<Void> {
         return DispatchQueue.global().promise {}.then(on: .global()) { _ in
             if self.trySync() {
-                return self.syncInternal().always {_ in
+                return self.syncInternal().always {
                     self.endSync()
                 }
             } else {

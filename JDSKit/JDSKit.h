@@ -28,7 +28,7 @@ FOUNDATION_EXPORT const unsigned char JDSKitVersionString[];
 
 @interface SNExceptionWrapper : NSObject
 
-+ (BOOL)tryBlock:(void(^)())tryBlock
++ (BOOL)tryBlock:(void(^)(void))tryBlock
            error:(NSError **)error;
 
 @end

@@ -293,7 +293,7 @@ open class BaseJSONAPIManager: NSObject {
         }
     }
     
-    open func executeRequestWithSessionCheck<B>(_ requestBlock: @escaping ((Void) -> Promise<B>)) -> Promise<B> {
+    open func executeRequestWithSessionCheck<B>(_ requestBlock: @escaping (() -> Promise<B>)) -> Promise<B> {
         return firstly {
             return requestBlock()
         }.recoverOnAuthError { (_) -> Promise<B> in
@@ -302,7 +302,7 @@ open class BaseJSONAPIManager: NSObject {
                     if let error = error {
                         reject(error)
                     } else {
-                        fulfill()
+                        fulfill(())
                     }
                 }
             }.then(on: .global()) { () -> Promise<B> in
@@ -319,11 +319,11 @@ open class BaseJSONAPIManager: NSObject {
         return Promise<Void> { fulfill, reject in
             if let username = username, let password = password {
                 authorizeUser(username, password: password, completion: { (result, error) -> (Void) in
-                    error != nil ? reject(error!) : fulfill()
+                    error != nil ? reject(error!) : fulfill(())
                 })
             } else {
                 authorizeClient({ (result, error) -> (Void) in
-                    error != nil ? reject(error!) : fulfill()
+                    error != nil ? reject(error!) : fulfill(())
                 })
             }
         }

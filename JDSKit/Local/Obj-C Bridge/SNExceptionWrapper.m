@@ -10,7 +10,7 @@
 
 @implementation SNExceptionWrapper
 
-+ (BOOL)tryBlock:(void(^)())tryBlock
++ (BOOL)tryBlock:(void(^)(void))tryBlock
            error:(NSError **)error
 {
     @try {

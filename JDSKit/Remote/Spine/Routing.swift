@@ -218,7 +218,7 @@ public extension NSComparisonPredicate {
     }
     
     convenience init(format: String, optionals: [Any]?=nil) {
-        self.init(format: format, [Any]())
+        self.init(format: format, optionals: [Any]())
         self.optionals = optionals
     }
     

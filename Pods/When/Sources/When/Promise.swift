@@ -1,43 +1,76 @@
 import Foundation
 
 open class Promise<T> {
-
   public typealias DoneHandler = (T) -> Void
   public typealias FailureHandler = (Error) -> Void
   public typealias CompletionHandler = (Result<T>) -> Void
 
-  open let key = UUID().uuidString
+  public let key = UUID().uuidString
+  let queue: DispatchQueue
+  fileprivate let observerQueue = DispatchQueue(label: "When.ObserverQueue", attributes: [])
+  fileprivate(set) public var state: State<T>
 
-  var queue: DispatchQueue
-  fileprivate(set) var state: State<T>
-
-  fileprivate(set) var observer: Observer<T>?
-  fileprivate(set) var doneHandler: DoneHandler?
-  fileprivate(set) var failureHandler: FailureHandler?
-  fileprivate(set) var completionHandler: CompletionHandler?
+  private var _observer: Observer<T>?
+  fileprivate(set) var observer: Observer<T>? {
+    get {
+      return observerQueue.sync {
+        return _observer
+      }
+    }
+    set {
+      observerQueue.sync {
+        _observer = newValue
+      }
+    }
+  }
+  fileprivate(set) var doneHandlers = [DoneHandler]()
+  fileprivate(set) var failureHandlers = [FailureHandler]()
+  fileprivate(set) var completionHandlers = [CompletionHandler]()
 
   // MARK: - Initialization
 
-  public init(queue: DispatchQueue = mainQueue, _ body: (Void) throws -> T) {
-    state = .pending
-    self.queue = queue
-
-    do {
-      let value = try body()
-      resolve(value)
-    } catch {
-      reject(error)
-    }
-  }
-
-  public init(queue: DispatchQueue = mainQueue, state: State<T> = .pending) {
+  /// Create a promise with a given state.
+  public init(queue: DispatchQueue = .main, state: State<T> = .pending) {
     self.queue = queue
     self.state = state
   }
 
+  /// Create a promise that resolves using a synchronous closure.
+  public convenience init(queue: DispatchQueue = .main, _ body: @escaping () throws -> T) {
+    self.init(queue: queue, state: .pending)
+    dispatch(queue) {
+      do {
+        let value = try body()
+        self.resolve(value)
+      } catch {
+        self.reject(error)
+      }
+    }
+  }
+
+  /// Create a promise that resolves using an asynchronous closure that can either resolve or reject.
+  public convenience init(queue: DispatchQueue = .main,
+                          _ body: @escaping (_ resolve: (T) -> Void, _ reject: (Error) -> Void) -> Void) {
+    self.init(queue: queue, state: .pending)
+    dispatch(queue) {
+      body(self.resolve, self.reject)
+    }
+  }
+
+  /// Create a promise that resolves using an asynchronous closure that can only resolve.
+  public convenience init(queue: DispatchQueue = .main, _ body: @escaping (@escaping (T) -> Void) -> Void) {
+    self.init(queue: queue, state: .pending)
+    dispatch(queue) {
+      body(self.resolve)
+    }
+  }
+
   // MARK: - States
 
-  open func reject(_ error: Error) {
+  /**
+   Rejects a promise with a given error.
+   */
+  public func reject(_ error: Error) {
     guard self.state.isPending else {
       return
     }
@@ -46,7 +79,10 @@ open class Promise<T> {
     update(state: state)
   }
 
-  open func resolve(_ value: T) {
+  /**
+   Resolves a promise with a given value.
+   */
+  public func resolve(_ value: T) {
     guard self.state.isPending else {
       return
     }
@@ -55,20 +91,42 @@ open class Promise<T> {
     update(state: state)
   }
 
+  /// Rejects a promise with the cancelled error.
+  open func cancel() {
+    reject(PromiseError.cancelled)
+  }
+
   // MARK: - Callbacks
 
-  @discardableResult open func done(_ handler: @escaping DoneHandler) -> Self {
-    doneHandler = handler
+  /**
+   Adds a handler to be called when the promise object is resolved with a value.
+   */
+  @discardableResult public func done(_ handler: @escaping DoneHandler) -> Self {
+    doneHandlers.append(handler)
     return self
   }
 
-  @discardableResult open func fail(_ handler: @escaping FailureHandler) -> Self {
-    failureHandler = handler
+  /**
+   Adds a handler to be called when the promise object is rejected with an error.
+   */
+  @discardableResult public func fail(policy: FailurePolicy = .notCancelled,
+                                      _ handler: @escaping FailureHandler) -> Self {
+    let failureHandler: FailureHandler = { error in
+      if case PromiseError.cancelled = error, policy == .notCancelled {
+        return
+      }
+      handler(error)
+    }
+    failureHandlers.append(failureHandler)
     return self
   }
 
-  @discardableResult open func always(_ handler: @escaping CompletionHandler) -> Self {
-    completionHandler = handler
+  /**
+   Adds a handler to be called when the promise object is either resolved or rejected.
+   This callback will be called after done or fail handlers
+   **/
+  @discardableResult public func always(_ handler: @escaping CompletionHandler) -> Self {
+    completionHandlers.append(handler)
     return self
   }
 
@@ -85,26 +143,70 @@ open class Promise<T> {
     }
   }
 
-  fileprivate func notify(_ result: Result<T>) {
+  private func notify(_ result: Result<T>) {
     switch result {
     case let .success(value):
-      doneHandler?(value)
+      for doneHandler in doneHandlers {
+        doneHandler(value)
+      }
     case let .failure(error):
-      failureHandler?(error)
+      for failureHandler in failureHandlers {
+        failureHandler(error)
+      }
     }
-
-    completionHandler?(result)
+    for completionHandler in completionHandlers {
+      completionHandler(result)
+    }
 
     if let observer = observer {
       dispatch(observer.queue) {
         observer.notify(result)
+        self.observer = nil
       }
     }
 
-    doneHandler = nil
-    failureHandler = nil
-    completionHandler = nil
-    observer = nil
+    doneHandlers.removeAll()
+    failureHandlers.removeAll()
+    completionHandlers.removeAll()
+  }
+
+  private func dispatch(_ queue: DispatchQueue, closure: @escaping () -> Void) {
+    if queue === instantQueue {
+      closure()
+    } else {
+      queue.async(execute: closure)
+    }
+  }
+}
+
+// MARK: - Then
+
+extension Promise {
+  @discardableResult public func then<U>(on queue: DispatchQueue = .main, _ body: @escaping (T) throws -> U) -> Promise<U> {
+    let promise = Promise<U>(queue: queue)
+    addObserver(on: queue, promise: promise, body)
+    return promise
+  }
+
+  @discardableResult public func then<U>(on queue: DispatchQueue = .main, _ body: @escaping (T) throws -> Promise<U>) -> Promise<U> {
+    let promise = Promise<U>(queue: queue)
+    addObserver(on: queue, promise: promise) { value -> U? in
+      let nextPromise = try body(value)
+      nextPromise.addObserver(on: queue, promise: promise) { value -> U? in
+        return value
+      }
+
+      return nil
+    }
+    return promise
+  }
+
+  @discardableResult public func thenInBackground<U>(_ body: @escaping (T) throws -> U) -> Promise<U> {
+    return then(on: backgroundQueue, body)
+  }
+
+  @discardableResult public func thenInBackground<U>(_ body: @escaping (T) throws -> Promise<U>) -> Promise<U> {
+    return then(on: backgroundQueue, body)
   }
 
   fileprivate func addObserver<U>(on queue: DispatchQueue, promise: Promise<U>, _ body: @escaping (T) throws -> U?) {
@@ -126,50 +228,63 @@ open class Promise<T> {
     update(state: state)
   }
 
-  fileprivate func dispatch(_ queue: DispatchQueue, closure: @escaping () -> Void) {
-    if queue === instantQueue {
-      closure()
-    } else {
-      queue.async(execute: closure)
-    }
+  /**
+   Returns a promise with Void as a result type.
+   */
+  public func asVoid(on queue: DispatchQueue = .main) -> Promise<Void> {
+    return then(on: queue) { _ in return }
   }
 }
 
-// MARK: - Then
+// MARK: - Recover
 
 extension Promise {
-
-  public func then<U>(on queue: DispatchQueue = mainQueue, _ body: @escaping (T) throws -> U) -> Promise<U> {
-    let promise = Promise<U>()
-    addObserver(on: queue, promise: promise, body)
-
+  /**
+   Helps to recover from certain errors. Continues the chain if a given closure does not throw.
+   */
+  public func recover(on queue: DispatchQueue = .main, _ body: @escaping (Error) throws -> T) -> Promise<T> {
+    let promise = Promise<T>(queue: queue)
+    addRecoverObserver(on: queue, promise: promise, body)
     return promise
   }
 
-  public func then<U>(on queue: DispatchQueue = mainQueue, _ body: @escaping (T) throws -> Promise<U>) -> Promise<U> {
-    let promise = Promise<U>()
-
-    addObserver(on: queue, promise: promise) { value -> U? in
-      let nextPromise = try body(value)
-      nextPromise.addObserver(on: queue, promise: promise) { value -> U? in
+  /**
+   Helps to recover from certain errors. Continues the chain if a given closure does not throw.
+   */
+  public func recover(on queue: DispatchQueue = .main,
+                      _ body: @escaping (Error) throws -> Promise<T>) -> Promise<T> {
+    let promise = Promise<T>(queue: queue)
+    addRecoverObserver(on: queue, promise: promise) { error -> T? in
+      let nextPromise = try body(error)
+      nextPromise.addObserver(on: queue, promise: promise) { value -> T? in
         return value
       }
 
       return nil
     }
-
     return promise
   }
 
-  public func thenInBackground<U>(_ body: @escaping (T) throws -> U) -> Promise<U> {
-    return then(on: backgroundQueue, body)
-  }
-
-  public func thenInBackground<U>(_ body: @escaping (T) throws -> Promise<U>) -> Promise<U> {
-    return then(on: backgroundQueue, body)
-  }
-
-  func asVoid() -> Promise<Void> {
-    return then(on: instantQueue) { _ in return }
+  /**
+   Adds a recover observer.
+   */
+  private func addRecoverObserver(on queue: DispatchQueue, promise: Promise<T>,
+                                  _ body: @escaping (Error) throws -> T?) {
+    observer = Observer(queue: queue) { result in
+      switch result {
+      case let .success(value):
+        promise.resolve(value)
+      case let .failure(error):
+        do {
+          if let result = try body(error) {
+            promise.resolve(result)
+          }
+        } catch {
+          promise.reject(error)
+        }
+      }
+    }
+    
+    update(state: state)
   }
 }
