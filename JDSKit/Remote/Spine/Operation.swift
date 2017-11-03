@@ -21,7 +21,7 @@ func errorFromStatusCode(_ statusCode: Int, additionalErrors: [NSError]? = nil) 
 		userInfo = nil
 	}
 	
-	return NSError(domain: SpineServerErrorDomain, code: statusCode, userInfo: userInfo as! [String : Any])
+    return NSError(domain: SpineServerErrorDomain, code: statusCode, userInfo: userInfo as? [String : Any])
 }
 
 private func convertResourcesToLinkage(_ resources: [Resource]) -> [[String: String]] {
