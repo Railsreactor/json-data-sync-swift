@@ -59,10 +59,10 @@ open class Resource: NSObject, NSCoding {
 	open class func fields() -> [Field] { return [] }
 	final public func fields() -> [Field] { return type(of: self).fields() }
 	
-	open var id: String?
+    @objc open var id: String?
 	open var URL: Foundation.URL?
 	
-	open var isLoaded: NSNumber? = 0
+    @objc open var isLoaded: NSNumber? = 0
 	
 	open var meta: [String: Any]?
 	

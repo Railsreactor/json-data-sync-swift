@@ -10,10 +10,10 @@ import Foundation
 
 open class JSONLinkableEntity: JSONManagedEntity {
     
-    open var parentId: String?
-    open var parentType: String?
+    @objc open var parentId: String?
+    @objc open var parentType: String?
     
-    open var parent: ManagedEntity? {
+    @objc open var parent: ManagedEntity? {
         get {
             return linkedEntity as? ManagedEntity
         }
