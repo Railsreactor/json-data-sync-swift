@@ -176,7 +176,7 @@ open class BaseJSONAPIManager: NSObject {
             }
         }
         
-        spine.networkClient.request(method: method, url: URL(string: urlString)!, payload: data!, callback: rawCompletion)
+        spine.networkClient.request(method: method, url: URL(string: urlString)!, payload: data, callback: rawCompletion)
     }
     
     open func call(_ method: String, path: String, request: [String: Any], completion: @escaping RemoteResultBlock) {

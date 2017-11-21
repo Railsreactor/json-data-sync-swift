@@ -27,7 +27,9 @@ open class NetworkSpinner: NSObject {
     }
     
     fileprivate func updateNetworkIndicator() {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = activeConnectionsCounter > 0
+        DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = self.activeConnectionsCounter > 0
+        }
     }
     
 }
